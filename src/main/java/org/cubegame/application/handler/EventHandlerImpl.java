@@ -1,23 +1,29 @@
 package org.cubegame.application.handler;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.cubegame.domain.events.Command;
 import org.cubegame.domain.events.Phase;
+import org.cubegame.domain.exceptions.EnumException;
 import org.cubegame.domain.model.ChatId;
 import org.cubegame.domain.model.Message;
 import org.cubegame.domain.model.UserId;
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.game.GameBuilder;
+import org.cubegame.domain.model.game.Player;
 import org.cubegame.infrastructure.ApplicationProperties;
 import org.cubegame.infrastructure.GameRepository;
 import org.cubegame.infrastructure.TelegramBotView;
 import org.cubegame.infrastructure.model.message.ErrorResponseMessage;
+import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextResponseMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +49,6 @@ public class EventHandlerImpl implements EventHandler {
         } else {
             processPhase(Phase.EMPTY, view, receivedMessage);
         }
-
 
 
 //        if (update.hasMessage() && update.getMessage().hasDice()) {
@@ -90,7 +95,17 @@ public class EventHandlerImpl implements EventHandler {
         switch (phase) {
             case EMPTY:
                 if (isCommand(message.getMessage())) {
-                    Command command = Command.fromValue(message.getMessage());
+
+                    Command command;
+                    try {
+                        command = Command.from(message.getMessage());
+                    } catch (EnumException exception) {
+                        // TODO log it
+                        System.out.println(exception.toString());
+                        view.respond(invalidCommand(message));
+                        break;
+                    }
+
                     switch (command) {
                         case START:
                             final String nextphaseValue = properties.getNextStateFor(phase.getValue());
@@ -112,11 +127,9 @@ public class EventHandlerImpl implements EventHandler {
                             break;
                     }
                 } else {
-                    final ErrorResponseMessage errorResponseMessage = new ErrorResponseMessage(
-                            "Invalid command: '" + message.getMessage() + "'",
-                            message.getChatId()
-                    );
-                    view.respond(errorResponseMessage);
+                    // TODO log it
+                    final ResponseMessage responseMessage = invalidCommand(message);
+                    view.respond(responseMessage);
                 }
                 break;
             case CHOOSE_GAME:
@@ -143,9 +156,27 @@ public class EventHandlerImpl implements EventHandler {
                             message.getChatId()
                     ));
                 }
-
                 break;
             case NUMBER_OF_PLAYERS:
+                final int numberOfPlayers;
+                try {
+                    numberOfPlayers = Integer.parseInt(message.getMessage());
+                } catch (NumberFormatException exception) {
+                    view.respond(new ErrorResponseMessage(
+                            "Invalid number of players. Please enter integer value.",
+                            message.getChatId()
+                    ));
+                    break;
+                }
+                if (numberOfPlayers <= 0) {
+                    view.respond(new ErrorResponseMessage(
+                            "Invalid number of players. Number must be greater than 0.",
+                            message.getChatId()
+                    ));
+                    break;
+                }
+
+
                 final Optional<Game> storedGame1 = gameRepository.get(message.getChatId());
                 if (storedGame1.isPresent()) {
 
@@ -155,12 +186,12 @@ public class EventHandlerImpl implements EventHandler {
                     final Game game = storedGame1.get();
                     final Game updatedGame = GameBuilder.from(game)
                             .setPhase(nextPhase)
-                            .setNumerOfPlayers(Integer.parseInt(message.getMessage()))
+                            .setNumerOfPlayers(numberOfPlayers)
                             .build();
                     gameRepository.save(updatedGame);
 
                     view.respond(new TextResponseMessage(
-                            "Specify players amount",
+                            String.format("Await for %d players", updatedGame.getNumerOfPlayers()),
                             message.getChatId()
                     ));
                 } else {
@@ -175,20 +206,28 @@ public class EventHandlerImpl implements EventHandler {
                 final Optional<Game> storedGame2 = gameRepository.get(message.getChatId());
                 if (storedGame2.isPresent()) {
 
-                    final String nextphaseValue = properties.getNextStateFor(phase.getValue());
-                    final Phase nextPhase = Phase.fromValue(nextphaseValue);
-
                     final Game game = storedGame2.get();
-                    final Game updatedGame = GameBuilder.from(game)
-                            .setPhase(nextPhase)
-                            .setNumerOfPlayers(Integer.parseInt(message.getMessage()))
-                            .build();
-                    gameRepository.save(updatedGame);
 
-                    view.respond(new TextResponseMessage(
-                            "Specify players amount",
-                            message.getChatId()
-                    ));
+                    final ArrayList<Player> currentPlayers = new ArrayList<>(game.getPlayers());
+                    final List<Player> newPlayer = Collections.singletonList(new Player(message.getUserId()));
+                    final List<Player> updatedPlayers = new ArrayList<>(CollectionUtils.union(currentPlayers, newPlayer));
+
+                    final GameBuilder currentGameBuilder = GameBuilder.from(game)
+                            .setPlayers(updatedPlayers);
+
+                    if (updatedPlayers.size() == game.getNumerOfPlayers()) {
+                        final String nextphaseValue = properties.getNextStateFor(phase.getValue());
+                        final Phase nextPhase = Phase.fromValue(nextphaseValue);
+                        currentGameBuilder.setPhase(nextPhase);
+
+                    } else {
+                        view.respond(new TextResponseMessage(
+                                String.format("Await for %d players", game.getNumerOfPlayers() - updatedPlayers.size()),
+                                message.getChatId()
+                        ));
+                    }
+
+                    gameRepository.save(currentGameBuilder.build());
                 } else {
                     view.respond(new ErrorResponseMessage(
                             "Invalid cannot find game session for this chat",
@@ -196,6 +235,12 @@ public class EventHandlerImpl implements EventHandler {
                     ));
                 }
 
+                break;
+            case STARTED:
+                view.respond(new TextResponseMessage(
+                        "Confradulation! Game is started",
+                        message.getChatId()
+                ));
                 break;
         }
     }
@@ -238,5 +283,12 @@ public class EventHandlerImpl implements EventHandler {
         }
 
         return null;
+    }
+
+    public ResponseMessage invalidCommand(Message message) {
+        return new ErrorResponseMessage(
+                String.format("Invalid command: '%s'", message.getMessage()),
+                message.getChatId()
+        );
     }
 }

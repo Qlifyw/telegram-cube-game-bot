@@ -31,7 +31,7 @@ public enum Command {
         return this.value;
     }
 
-    public static Command fromValue(final String value) {
+    public static Command from(final String value) {
         final Command createdValue = enumsByValue.get(value.toUpperCase());
         if (createdValue == null) {
             final List<String> allowedValues = Arrays.stream(values())

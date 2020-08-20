@@ -37,7 +37,6 @@ public class CubeGameBot
 //
 //        }
 
-
         eventHandler.handle(update, this, properties);
 
     }

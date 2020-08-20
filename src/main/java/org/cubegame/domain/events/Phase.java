@@ -12,7 +12,8 @@ public enum Phase {
     EMPTY("empty"),
     CHOOSE_GAME("choose_the_game"),
     NUMBER_OF_PLAYERS("number_of_players"),
-    AWAIT_PLAYERS("await_players");
+    AWAIT_PLAYERS("await_players"),
+    STARTED("started");
 
     private final String value;
     private final static Map<String, Phase> enumsByValue = new HashMap<>();
