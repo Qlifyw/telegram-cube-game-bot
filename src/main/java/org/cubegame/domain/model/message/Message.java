@@ -1,4 +1,7 @@
-package org.cubegame.domain.model;
+package org.cubegame.domain.model.message;
+
+import org.cubegame.domain.model.identifier.ChatId;
+import org.cubegame.domain.model.identifier.UserId;
 
 public class Message {
 

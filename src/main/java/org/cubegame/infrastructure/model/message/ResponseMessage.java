@@ -1,18 +1,18 @@
 package org.cubegame.infrastructure.model.message;
 
-import org.cubegame.domain.model.ChatId;
+import org.cubegame.domain.model.identifier.ChatId;
 
 public abstract class ResponseMessage {
-    protected String value;
+    protected String message;
     protected ChatId chatId;
 
-    public ResponseMessage(final String value, final ChatId chatId) {
-        this.value = value;
+    public ResponseMessage(final String message, final ChatId chatId) {
+        this.message = message;
         this.chatId = chatId;
     }
 
-    public String getValue() {
-        return value;
+    public String getMessage() {
+        return message;
     }
 
     public ChatId getChatId() {

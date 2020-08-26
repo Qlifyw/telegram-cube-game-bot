@@ -1,23 +1,21 @@
 package org.cubegame.application.handler;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.cubegame.domain.events.Command;
+import org.cubegame.domain.events.CommandValidator;
 import org.cubegame.domain.events.Phase;
+import org.cubegame.domain.events.UnvalidatedCommand;
 import org.cubegame.domain.exceptions.EnumException;
-import org.cubegame.domain.model.ChatId;
-import org.cubegame.domain.model.Message;
-import org.cubegame.domain.model.UserId;
+import org.cubegame.domain.model.identifier.ChatId;
+import org.cubegame.domain.model.message.Message;
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.game.GameBuilder;
 import org.cubegame.domain.model.game.Player;
 import org.cubegame.infrastructure.ApplicationProperties;
-import org.cubegame.infrastructure.GameRepository;
+import org.cubegame.infrastructure.repository.game.GameRepository;
 import org.cubegame.infrastructure.TelegramBotView;
 import org.cubegame.infrastructure.model.message.ErrorResponseMessage;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextResponseMessage;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -38,9 +36,8 @@ public class EventHandlerImpl implements EventHandler {
     }
 
     @Override
-    public void handle(Update update, TelegramBotView view, ApplicationProperties properties) {
+    public void handle(Message receivedMessage, TelegramBotView view, ApplicationProperties properties) {
 
-        final Message receivedMessage = getMessage(update);
         final Optional<Game> game = gameRepository.get(receivedMessage.getChatId());
         if (game.isPresent()) {
             final Game storedGame = game.get();
@@ -94,19 +91,21 @@ public class EventHandlerImpl implements EventHandler {
     public void processPhase(Phase phase, TelegramBotView view, Message message) {
         switch (phase) {
             case EMPTY:
-                if (isCommand(message.getMessage())) {
+                final Optional<UnvalidatedCommand> maybeCommand = UnvalidatedCommand.from(message.getMessage());
 
-                    Command command;
+                maybeCommand.ifPresent( unvalidatedCommand -> {
+
+                    final CommandValidator.ValidatedCommand validatedCommand;
                     try {
-                        command = Command.from(message.getMessage());
+                        validatedCommand = CommandValidator.validateOrThrow(unvalidatedCommand);
                     } catch (EnumException exception) {
                         // TODO log it
                         System.out.println(exception.toString());
                         view.respond(invalidCommand(message));
-                        break;
+                        return;
                     }
 
-                    switch (command) {
+                    switch (validatedCommand.getValue()) {
                         case START:
                             final String nextphaseValue = properties.getNextStateFor(phase.getValue());
                             final Phase nextPhase = Phase.fromValue(nextphaseValue);
@@ -126,11 +125,7 @@ public class EventHandlerImpl implements EventHandler {
                         case STOP:
                             break;
                     }
-                } else {
-                    // TODO log it
-                    final ResponseMessage responseMessage = invalidCommand(message);
-                    view.respond(responseMessage);
-                }
+                });
                 break;
             case CHOOSE_GAME:
                 final Optional<Game> storedGame = gameRepository.get(message.getChatId());
@@ -262,27 +257,8 @@ public class EventHandlerImpl implements EventHandler {
         return message.startsWith("/");
     }
 
-    public Message getMessage(Update update) {
-
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            final String receivedText = update.getMessage().getText();
-            final ChatId chatId = new ChatId(update.getMessage().getChatId());
-            final UserId userId = new UserId(update.getMessage().getFrom().getId());
-
-            return new Message(chatId, userId, receivedText);
-        }
-
-        if (update.hasCallbackQuery()) {
-            CallbackQuery callbackQuery = update.getCallbackQuery();
-
-            final String receivedText = callbackQuery.getData();
-            final ChatId chatId = new ChatId(callbackQuery.getFrom().getId().longValue());
-            final UserId userId = new UserId(callbackQuery.getMessage().getFrom().getId());
-
-            return new Message(chatId, userId, receivedText);
-        }
-
-        return null;
+    public String extractCommand(String message) {
+        return message.split("@")[0];
     }
 
     public ResponseMessage invalidCommand(Message message) {

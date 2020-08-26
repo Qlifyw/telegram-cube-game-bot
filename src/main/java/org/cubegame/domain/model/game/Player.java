@@ -1,6 +1,6 @@
 package org.cubegame.domain.model.game;
 
-import org.cubegame.domain.model.UserId;
+import org.cubegame.domain.model.identifier.UserId;
 
 public class Player {
 

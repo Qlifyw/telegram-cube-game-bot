@@ -1,9 +1,7 @@
-package org.cubegame.infrastructure;
+package org.cubegame.infrastructure.repository.game;
 
-import org.cubegame.domain.events.Phase;
-import org.cubegame.domain.model.ChatId;
+import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.game.Game;
-import org.cubegame.domain.model.game.GameBuilder;
 
 import java.util.Optional;
 

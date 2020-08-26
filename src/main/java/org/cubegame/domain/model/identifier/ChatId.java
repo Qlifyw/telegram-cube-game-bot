@@ -1,4 +1,4 @@
-package org.cubegame.domain.model;
+package org.cubegame.domain.model.identifier;
 
 public class ChatId {
     private final Long value;

@@ -1,10 +1,9 @@
 package org.cubegame.domain.model.game;
 
 import org.cubegame.domain.events.Phase;
-import org.cubegame.domain.model.ChatId;
-import org.cubegame.domain.model.GameId;
+import org.cubegame.domain.model.identifier.ChatId;
+import org.cubegame.domain.model.identifier.GameId;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

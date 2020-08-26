@@ -13,12 +13,12 @@ public class ApplicationProperties {
     private final static File propertiesFile = new File("application.properties");
 
 
-    private ApplicationProperties(Properties properties) {
+    private ApplicationProperties() {
     }
 
     public static ApplicationProperties load() {
         tryLoad();
-        return new ApplicationProperties(properties);
+        return new ApplicationProperties();
     }
 
     private static void tryLoad() {
