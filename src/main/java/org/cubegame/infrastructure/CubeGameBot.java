@@ -3,8 +3,8 @@ package org.cubegame.infrastructure;
 import org.cubegame.application.handler.EventHandler;
 import org.cubegame.application.handler.EventHandlerImpl;
 import org.cubegame.domain.model.identifier.ChatId;
-import org.cubegame.domain.model.message.Message;
 import org.cubegame.domain.model.identifier.UserId;
+import org.cubegame.domain.model.message.Message;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.repository.game.GameRepository;
 import org.cubegame.infrastructure.repository.game.GameRepositoryImpl;
@@ -92,7 +92,10 @@ public class CubeGameBot
 
     @Override
     public void respond(final ResponseMessage message) {
-        respond(new SendMessage(message.getChatId().getValue(), message.getMessage()));
+        final SendMessage responseMessage = new SendMessage()
+                .setChatId(message.getChatId().getValue())
+                .setText(message.getMessage());
+        respond(responseMessage);
     }
 
     private void respond(SendMessage message) {

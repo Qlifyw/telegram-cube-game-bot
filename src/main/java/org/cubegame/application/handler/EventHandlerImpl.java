@@ -5,17 +5,18 @@ import org.cubegame.domain.events.CommandValidator;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.events.UnvalidatedCommand;
 import org.cubegame.domain.exceptions.EnumException;
-import org.cubegame.domain.model.identifier.ChatId;
-import org.cubegame.domain.model.message.Message;
+import org.cubegame.domain.exceptions.GameNoFoundException;
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.game.GameBuilder;
 import org.cubegame.domain.model.game.Player;
+import org.cubegame.domain.model.identifier.ChatId;
+import org.cubegame.domain.model.message.Message;
 import org.cubegame.infrastructure.ApplicationProperties;
-import org.cubegame.infrastructure.repository.game.GameRepository;
 import org.cubegame.infrastructure.TelegramBotView;
 import org.cubegame.infrastructure.model.message.ErrorResponseMessage;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextResponseMessage;
+import org.cubegame.infrastructure.repository.game.GameRepository;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -90,10 +91,10 @@ public class EventHandlerImpl implements EventHandler {
 
     public void processPhase(Phase phase, TelegramBotView view, Message message) {
         switch (phase) {
-            case EMPTY:
+            case EMPTY: {
                 final Optional<UnvalidatedCommand> maybeCommand = UnvalidatedCommand.from(message.getMessage());
 
-                maybeCommand.ifPresent( unvalidatedCommand -> {
+                maybeCommand.ifPresent(unvalidatedCommand -> {
 
                     final CommandValidator.ValidatedCommand validatedCommand;
                     try {
@@ -127,59 +128,55 @@ public class EventHandlerImpl implements EventHandler {
                     }
                 });
                 break;
-            case CHOOSE_GAME:
-                final Optional<Game> storedGame = gameRepository.get(message.getChatId());
-                if (storedGame.isPresent()) {
+            }
+            case CHOOSE_GAME: {
+                final Game storedGame = gameRepository
+                        .get(message.getChatId())
+                        .orElseThrow(() -> new GameNoFoundException(message.getChatId()));
 
-                    final String nextphaseValue = properties.getNextStateFor(phase.getValue());
-                    final Phase nextPhase = Phase.fromValue(nextphaseValue);
+                final String nextphaseValue = properties.getNextStateFor(phase.getValue());
+                final Phase nextPhase = Phase.fromValue(nextphaseValue);
 
-                    final Game game = storedGame.get();
-                    final Game updatedGame = GameBuilder.from(game)
-                            .setPhase(nextPhase)
-                            .setGameName(message.getMessage())
-                            .build();
-                    gameRepository.save(updatedGame);
+                final Game updatedGame = GameBuilder.from(storedGame)
+                        .setPhase(nextPhase)
+                        .setGameName(message.getMessage())
+                        .build();
+                gameRepository.save(updatedGame);
 
-                    view.respond(new TextResponseMessage(
-                            "Specify players amount",
-                            message.getChatId()
-                    ));
-                } else {
-                    view.respond(new ErrorResponseMessage(
-                            "Invalid cannot find game session for this chat",
-                            message.getChatId()
-                    ));
-                }
+                view.respond(new TextResponseMessage(
+                        "Specify players amount",
+                        message.getChatId()
+                ));
+
                 break;
-            case NUMBER_OF_PLAYERS:
-                final int numberOfPlayers;
-                try {
-                    numberOfPlayers = Integer.parseInt(message.getMessage());
-                } catch (NumberFormatException exception) {
-                    view.respond(new ErrorResponseMessage(
-                            "Invalid number of players. Please enter integer value.",
-                            message.getChatId()
-                    ));
-                    break;
-                }
-                if (numberOfPlayers <= 0) {
-                    view.respond(new ErrorResponseMessage(
-                            "Invalid number of players. Number must be greater than 0.",
-                            message.getChatId()
-                    ));
-                    break;
-                }
+            }
+                case NUMBER_OF_PLAYERS: {
+                    final int numberOfPlayers;
+                    try {
+                        numberOfPlayers = Integer.parseInt(message.getMessage());
+                    } catch (NumberFormatException exception) {
+                        view.respond(new ErrorResponseMessage(
+                                "Invalid number of players. Please enter integer value.",
+                                message.getChatId()
+                        ));
+                        break;
+                    }
+                    if (numberOfPlayers <= 0) {
+                        view.respond(new ErrorResponseMessage(
+                                "Invalid number of players. Number must be greater than 0.",
+                                message.getChatId()
+                        ));
+                        break;
+                    }
 
-
-                final Optional<Game> storedGame1 = gameRepository.get(message.getChatId());
-                if (storedGame1.isPresent()) {
+                    final Game storedGame = gameRepository
+                            .get(message.getChatId())
+                            .orElseThrow(() -> new GameNoFoundException(message.getChatId()));
 
                     final String nextphaseValue = properties.getNextStateFor(phase.getValue());
                     final Phase nextPhase = Phase.fromValue(nextphaseValue);
 
-                    final Game game = storedGame1.get();
-                    final Game updatedGame = GameBuilder.from(game)
+                    final Game updatedGame = GameBuilder.from(storedGame)
                             .setPhase(nextPhase)
                             .setNumerOfPlayers(numberOfPlayers)
                             .build();
@@ -189,54 +186,45 @@ public class EventHandlerImpl implements EventHandler {
                             String.format("Await for %d players", updatedGame.getNumerOfPlayers()),
                             message.getChatId()
                     ));
+
+                    break;
+            }
+            case AWAIT_PLAYERS: {
+                final Game storedGame = gameRepository
+                        .get(message.getChatId())
+                        .orElseThrow(() -> new GameNoFoundException(message.getChatId()));
+
+                final ArrayList<Player> currentPlayers = new ArrayList<>(storedGame.getPlayers());
+                final List<Player> newPlayer = Collections.singletonList(new Player(message.getUserId()));
+                final List<Player> updatedPlayers = new ArrayList<>(CollectionUtils.union(currentPlayers, newPlayer));
+
+                final GameBuilder currentGameBuilder = GameBuilder.from(storedGame)
+                        .setPlayers(updatedPlayers);
+
+                if (updatedPlayers.size() == storedGame.getNumerOfPlayers()) {
+                    final String nextphaseValue = properties.getNextStateFor(phase.getValue());
+                    final Phase nextPhase = Phase.fromValue(nextphaseValue);
+                    currentGameBuilder.setPhase(nextPhase);
+
                 } else {
-                    view.respond(new ErrorResponseMessage(
-                            "Invalid cannot find game session for this chat",
+                    view.respond(new TextResponseMessage(
+                            String.format("Await for %d players", storedGame.getNumerOfPlayers() - updatedPlayers.size()),
                             message.getChatId()
                     ));
                 }
 
-                break;
-            case AWAIT_PLAYERS:
-                final Optional<Game> storedGame2 = gameRepository.get(message.getChatId());
-                if (storedGame2.isPresent()) {
+                gameRepository.save(currentGameBuilder.build());
 
-                    final Game game = storedGame2.get();
-
-                    final ArrayList<Player> currentPlayers = new ArrayList<>(game.getPlayers());
-                    final List<Player> newPlayer = Collections.singletonList(new Player(message.getUserId()));
-                    final List<Player> updatedPlayers = new ArrayList<>(CollectionUtils.union(currentPlayers, newPlayer));
-
-                    final GameBuilder currentGameBuilder = GameBuilder.from(game)
-                            .setPlayers(updatedPlayers);
-
-                    if (updatedPlayers.size() == game.getNumerOfPlayers()) {
-                        final String nextphaseValue = properties.getNextStateFor(phase.getValue());
-                        final Phase nextPhase = Phase.fromValue(nextphaseValue);
-                        currentGameBuilder.setPhase(nextPhase);
-
-                    } else {
-                        view.respond(new TextResponseMessage(
-                                String.format("Await for %d players", game.getNumerOfPlayers() - updatedPlayers.size()),
-                                message.getChatId()
-                        ));
-                    }
-
-                    gameRepository.save(currentGameBuilder.build());
-                } else {
-                    view.respond(new ErrorResponseMessage(
-                            "Invalid cannot find game session for this chat",
-                            message.getChatId()
-                    ));
-                }
 
                 break;
-            case STARTED:
+            }
+            case STARTED: {
                 view.respond(new TextResponseMessage(
                         "Confradulation! Game is started",
                         message.getChatId()
                 ));
                 break;
+            }
         }
     }
 
