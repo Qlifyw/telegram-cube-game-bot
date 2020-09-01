@@ -1,4 +1,4 @@
-package org.cubegame.infrastructure;
+package org.cubegame.infrastructure.properties;
 
 import java.io.File;
 import java.io.FileInputStream;

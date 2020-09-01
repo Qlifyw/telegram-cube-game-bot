@@ -1,10 +1,11 @@
-package org.cubegame.infrastructure;
+package org.cubegame.infrastructure.bot;
 
 import org.cubegame.application.handler.EventHandler;
 import org.cubegame.application.handler.EventHandlerImpl;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.identifier.UserId;
 import org.cubegame.domain.model.message.Message;
+import org.cubegame.infrastructure.properties.ApplicationProperties;
 import org.cubegame.infrastructure.model.message.NavigationResponseMessage;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextualResponseMessage;

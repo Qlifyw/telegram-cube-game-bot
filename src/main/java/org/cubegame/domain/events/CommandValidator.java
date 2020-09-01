@@ -1,9 +1,5 @@
 package org.cubegame.domain.events;
 
-import org.cubegame.infrastructure.ApplicationProperties;
-
-import java.util.Optional;
-
 public class CommandValidator {
 
     public static ValidatedCommand validateOrThrow(UnvalidatedCommand unvalidatedCommand) {

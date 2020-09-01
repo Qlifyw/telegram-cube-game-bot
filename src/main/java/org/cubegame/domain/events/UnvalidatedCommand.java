@@ -1,6 +1,6 @@
 package org.cubegame.domain.events;
 
-import org.cubegame.infrastructure.ApplicationProperties;
+import org.cubegame.infrastructure.properties.ApplicationProperties;
 
 import java.util.Optional;
 

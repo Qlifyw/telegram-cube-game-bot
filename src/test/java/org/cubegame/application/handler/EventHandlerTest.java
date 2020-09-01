@@ -1,21 +1,15 @@
 package org.cubegame.application.handler;
 
 import org.cubegame.domain.model.identifier.ChatId;
-import org.cubegame.domain.model.message.Message;
 import org.cubegame.domain.model.identifier.UserId;
-import org.cubegame.infrastructure.ApplicationProperties;
+import org.cubegame.infrastructure.properties.ApplicationProperties;
 import org.cubegame.infrastructure.repository.game.GameRepository;
 import org.cubegame.infrastructure.repository.game.GameRepositoryImpl;
-import org.cubegame.infrastructure.TelegramBotView;
-import org.cubegame.infrastructure.model.message.ResponseMessage;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class EventHandlerTest implements TelegramBotView {
+class EventHandlerTest {
 
     final static ApplicationProperties applicationProperties = ApplicationProperties.load();
     final GameRepository gameRepository = new GameRepositoryImpl();
@@ -51,17 +45,4 @@ class EventHandlerTest implements TelegramBotView {
 //        eventHandler.handle(receivedMessage, applicationProperties);
 //    }
 
-
-
-
-
-    @Override
-    public void showMenu(final InlineKeyboardMarkup menu, final ChatId chatId) {
-
-    }
-
-    @Override
-    public void respond(final ResponseMessage response) {
-
-    }
 }

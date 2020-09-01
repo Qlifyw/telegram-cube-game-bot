@@ -1,5 +1,6 @@
 package org.cubegame.infrastructure;
 
+import org.cubegame.infrastructure.bot.CubeGameBot;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
