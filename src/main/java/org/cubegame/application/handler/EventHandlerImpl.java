@@ -14,6 +14,7 @@ import org.cubegame.domain.model.message.Message;
 import org.cubegame.infrastructure.ApplicationProperties;
 import org.cubegame.infrastructure.TelegramBotView;
 import org.cubegame.infrastructure.model.message.ErrorResponseMessage;
+import org.cubegame.infrastructure.model.message.NavigationResponseMessage;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextResponseMessage;
 import org.cubegame.infrastructure.repository.game.GameRepository;
@@ -37,15 +38,15 @@ public class EventHandlerImpl implements EventHandler {
     }
 
     @Override
-    public void handle(Message receivedMessage, TelegramBotView view, ApplicationProperties properties) {
+    public ResponseMessage handle(Message receivedMessage, ApplicationProperties properties) {
 
         final Optional<Game> game = gameRepository.get(receivedMessage.getChatId());
         if (game.isPresent()) {
             final Game storedGame = game.get();
             final Phase phase = storedGame.getPhase();
-            processPhase(phase, view, receivedMessage);
+            return processPhase(phase, receivedMessage);
         } else {
-            processPhase(Phase.EMPTY, view, receivedMessage);
+            return processPhase(Phase.EMPTY, receivedMessage);
         }
 
 
@@ -89,12 +90,16 @@ public class EventHandlerImpl implements EventHandler {
          */
     }
 
-    public void processPhase(Phase phase, TelegramBotView view, Message message) {
+    public ResponseMessage processPhase(Phase phase, Message message) {
+
+        ResponseMessage responseMessage = null;
         switch (phase) {
             case EMPTY: {
                 final Optional<UnvalidatedCommand> maybeCommand = UnvalidatedCommand.from(message.getMessage());
 
-                maybeCommand.ifPresent(unvalidatedCommand -> {
+                if (maybeCommand.isPresent()) {
+
+                    final UnvalidatedCommand unvalidatedCommand = maybeCommand.get();
 
                     final CommandValidator.ValidatedCommand validatedCommand;
                     try {
@@ -102,8 +107,8 @@ public class EventHandlerImpl implements EventHandler {
                     } catch (EnumException exception) {
                         // TODO log it
                         System.out.println(exception.toString());
-                        view.respond(invalidCommand(message));
-                        return;
+                        responseMessage = invalidCommand(message);
+                        break;
                     }
 
                     switch (validatedCommand.getValue()) {
@@ -119,14 +124,12 @@ public class EventHandlerImpl implements EventHandler {
 
                             gameRepository.save(createdGame);
 
-                            final InlineKeyboardMarkup menu = buildMenu();
-                            view.showMenu(menu, message.getChatId());
-
+                            responseMessage = new NavigationResponseMessage(buildMenu(), message.getChatId());
                             break;
                         case STOP:
                             break;
                     }
-                });
+                };
                 break;
             }
             case CHOOSE_GAME: {
@@ -143,51 +146,47 @@ public class EventHandlerImpl implements EventHandler {
                         .build();
                 gameRepository.save(updatedGame);
 
-                view.respond(new TextResponseMessage(
-                        "Specify players amount",
-                        message.getChatId()
-                ));
-
+                responseMessage = new TextResponseMessage("Specify players amount", message.getChatId());
                 break;
             }
-                case NUMBER_OF_PLAYERS: {
-                    final int numberOfPlayers;
-                    try {
-                        numberOfPlayers = Integer.parseInt(message.getMessage());
-                    } catch (NumberFormatException exception) {
-                        view.respond(new ErrorResponseMessage(
-                                "Invalid number of players. Please enter integer value.",
-                                message.getChatId()
-                        ));
-                        break;
-                    }
-                    if (numberOfPlayers <= 0) {
-                        view.respond(new ErrorResponseMessage(
-                                "Invalid number of players. Number must be greater than 0.",
-                                message.getChatId()
-                        ));
-                        break;
-                    }
-
-                    final Game storedGame = gameRepository
-                            .get(message.getChatId())
-                            .orElseThrow(() -> new GameNoFoundException(message.getChatId()));
-
-                    final String nextphaseValue = properties.getNextStateFor(phase.getValue());
-                    final Phase nextPhase = Phase.fromValue(nextphaseValue);
-
-                    final Game updatedGame = GameBuilder.from(storedGame)
-                            .setPhase(nextPhase)
-                            .setNumerOfPlayers(numberOfPlayers)
-                            .build();
-                    gameRepository.save(updatedGame);
-
-                    view.respond(new TextResponseMessage(
-                            String.format("Await for %d players", updatedGame.getNumerOfPlayers()),
+            case NUMBER_OF_PLAYERS: {
+                final int numberOfPlayers;
+                try {
+                    numberOfPlayers = Integer.parseInt(message.getMessage());
+                } catch (NumberFormatException exception) {
+                    responseMessage = new ErrorResponseMessage(
+                            "Invalid number of players. Please enter integer value.",
                             message.getChatId()
-                    ));
-
+                    );
                     break;
+                }
+                if (numberOfPlayers <= 0) {
+                    responseMessage = new ErrorResponseMessage(
+                            "Invalid number of players. Number must be greater than 0.",
+                            message.getChatId()
+                    );
+                    break;
+                }
+
+                final Game storedGame = gameRepository
+                        .get(message.getChatId())
+                        .orElseThrow(() -> new GameNoFoundException(message.getChatId()));
+
+                final String nextphaseValue = properties.getNextStateFor(phase.getValue());
+                final Phase nextPhase = Phase.fromValue(nextphaseValue);
+
+                final Game updatedGame = GameBuilder.from(storedGame)
+                        .setPhase(nextPhase)
+                        .setNumerOfPlayers(numberOfPlayers)
+                        .build();
+                gameRepository.save(updatedGame);
+
+                responseMessage = new TextResponseMessage(
+                        String.format("Await for %d players", updatedGame.getNumerOfPlayers()),
+                        message.getChatId()
+                );
+
+                break;
             }
             case AWAIT_PLAYERS: {
                 final Game storedGame = gameRepository
@@ -207,10 +206,10 @@ public class EventHandlerImpl implements EventHandler {
                     currentGameBuilder.setPhase(nextPhase);
 
                 } else {
-                    view.respond(new TextResponseMessage(
+                    responseMessage = new TextResponseMessage(
                             String.format("Await for %d players", storedGame.getNumerOfPlayers() - updatedPlayers.size()),
                             message.getChatId()
-                    ));
+                    );
                 }
 
                 gameRepository.save(currentGameBuilder.build());
@@ -219,13 +218,14 @@ public class EventHandlerImpl implements EventHandler {
                 break;
             }
             case STARTED: {
-                view.respond(new TextResponseMessage(
+                responseMessage = new TextResponseMessage(
                         "Confradulation! Game is started",
                         message.getChatId()
-                ));
+                );
                 break;
             }
         }
+        return responseMessage;
     }
 
 
@@ -238,15 +238,6 @@ public class EventHandlerImpl implements EventHandler {
         final List<InlineKeyboardButton> buttons = Arrays.asList(inlineKeyboardButton1, inlineKeyboardButton2);
         InlineKeyboardMarkup menu = new InlineKeyboardMarkup(Arrays.asList(buttons));
         return menu;
-    }
-
-
-    public boolean isCommand(String message) {
-        return message.startsWith("/");
-    }
-
-    public String extractCommand(String message) {
-        return message.split("@")[0];
     }
 
     public ResponseMessage invalidCommand(Message message) {

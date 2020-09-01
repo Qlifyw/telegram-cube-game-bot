@@ -5,7 +5,9 @@ import org.cubegame.application.handler.EventHandlerImpl;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.identifier.UserId;
 import org.cubegame.domain.model.message.Message;
+import org.cubegame.infrastructure.model.message.NavigationResponseMessage;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
+import org.cubegame.infrastructure.model.message.TextualResponseMessage;
 import org.cubegame.infrastructure.repository.game.GameRepository;
 import org.cubegame.infrastructure.repository.game.GameRepositoryImpl;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -15,9 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-public class CubeGameBot
-        extends TelegramLongPollingBot
-        implements TelegramBotView {
+public class CubeGameBot extends TelegramLongPollingBot {
 
     private final ApplicationProperties properties = ApplicationProperties.load();
 
@@ -44,7 +44,20 @@ public class CubeGameBot
 
 
         final Message receivedMessage = getMessage(update);
-        eventHandler.handle(receivedMessage, this, properties);
+        final ResponseMessage responseMessage = eventHandler.handle(receivedMessage, properties);
+
+        switch (responseMessage.getType()) {
+            case NAVIAGTION: {
+                final NavigationResponseMessage response = (NavigationResponseMessage) responseMessage;
+                showMenu(response.getMenu(), response.getChatId());
+                break;
+            }
+            case TEXT: {
+                final TextualResponseMessage response = (TextualResponseMessage) responseMessage;
+                respond(response);
+                break;
+            }
+        }
 
     }
 
@@ -81,24 +94,22 @@ public class CubeGameBot
         return properties.getBotToken();
     }
 
-    @Override
     public void showMenu(InlineKeyboardMarkup menu, ChatId chatId) {
         SendMessage message = new SendMessage()
                 .setChatId(chatId.getValue())
                 .setText("Choose the game")
                 .setReplyMarkup(menu);
-        respond(message);
+        respondToClient(message);
     }
 
-    @Override
-    public void respond(final ResponseMessage message) {
+    public <T extends TextualResponseMessage> void respond(final T message) {
         final SendMessage responseMessage = new SendMessage()
                 .setChatId(message.getChatId().getValue())
                 .setText(message.getMessage());
-        respond(responseMessage);
+        respondToClient(responseMessage);
     }
 
-    private void respond(SendMessage message) {
+    private void respondToClient(SendMessage message) {
         try {
             execute(message);
         } catch (TelegramApiException e) {
