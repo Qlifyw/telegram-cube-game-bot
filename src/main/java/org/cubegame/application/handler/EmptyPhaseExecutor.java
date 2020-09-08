@@ -31,15 +31,15 @@ public class EmptyPhaseExecutor implements PhaseExecutor {
     @Override
     public PhaseStatusable execute(Message message, GameRepository gameRepository) {
 
-//        final Optional<UnvalidatedCommand> maybeCommand = UnvalidatedCommand.from(message.getMessage());
+        final Optional<UnvalidatedCommand> maybeCommand = UnvalidatedCommand.from(message.getMessage());
 
-//        if (maybeCommand.isPresent()) {
+        if (maybeCommand.isPresent()) {
 
-//            final UnvalidatedCommand unvalidatedCommand = maybeCommand.get();
+            final UnvalidatedCommand unvalidatedCommand = maybeCommand.get();
 
             final CommandValidator.ValidatedCommand validatedCommand;
             try {
-                validatedCommand = CommandValidator.validateOrThrow(message.getMessage());
+                validatedCommand = CommandValidator.validateOrThrow(unvalidatedCommand);
             } catch (EnumException exception) {
                 // TODO log it
                 System.out.println(exception.toString());
@@ -67,7 +67,7 @@ public class EmptyPhaseExecutor implements PhaseExecutor {
                             )
                     );
             }
-//        }
+        }
 
         return new SkipedResult();
     }
