@@ -1,5 +1,6 @@
 package org.cubegame.domain.model.message;
 
+import org.cubegame.domain.events.Appeal;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.identifier.UserId;
 import org.telegram.telegrambots.meta.api.objects.Dice;
@@ -16,6 +17,16 @@ public class Message {
         this.message = message;
         this.dice = dice;
         this.author = new Author(userId, firstName);
+    }
+
+    public Message apply(Appeal appeal) {
+        return new Message(
+                this.chatId,
+                this.author.getUserId(),
+                this.author.getFirstName(),
+                appeal.toString(),
+                this.dice
+        );
     }
 
     public ChatId getChatId() {

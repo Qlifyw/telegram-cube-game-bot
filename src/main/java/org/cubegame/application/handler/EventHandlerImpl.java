@@ -3,7 +3,6 @@ package org.cubegame.application.handler;
 import org.cubegame.application.model.FailedResult;
 import org.cubegame.application.model.PhaseStatusable;
 import org.cubegame.application.model.ProcessedResult;
-import org.cubegame.domain.events.Appeal;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.message.Message;
@@ -30,38 +29,39 @@ public class EventHandlerImpl implements EventHandler {
 
         final List<ResponseMessage> responses = new ArrayList<>();
 
-        final Optional<Appeal> maybeAppeal = Appeal.from(receivedMessage.getMessage());
-        maybeAppeal.ifPresent(appeal -> {
-            final Optional<Game> game = gameRepository.get(receivedMessage.getChatId());
+        final Optional<Game> game = gameRepository.get(receivedMessage.getChatId());
 
-            final Phase phase = game
-                    .flatMap(storedGame -> Optional.of(storedGame.getPhase()))
-                    .orElse(Phase.EMPTY);
+        final Phase phase = game
+                .flatMap(storedGame -> Optional.of(storedGame.getPhase()))
+                .orElse(Phase.EMPTY);
 
-            final PhaseStatusable processingResult = PhaseExecutorFactory
-                    .of(phase)
-                    .execute(receivedMessage, gameRepository);
+        final PhaseStatusable processingResult = PhaseExecutorFactory
+                .of(phase)
+                .execute(receivedMessage, gameRepository);
 
-            switch (processingResult.getStatus()) {
-                case PROCESSED:
-                    final ResponseMessage responseMessage = ((ProcessedResult) processingResult).getResponseMessage();
-                    responses.add(responseMessage);
+        switch (processingResult.getStatus()) {
+            case PROCESSED:
+                final ResponseMessage responseMessage = ((ProcessedResult) processingResult).getResponseMessage();
+                responses.add(responseMessage);
 
-                    PhaseExecutorFactory
-                            .of(Phase.getNextFor(phase))
-                            .initiation(receivedMessage.getChatId())
-                            .ifPresent(responses::add);
-                    break;
-                case FAILED:
-                    final ResponseMessage fail = ((FailedResult) processingResult).getResponseMessage();
-                    responses.add(fail);
-                    break;
-                case PROCEDURAL:
-                    break;
-                case SKIPPED:
-                    break;
-            }
-        });
+                PhaseExecutorFactory
+                        .of(Phase.getNextFor(phase))
+                        .initiation(receivedMessage.getChatId())
+                        .ifPresent(responses::add);
+                break;
+            case FAILED:
+                final ResponseMessage fail = ((FailedResult) processingResult).getResponseMessage();
+                responses.add(fail);
+                break;
+            case PROCEDURAL:
+                PhaseExecutorFactory
+                        .of(Phase.getNextFor(phase))
+                        .initiation(receivedMessage.getChatId())
+                        .ifPresent(responses::add);
+                break;
+            case SKIPPED:
+                break;
+        }
 
         return responses;
 
