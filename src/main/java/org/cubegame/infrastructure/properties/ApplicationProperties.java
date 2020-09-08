@@ -38,8 +38,4 @@ public class ApplicationProperties {
         return properties.getProperty(PROPERTY_BOT_TOKEN);
     }
 
-    public String getNextStateFor(String currentState) {
-        return properties.getProperty(currentState);
-    }
-
 }

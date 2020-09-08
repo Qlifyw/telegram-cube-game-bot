@@ -8,7 +8,7 @@ public class NavigationResponseMessage extends ResponseMessage {
     private InlineKeyboardMarkup menu;
 
     public NavigationResponseMessage(final InlineKeyboardMarkup menu, final ChatId chatId) {
-        super("", chatId, ResponseType.TEXT);
+        super("", chatId, ResponseType.NAVIAGTION);
         this.menu = menu;
     }
 

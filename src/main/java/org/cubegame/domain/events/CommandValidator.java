@@ -2,8 +2,8 @@ package org.cubegame.domain.events;
 
 public class CommandValidator {
 
-    public static ValidatedCommand validateOrThrow(UnvalidatedCommand unvalidatedCommand) {
-        final Command command = Command.from(unvalidatedCommand.toString());
+    public static ValidatedCommand validateOrThrow(String unvalidatedCommand) {
+        final Command command = Command.from(unvalidatedCommand);
         return new ValidatedCommand(command);
     }
 

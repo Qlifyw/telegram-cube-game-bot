@@ -3,10 +3,10 @@ package org.cubegame.domain.events;
 import org.cubegame.domain.exceptions.EnumException;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public enum Command {
 
@@ -15,7 +15,11 @@ public enum Command {
 
     private final String value;
 
-    private final static Map<String, Command> enumsByValue = new HashMap<>();
+    private final static Map<String, Command> enumsByValue = Stream.of(values())
+            .collect(Collectors.toMap(
+                    command -> command.getValue().toUpperCase(),
+                    command -> command)
+            );
 
     static {
         for (Command item : values()) {

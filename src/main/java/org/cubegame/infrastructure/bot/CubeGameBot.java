@@ -5,10 +5,10 @@ import org.cubegame.application.handler.EventHandlerImpl;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.identifier.UserId;
 import org.cubegame.domain.model.message.Message;
-import org.cubegame.infrastructure.properties.ApplicationProperties;
 import org.cubegame.infrastructure.model.message.NavigationResponseMessage;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextualResponseMessage;
+import org.cubegame.infrastructure.properties.ApplicationProperties;
 import org.cubegame.infrastructure.repository.game.GameRepository;
 import org.cubegame.infrastructure.repository.game.GameRepositoryImpl;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -17,6 +17,8 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.util.List;
 
 public class CubeGameBot extends TelegramLongPollingBot {
 
@@ -45,18 +47,20 @@ public class CubeGameBot extends TelegramLongPollingBot {
 
 
         final Message receivedMessage = getMessage(update);
-        final ResponseMessage responseMessage = eventHandler.handle(receivedMessage, properties);
+        final List<ResponseMessage> responseMessages = eventHandler.handle(receivedMessage, properties);
 
-        switch (responseMessage.getType()) {
-            case NAVIAGTION: {
-                final NavigationResponseMessage response = (NavigationResponseMessage) responseMessage;
-                showMenu(response.getMenu(), response.getChatId());
-                break;
-            }
-            case TEXT: {
-                final TextualResponseMessage response = (TextualResponseMessage) responseMessage;
-                respond(response);
-                break;
+        for (ResponseMessage responseMessage : responseMessages) {
+            switch (responseMessage.getType()) {
+                case NAVIAGTION: {
+                    final NavigationResponseMessage response = (NavigationResponseMessage) responseMessage;
+                    showMenu(response.getMenu(), response.getChatId());
+                    break;
+                }
+                case TEXT: {
+                    final TextualResponseMessage response = (TextualResponseMessage) responseMessage;
+                    respond(response);
+                    break;
+                }
             }
         }
 
@@ -68,8 +72,9 @@ public class CubeGameBot extends TelegramLongPollingBot {
             final String receivedText = update.getMessage().getText();
             final ChatId chatId = new ChatId(update.getMessage().getChatId());
             final UserId userId = new UserId(update.getMessage().getFrom().getId());
+            final String firstName = update.getMessage().getFrom().getFirstName();
 
-            return new Message(chatId, userId, receivedText);
+            return new Message(chatId, userId, firstName, receivedText, null);
         }
 
         if (update.hasCallbackQuery()) {
@@ -78,8 +83,9 @@ public class CubeGameBot extends TelegramLongPollingBot {
             final String receivedText = callbackQuery.getData();
             final ChatId chatId = new ChatId(callbackQuery.getFrom().getId().longValue());
             final UserId userId = new UserId(callbackQuery.getMessage().getFrom().getId());
+            final String firstName = callbackQuery.getMessage().getFrom().getFirstName();
 
-            return new Message(chatId, userId, receivedText);
+            return new Message(chatId, userId, firstName, receivedText, null);
         }
 
         return null;
