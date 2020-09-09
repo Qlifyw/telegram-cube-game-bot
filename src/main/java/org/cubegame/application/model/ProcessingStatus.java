@@ -4,6 +4,7 @@ public enum ProcessingStatus {
     PROCESSED,
     FAILED,
     PROCEDURAL,
+    ITERABLE,
     SKIPPED
 }
 

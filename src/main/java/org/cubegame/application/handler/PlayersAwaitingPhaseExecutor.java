@@ -1,8 +1,10 @@
 package org.cubegame.application.handler;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.cubegame.application.model.IterableResult;
 import org.cubegame.application.model.PhaseStatusable;
-import org.cubegame.application.model.ProcessedResult;
+import org.cubegame.application.model.ProceduralResult;
+import org.cubegame.application.model.SkipedResult;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.exceptions.GameNoFoundException;
 import org.cubegame.domain.model.game.Game;
@@ -28,6 +30,13 @@ public class PlayersAwaitingPhaseExecutor implements PhaseExecutor {
 
     @Override
     public PhaseStatusable execute(Message message, GameRepository gameRepository) {
+        switch (message.getSpeech().getType()) {
+            case COMMENT:
+                return new SkipedResult();
+            case APEAL:
+                break;
+        }
+
         final Game storedGame = gameRepository
                 .get(message.getChatId())
                 .orElseThrow(() -> new GameNoFoundException(message.getChatId()));
@@ -43,14 +52,10 @@ public class PlayersAwaitingPhaseExecutor implements PhaseExecutor {
             final Phase nextPhase = Phase.getNextFor(getPhase());
             currentGameBuilder.setPhase(nextPhase);
             gameRepository.save(currentGameBuilder.build());
-            return new ProcessedResult(
-                    new TextResponseMessage(
-                            String.format("Await for %d players", storedGame.getNumerOfPlayers() - updatedPlayers.size()),
-                            message.getChatId()
-                    )
-            );
+            return new ProceduralResult();
         } else {
-            return new ProcessedResult(
+            gameRepository.save(currentGameBuilder.build());
+            return new IterableResult(
                     new TextResponseMessage(
                             String.format("Await for %d players", storedGame.getNumerOfPlayers() - updatedPlayers.size()),
                             message.getChatId()

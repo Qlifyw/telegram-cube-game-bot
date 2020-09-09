@@ -19,6 +19,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * TODO tests
+ * if game pick not game owner
+ */
 public class ChooseGamePhaseExecutor implements PhaseExecutor {
 
     @Override

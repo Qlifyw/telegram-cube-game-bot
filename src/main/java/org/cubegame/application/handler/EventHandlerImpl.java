@@ -1,6 +1,7 @@
 package org.cubegame.application.handler;
 
 import org.cubegame.application.model.FailedResult;
+import org.cubegame.application.model.IterableResult;
 import org.cubegame.application.model.PhaseStatusable;
 import org.cubegame.application.model.ProcessedResult;
 import org.cubegame.domain.events.Phase;
@@ -58,6 +59,10 @@ public class EventHandlerImpl implements EventHandler {
                         .of(Phase.getNextFor(phase))
                         .initiation(receivedMessage.getChatId())
                         .ifPresent(responses::add);
+                break;
+            case ITERABLE:
+                final ResponseMessage iteration = ((IterableResult) processingResult).getResponseMessage();
+                responses.add(iteration);
                 break;
             case SKIPPED:
                 break;
