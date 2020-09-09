@@ -78,7 +78,8 @@ public class EventHandlerImpl implements EventHandler {
     }
 
     private boolean isBotMentioned(Message message) {
-        return message.getText()
+        return message.getSpeech()
+                .getText()
                 .trim()
                 .startsWith("@" + properties.getBotName());
     }

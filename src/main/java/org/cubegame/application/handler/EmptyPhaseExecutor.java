@@ -4,11 +4,9 @@ import org.cubegame.application.model.FailedResult;
 import org.cubegame.application.model.PhaseStatusable;
 import org.cubegame.application.model.ProceduralResult;
 import org.cubegame.application.model.SkipedResult;
-import org.cubegame.domain.events.Appeal;
 import org.cubegame.domain.events.Command;
 import org.cubegame.domain.events.CommandValidator;
 import org.cubegame.domain.events.Phase;
-import org.cubegame.domain.events.UnvalidatedCommand;
 import org.cubegame.domain.exceptions.EnumException;
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.game.GameBuilder;
@@ -31,13 +29,19 @@ public class EmptyPhaseExecutor implements PhaseExecutor {
     @Override
     public PhaseStatusable execute(Message message, GameRepository gameRepository) {
 
-        final Optional<Appeal> maybeAppeal = Appeal.from(message.getText());
+        switch (message.getSpeech().getType()) {
+            case COMMENT:
+                return new SkipedResult();
+            case APEAL:
+                break;
+        }
 
-        final Optional<UnvalidatedCommand> maybeCommand = UnvalidatedCommand.from(message.getText());
 
-        if (maybeCommand.isPresent()) {
+//        final Optional<UnvalidatedCommand> maybeCommand = UnvalidatedCommand.from(message.getSpeech());
 
-            final UnvalidatedCommand unvalidatedCommand = maybeCommand.get();
+//        if (maybeCommand.isPresent()) {
+
+            final String unvalidatedCommand = message.getSpeech().getText();
 
             final CommandValidator.ValidatedCommand validatedCommand;
             try {
@@ -69,7 +73,7 @@ public class EmptyPhaseExecutor implements PhaseExecutor {
                             )
                     );
             }
-        }
+//        }
 
         return new SkipedResult();
     }
@@ -79,7 +83,7 @@ public class EmptyPhaseExecutor implements PhaseExecutor {
         return Phase.EMPTY;
     }
 
-    private ResponseMessage invalidCommand(UnvalidatedCommand command, ChatId chatId) {
+    private ResponseMessage invalidCommand(String command, ChatId chatId) {
         return new ErrorResponseMessage(
                 String.format("Invalid command: '%s'", command),
                 chatId

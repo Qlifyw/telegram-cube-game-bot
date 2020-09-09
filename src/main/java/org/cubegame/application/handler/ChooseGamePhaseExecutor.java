@@ -37,13 +37,13 @@ public class ChooseGamePhaseExecutor implements PhaseExecutor {
 
         final Game updatedGame = GameBuilder.from(storedGame)
                 .setPhase(nextPhase)
-                .setGameName(message.getText())
+                .setGameName(message.getSpeech().getText())
                 .build();
         gameRepository.save(updatedGame);
 
         return new ProcessedResult(
                 new TextResponseMessage(
-                        String.format("%s is selected.", message.getText()),
+                        String.format("%s is selected.", message.getSpeech().getText()),
                         message.getChatId()
                 )
         );

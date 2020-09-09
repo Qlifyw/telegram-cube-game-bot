@@ -1,18 +1,16 @@
-package org.cubegame.domain.events;
+package org.cubegame.domain.model.message.speach;
 
 import org.cubegame.infrastructure.properties.ApplicationProperties;
 
-import java.util.Optional;
-
-public class Appeal {
+public class SpeechFactory {
 
     private final String value;
 
-    private Appeal(final String value) {
+    private SpeechFactory(String value) {
         this.value = value;
     }
 
-    public static Optional<Appeal> from(String text) {
+    public static Speech of(String text) {
         final ApplicationProperties applicationProperties = ApplicationProperties.load();
 
 //        if (!text.startsWith("@"+applicationProperties.getBotName()))
@@ -29,16 +27,16 @@ public class Appeal {
         final String[] split = text.split(" ");
 
         if (split.length != CommandPart.values().length)
-            return Optional.empty();
+            return new Comment(text);
 
         // TODO delete .trim()
-        final String message = split[CommandPart.COMMAND_PART.getOrder()].trim();
+        final String message = split[CommandPart.TEXT_PART.getOrder()].trim();
         final String botName = split[CommandPart.BOT_NAME_PART.getOrder()];
 
         if (!botName.equals("@"+applicationProperties.getBotName()))
-            return Optional.empty();
+            return new Comment(text);
 
-        return Optional.of(new Appeal(message));
+        return new Appeal(message);
     }
 
     @Override
@@ -49,7 +47,7 @@ public class Appeal {
     private enum CommandPart {
 
         BOT_NAME_PART(0),
-        COMMAND_PART(1);
+        TEXT_PART(1);
 
         private final int order;
 
@@ -61,5 +59,4 @@ public class Appeal {
             return order;
         }
     }
-
 }

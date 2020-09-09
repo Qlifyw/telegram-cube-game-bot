@@ -5,6 +5,8 @@ import org.cubegame.application.handler.EventHandlerImpl;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.identifier.UserId;
 import org.cubegame.domain.model.message.Message;
+import org.cubegame.domain.model.message.speach.Speech;
+import org.cubegame.domain.model.message.speach.SpeechFactory;
 import org.cubegame.infrastructure.model.message.NavigationResponseMessage;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextualResponseMessage;
@@ -74,7 +76,8 @@ public class CubeGameBot extends TelegramLongPollingBot {
             final UserId userId = new UserId(update.getMessage().getFrom().getId());
             final String firstName = update.getMessage().getFrom().getFirstName();
 
-            return new Message(chatId, userId, firstName, receivedText, null);
+            final Speech speech = SpeechFactory.of(receivedText);
+            return new Message(chatId, userId, firstName, speech, null);
         }
 
         if (update.hasCallbackQuery()) {
@@ -85,7 +88,8 @@ public class CubeGameBot extends TelegramLongPollingBot {
             final UserId userId = new UserId(callbackQuery.getMessage().getFrom().getId());
             final String firstName = callbackQuery.getMessage().getFrom().getFirstName();
 
-            return new Message(chatId, userId, firstName, receivedText, null);
+            final Speech speech = SpeechFactory.of(receivedText);
+            return new Message(chatId, userId, firstName, speech, null);
         }
 
         return null;
