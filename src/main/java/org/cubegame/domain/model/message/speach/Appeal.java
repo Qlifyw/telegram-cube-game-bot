@@ -4,6 +4,7 @@ public final class Appeal implements Speech {
 
     private final String text;
 
+    // TODO make it private
     public Appeal(final String text) {
         this.text = text;
     }

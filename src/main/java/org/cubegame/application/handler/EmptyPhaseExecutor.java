@@ -19,7 +19,7 @@ import org.cubegame.infrastructure.repository.game.GameRepository;
 
 import java.util.Optional;
 
-public class EmptyPhaseExecutor implements PhaseExecutor {
+public final class EmptyPhaseExecutor implements PhaseExecutor {
 
     @Override
     public Optional<ResponseMessage> initiation(final ChatId chatId) {

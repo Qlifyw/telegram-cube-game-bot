@@ -3,6 +3,7 @@ package org.cubegame.domain.model.game;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.identifier.GameId;
+import org.cubegame.domain.model.identifier.UserId;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,15 +16,25 @@ public class Game {
     private final int numerOfPlayers;
     private final Phase phase;
     private final List<Player> players;
+    private final UserId owner;
 
 
-    public Game(GameId gameId, ChatId chatId, Phase phase, String gameName, int numerOfPlayers, final List<Player> players) {
+    public Game(
+            final GameId gameId,
+            final ChatId chatId,
+            final Phase phase,
+            final String gameName,
+            int numerOfPlayers,
+            final List<Player> players,
+            final UserId owner
+    ) {
         this.gameId = gameId;
         this.chatId = chatId;
         this.phase = phase;
         this.gameName = gameName;
         this.numerOfPlayers = numerOfPlayers;
         this.players = players;
+        this.owner = owner;
     }
 
     public ChatId getChatId() {
@@ -38,9 +49,17 @@ public class Game {
         return numerOfPlayers;
     }
 
-    public Phase getPhase() { return phase; }
+    public UserId getOwner() {
+        return owner;
+    }
 
-    public GameId getGameId() { return gameId; }
+    public Phase getPhase() {
+        return phase;
+    }
+
+    public GameId getGameId() {
+        return gameId;
+    }
 
     public List<Player> getPlayers() {
         if (players == null)

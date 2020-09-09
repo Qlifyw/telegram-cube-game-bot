@@ -3,6 +3,7 @@ package org.cubegame.domain.model.game;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.identifier.GameId;
+import org.cubegame.domain.model.identifier.UserId;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class GameBuilder {
     private String gameName;
     private int numerOfPlayers;
     private List<Player> players;
+    private UserId owner;
 
 
     public GameBuilder setChatId(final ChatId chatId) {
@@ -45,6 +47,11 @@ public class GameBuilder {
         return this;
     }
 
+    public GameBuilder setOwner(final UserId owner) {
+        this.owner = owner;
+        return this;
+    }
+
     public static GameBuilder from(Game game) {
         return new GameBuilder()
                 .setGameId(game.getGameId())
@@ -52,11 +59,12 @@ public class GameBuilder {
                 .setGameName(game.getGameName())
                 .setPhase(game.getPhase())
                 .setNumerOfPlayers(game.getNumerOfPlayers())
-                .setPlayers(game.getPlayers());
+                .setPlayers(game.getPlayers())
+                .setOwner(game.getOwner());
     }
 
     public Game build() {
-        return new Game(gameId, chatId, phase, gameName, numerOfPlayers, players);
+        return new Game(gameId, chatId, phase, gameName, numerOfPlayers, players, owner);
     }
 
 }
