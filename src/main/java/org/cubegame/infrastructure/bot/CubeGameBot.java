@@ -16,6 +16,7 @@ import org.cubegame.infrastructure.repository.game.GameRepositoryImpl;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.Dice;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -70,14 +71,15 @@ public class CubeGameBot extends TelegramLongPollingBot {
 
     public Message getMessage(Update update) {
 
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            final String receivedText = update.getMessage().getText();
+        if (update.hasMessage()) {
+            final String receivedText = update.getMessage().hasText() ? update.getMessage().getText() : "";
             final ChatId chatId = new ChatId(update.getMessage().getChatId());
             final UserId userId = new UserId(update.getMessage().getFrom().getId());
             final String firstName = update.getMessage().getFrom().getFirstName();
+            final Dice dice = update.getMessage().hasDice() ? update.getMessage().getDice() : null;
 
             final Speech speech = SpeechFactory.of(receivedText);
-            return new Message(chatId, userId, firstName, speech, null);
+            return new Message(chatId, userId, firstName, speech, dice);
         }
 
         if (update.hasCallbackQuery()) {

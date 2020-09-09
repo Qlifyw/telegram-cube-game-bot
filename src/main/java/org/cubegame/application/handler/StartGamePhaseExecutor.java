@@ -1,7 +1,8 @@
 package org.cubegame.application.handler;
 
+import org.cubegame.application.model.IterableResult;
 import org.cubegame.application.model.PhaseStatebleResponse;
-import org.cubegame.application.model.ProcessedResult;
+import org.cubegame.application.model.SkipedResult;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.message.Message;
@@ -30,7 +31,7 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
             final Dice dice = message.getDice();
             String firstName = message.getAuthor().getFirstName();
 
-            return new ProcessedResult(
+            return new IterableResult(
                     new TextResponseMessage(
                             String.format("User %s has %d point", firstName, dice.getValue()),
                             message.getChatId()
@@ -38,12 +39,7 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
             );
         }
 
-        return new ProcessedResult(
-                new TextResponseMessage(
-                        "Confradulation! Game is started",
-                        message.getChatId()
-                )
-        );
+        return new SkipedResult();
     }
 
     @Override
