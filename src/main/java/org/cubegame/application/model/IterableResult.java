@@ -2,7 +2,7 @@ package org.cubegame.application.model;
 
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 
-public class IterableResult implements PhaseStatusable {
+public class IterableResult implements PhaseStatebleResponse {
 
     private final ResponseMessage responseMessage;
 

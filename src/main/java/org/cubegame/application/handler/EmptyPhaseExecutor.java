@@ -1,7 +1,7 @@
 package org.cubegame.application.handler;
 
 import org.cubegame.application.model.FailedResult;
-import org.cubegame.application.model.PhaseStatusable;
+import org.cubegame.application.model.PhaseStatebleResponse;
 import org.cubegame.application.model.ProceduralResult;
 import org.cubegame.application.model.SkipedResult;
 import org.cubegame.domain.events.Command;
@@ -27,7 +27,7 @@ public class EmptyPhaseExecutor implements PhaseExecutor {
     }
 
     @Override
-    public PhaseStatusable execute(Message message, GameRepository gameRepository) {
+    public PhaseStatebleResponse execute(Message message, GameRepository gameRepository) {
 
         switch (message.getSpeech().getType()) {
             case COMMENT:

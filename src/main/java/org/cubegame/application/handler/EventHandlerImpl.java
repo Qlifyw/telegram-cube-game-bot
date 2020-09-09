@@ -2,7 +2,7 @@ package org.cubegame.application.handler;
 
 import org.cubegame.application.model.FailedResult;
 import org.cubegame.application.model.IterableResult;
-import org.cubegame.application.model.PhaseStatusable;
+import org.cubegame.application.model.PhaseStatebleResponse;
 import org.cubegame.application.model.ProcessedResult;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.game.Game;
@@ -36,7 +36,7 @@ public class EventHandlerImpl implements EventHandler {
                 .flatMap(storedGame -> Optional.of(storedGame.getPhase()))
                 .orElse(Phase.EMPTY);
 
-        final PhaseStatusable processingResult = PhaseExecutorFactory
+        final PhaseStatebleResponse processingResult = PhaseExecutorFactory
                 .of(phase)
                 .execute(receivedMessage, gameRepository);
 

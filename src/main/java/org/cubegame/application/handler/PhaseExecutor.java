@@ -1,6 +1,6 @@
 package org.cubegame.application.handler;
 
-import org.cubegame.application.model.PhaseStatusable;
+import org.cubegame.application.model.PhaseStatebleResponse;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.message.Message;
@@ -14,7 +14,7 @@ public interface PhaseExecutor {
 
     Optional<ResponseMessage> initiation(ChatId chatId);
 
-    PhaseStatusable execute(Message message, GameRepository gameRepository);
+    PhaseStatebleResponse execute(Message message, GameRepository gameRepository);
 
     Phase getPhase();
 }

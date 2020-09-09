@@ -1,6 +1,6 @@
 package org.cubegame.application.model;
 
-public class ProceduralResult implements PhaseStatusable {
+public class ProceduralResult implements PhaseStatebleResponse {
 
     @Override
     public ProcessingStatus getStatus() {

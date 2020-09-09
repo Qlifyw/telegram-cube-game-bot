@@ -1,6 +1,6 @@
 package org.cubegame.application.model;
 
-public class SkipedResult implements PhaseStatusable {
+public class SkipedResult implements PhaseStatebleResponse {
 
     @Override
     public ProcessingStatus getStatus() {

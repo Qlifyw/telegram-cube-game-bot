@@ -1,6 +1,6 @@
 package org.cubegame.application.handler;
 
-import org.cubegame.application.model.PhaseStatusable;
+import org.cubegame.application.model.PhaseStatebleResponse;
 import org.cubegame.application.model.ProcessedResult;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.identifier.ChatId;
@@ -24,7 +24,7 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
     }
 
     @Override
-    public PhaseStatusable execute(Message message, GameRepository gameRepository) {
+    public PhaseStatebleResponse execute(Message message, GameRepository gameRepository) {
 
         if (message.hasDice()) {
             final Dice dice = message.getDice();
