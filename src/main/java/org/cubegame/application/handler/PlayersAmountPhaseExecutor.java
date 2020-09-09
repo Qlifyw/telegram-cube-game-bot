@@ -27,7 +27,7 @@ public class PlayersAmountPhaseExecutor implements PhaseExecutor {
     public PhaseStatusable execute(Message message, GameRepository gameRepository) {
         final int numberOfPlayers;
         try {
-            numberOfPlayers = Integer.parseInt(message.getMessage());
+            numberOfPlayers = Integer.parseInt(message.getText());
         } catch (NumberFormatException exception) {
             return new ProcessedResult(
                     new ErrorResponseMessage(

@@ -8,13 +8,13 @@ import org.telegram.telegrambots.meta.api.objects.Dice;
 public class Message {
 
     private final ChatId chatId;
-    private final String message;
+    private final String text;
     private final Dice dice;
     private final Author author;
 
-    public Message(ChatId chatId, UserId userId, String firstName, String message, Dice dice) {
+    public Message(ChatId chatId, UserId userId, String firstName, String text, Dice dice) {
         this.chatId = chatId;
-        this.message = message;
+        this.text = text;
         this.dice = dice;
         this.author = new Author(userId, firstName);
     }
@@ -33,8 +33,8 @@ public class Message {
         return chatId;
     }
 
-    public String getMessage() {
-        return message;
+    public String getText() {
+        return text;
     }
 
     public Dice getDice() {

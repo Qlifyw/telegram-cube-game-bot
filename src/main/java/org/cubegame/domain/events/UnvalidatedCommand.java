@@ -22,7 +22,8 @@ public class UnvalidatedCommand {
         if (split.length != CommandPart.values().length)
             return Optional.empty();
 
-        final String command = split[CommandPart.COMMAND_PART.getOrder()];
+        // TODO delete .trim()
+        final String command = split[CommandPart.COMMAND_PART.getOrder()].trim();
         final String botName = split[CommandPart.BOT_NAME_PART.getOrder()];
 
         final ApplicationProperties applicationProperties = ApplicationProperties.load();

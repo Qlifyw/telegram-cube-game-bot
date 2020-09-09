@@ -31,7 +31,8 @@ public class Appeal {
         if (split.length != CommandPart.values().length)
             return Optional.empty();
 
-        final String message = split[CommandPart.COMMAND_PART.getOrder()];
+        // TODO delete .trim()
+        final String message = split[CommandPart.COMMAND_PART.getOrder()].trim();
         final String botName = split[CommandPart.BOT_NAME_PART.getOrder()];
 
         if (!botName.equals("@"+applicationProperties.getBotName()))

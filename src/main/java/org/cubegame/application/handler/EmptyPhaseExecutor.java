@@ -3,8 +3,8 @@ package org.cubegame.application.handler;
 import org.cubegame.application.model.FailedResult;
 import org.cubegame.application.model.PhaseStatusable;
 import org.cubegame.application.model.ProceduralResult;
-import org.cubegame.application.model.ProcessedResult;
 import org.cubegame.application.model.SkipedResult;
+import org.cubegame.domain.events.Appeal;
 import org.cubegame.domain.events.Command;
 import org.cubegame.domain.events.CommandValidator;
 import org.cubegame.domain.events.Phase;
@@ -31,7 +31,9 @@ public class EmptyPhaseExecutor implements PhaseExecutor {
     @Override
     public PhaseStatusable execute(Message message, GameRepository gameRepository) {
 
-        final Optional<UnvalidatedCommand> maybeCommand = UnvalidatedCommand.from(message.getMessage());
+        final Optional<Appeal> maybeAppeal = Appeal.from(message.getText());
+
+        final Optional<UnvalidatedCommand> maybeCommand = UnvalidatedCommand.from(message.getText());
 
         if (maybeCommand.isPresent()) {
 
@@ -43,7 +45,7 @@ public class EmptyPhaseExecutor implements PhaseExecutor {
             } catch (EnumException exception) {
                 // TODO log it
                 System.out.println(exception.toString());
-                return new FailedResult(invalidCommand(message));
+                return new FailedResult(invalidCommand(unvalidatedCommand, message.getChatId()));
             }
 
             switch (validatedCommand.getValue()) {
@@ -77,10 +79,10 @@ public class EmptyPhaseExecutor implements PhaseExecutor {
         return Phase.EMPTY;
     }
 
-    private ResponseMessage invalidCommand(Message message) {
+    private ResponseMessage invalidCommand(UnvalidatedCommand command, ChatId chatId) {
         return new ErrorResponseMessage(
-                String.format("Invalid command: '%s'", message.getMessage()),
-                message.getChatId()
+                String.format("Invalid command: '%s'", command),
+                chatId
         );
     }
 
