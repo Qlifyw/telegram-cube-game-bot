@@ -68,7 +68,6 @@ class EmptyPhaseExecutorTest {
         assertTrue(failedResponse.getMessage().contains("Invalid command"));
     }
 
-
     @Test
     @DisplayName("Success if bot tagged with valid command")
     void tag_bot_with_valid_command() {
