@@ -4,7 +4,7 @@ import org.cubegame.domain.model.identifier.UserId;
 
 public class Player {
 
-    private UserId userId;
+    private final UserId userId;
 
     public Player(final UserId userId) {
         this.userId = userId;

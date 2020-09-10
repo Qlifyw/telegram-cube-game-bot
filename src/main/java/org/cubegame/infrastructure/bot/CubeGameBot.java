@@ -33,22 +33,6 @@ public class CubeGameBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
 
-//
-//        if (update.hasMessage() && update.getMessage().hasText()) {
-//            final String receivedMessage = update.getMessage().getText();
-//
-//            System.out.println(update.getMessage().getChatId());
-//        }
-//
-//        if (update.hasCallbackQuery()) {
-//            CallbackQuery callbackQuery = update.getCallbackQuery();
-//            String data = callbackQuery.getData();
-//
-//            System.out.println(callbackQuery.getFrom().getId());
-//
-//        }
-
-
         final Message receivedMessage = getMessage(update);
         final List<ResponseMessage> responseMessages = eventHandler.handle(receivedMessage, properties);
 

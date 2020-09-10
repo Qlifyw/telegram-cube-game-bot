@@ -59,6 +59,7 @@ public final class EmptyPhaseExecutor implements PhaseExecutor {
                     final ChatId chatId = message.getChatId();
                     final Game createdGame = new GameBuilder()
                             .setChatId(chatId)
+                            .setOwner(message.getAuthor().getUserId())
                             .setPhase(nextPhase)
                             .build();
 

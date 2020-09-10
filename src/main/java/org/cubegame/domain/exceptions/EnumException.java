@@ -3,7 +3,7 @@ package org.cubegame.domain.exceptions;
 import java.util.Arrays;
 import java.util.List;
 
-public class EnumException extends RuntimeException {
+public final class EnumException extends RuntimeException {
     public final String className;
     public final String actualValue;
     public final List<String> allowedValues;

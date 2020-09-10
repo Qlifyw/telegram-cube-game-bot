@@ -1,6 +1,6 @@
 package org.cubegame.domain.model.identifier;
 
-public class UserId {
+public final class UserId {
     private final long value;
 
     public UserId(long value) {

@@ -4,7 +4,7 @@ import org.cubegame.domain.exceptions.incident.Incident;
 import org.cubegame.domain.exceptions.incident.IncidentType;
 import org.cubegame.domain.model.identifier.ChatId;
 
-public class GameNoFoundException extends Incident {
+public final class GameNoFoundException extends Incident {
 
     public GameNoFoundException(ChatId chatId) {
         super(

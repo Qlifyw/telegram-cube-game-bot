@@ -3,7 +3,6 @@ package org.cubegame.application.handler;
 import org.cubegame.application.model.FailedResult;
 import org.cubegame.application.model.PhaseStatebleResponse;
 import org.cubegame.application.model.ProcessingStatus;
-import org.cubegame.domain.events.Command;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.identifier.UserId;
@@ -18,15 +17,18 @@ import org.cubegame.infrastructure.repository.game.GameRepositoryImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.telegram.telegrambots.meta.api.objects.Dice;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class EmptyPhaseExecutorTest {
+class PlayersAmountPhaseExecutorTest {
 
-    final PhaseExecutor phaseExecutor = PhaseExecutorFactory.of(Phase.EMPTY);
+
+    final PhaseExecutor phaseExecutor = PhaseExecutorFactory.of(Phase.NUMBER_OF_PLAYERS);
     final GameRepository gameRepository = new GameRepositoryImpl();
 
     final ApplicationProperties properties = ApplicationProperties.load();
@@ -56,10 +58,11 @@ class EmptyPhaseExecutorTest {
         assertEquals(ProcessingStatus.SKIPPED, response.getStatus());
     }
 
-    @Test
-    @DisplayName("Error message if bot tagged with invalid command")
-    void tag_bot_with_invalid_command() {
-        final Speech comment = SpeechFactory.of(String.format("@%s %s", properties.getBotName(), "N/A"));
+    @DisplayName("Error message if bot tagged with invalid number")
+    @ParameterizedTest
+    @ValueSource(strings = {"-1", "0", "1.2"})
+    void tag_bot_with_invalid_command(String number) {
+        final Speech comment = SpeechFactory.of(String.format("@%s %s", properties.getBotName(), number));
         final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, comment, DICE);
         final PhaseStatebleResponse response = phaseExecutor.execute(message, gameRepository);
 
@@ -69,13 +72,14 @@ class EmptyPhaseExecutorTest {
     }
 
     @Test
-    @DisplayName("Success if bot tagged with valid command")
+    @DisplayName("Success if bot tagged with valid number")
     void tag_bot_with_valid_command() {
-        final Speech comment = SpeechFactory.of(String.format("@%s /%s", properties.getBotName(), Command.START));
+        final Speech comment = SpeechFactory.of(String.format("@%s %d", properties.getBotName(), 3));
         final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, comment, DICE);
         final PhaseStatebleResponse response = phaseExecutor.execute(message, gameRepository);
 
         assertEquals(ProcessingStatus.PROCEDURAL, response.getStatus());
     }
+
 
 }
