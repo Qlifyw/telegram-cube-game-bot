@@ -33,6 +33,13 @@ public class PlayersAmountPhaseExecutor implements PhaseExecutor {
                 break;
         }
 
+        final Game storedGame = gameRepository
+                .get(message.getChatId())
+                .orElseThrow(() -> new GameNoFoundException(message.getChatId()));
+
+        if (!message.getAuthor().getUserId().equals(storedGame.getOwner()))
+            return new SkipedResult();
+
         final int numberOfPlayers;
         try {
             numberOfPlayers = Integer.parseInt(message.getSpeech().getText());
@@ -52,10 +59,6 @@ public class PlayersAmountPhaseExecutor implements PhaseExecutor {
                     )
             );
         }
-
-        final Game storedGame = gameRepository
-                .get(message.getChatId())
-                .orElseThrow(() -> new GameNoFoundException(message.getChatId()));
 
         final Phase nextPhase = Phase.getNextFor(getPhase());
 

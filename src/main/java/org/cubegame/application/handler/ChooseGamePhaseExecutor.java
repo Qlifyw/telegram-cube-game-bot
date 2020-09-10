@@ -2,6 +2,7 @@ package org.cubegame.application.handler;
 
 import org.cubegame.application.model.PhaseStatebleResponse;
 import org.cubegame.application.model.ProcessedResult;
+import org.cubegame.application.model.SkipedResult;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.exceptions.GameNoFoundException;
 import org.cubegame.domain.model.game.Game;
@@ -36,6 +37,9 @@ public class ChooseGamePhaseExecutor implements PhaseExecutor {
         final Game storedGame = gameRepository
                 .get(message.getChatId())
                 .orElseThrow(() -> new GameNoFoundException(message.getChatId()));
+
+        if (!message.getAuthor().getUserId().equals(storedGame.getOwner()))
+            return new SkipedResult();
 
         final Phase nextPhase = Phase.getNextFor(getPhase());
 

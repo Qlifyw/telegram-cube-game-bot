@@ -41,9 +41,13 @@ public class PlayersAwaitingPhaseExecutor implements PhaseExecutor {
                 .get(message.getChatId())
                 .orElseThrow(() -> new GameNoFoundException(message.getChatId()));
 
+        final Player newPlayer = new Player(message.getAuthor().getUserId());
+        if (storedGame.getPlayers().contains(newPlayer))
+            return new SkipedResult();
+
         final ArrayList<Player> currentPlayers = new ArrayList<>(storedGame.getPlayers());
-        final List<Player> newPlayer = Collections.singletonList(new Player(message.getAuthor().getUserId()));
-        final List<Player> updatedPlayers = new ArrayList<>(CollectionUtils.union(currentPlayers, newPlayer));
+        final List<Player> newPlayers = Collections.singletonList(newPlayer);
+        final List<Player> updatedPlayers = new ArrayList<>(CollectionUtils.union(currentPlayers, newPlayers));
 
         final GameBuilder currentGameBuilder = GameBuilder.from(storedGame)
                 .setPlayers(updatedPlayers);
