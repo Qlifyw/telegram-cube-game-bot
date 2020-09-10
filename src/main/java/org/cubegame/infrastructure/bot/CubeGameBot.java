@@ -59,7 +59,8 @@ public class CubeGameBot extends TelegramLongPollingBot {
             final String receivedText = update.getMessage().hasText() ? update.getMessage().getText() : "";
             final ChatId chatId = new ChatId(update.getMessage().getChatId());
             final UserId userId = new UserId(update.getMessage().getFrom().getId());
-            final String firstName = update.getMessage().getFrom().getFirstName();final Dice dice = update.getMessage().hasDice() ? update.getMessage().getDice() : null;
+            final String firstName = update.getMessage().getFrom().getFirstName();
+            final Dice dice = update.getMessage().hasDice() ? update.getMessage().getDice() : null;
 
             final Speech speech = SpeechFactory.of(receivedText);
             return new Message(chatId, userId, firstName, speech, dice);
