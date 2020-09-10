@@ -34,7 +34,7 @@ public class CubeGameBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
 
         final Message receivedMessage = getMessage(update);
-        final List<ResponseMessage> responseMessages = eventHandler.handle(receivedMessage, properties);
+        final List<ResponseMessage> responseMessages = eventHandler.handle(receivedMessage);
 
         for (ResponseMessage responseMessage : responseMessages) {
             switch (responseMessage.getType()) {
@@ -70,7 +70,7 @@ public class CubeGameBot extends TelegramLongPollingBot {
             CallbackQuery callbackQuery = update.getCallbackQuery();
 
             final String receivedText = callbackQuery.getData();
-            final ChatId chatId = new ChatId(callbackQuery.getFrom().getId().longValue());
+            final ChatId chatId = new ChatId(callbackQuery.getMessage().getChat().getId());
             final UserId userId = new UserId(callbackQuery.getMessage().getFrom().getId());
             final String firstName = callbackQuery.getMessage().getFrom().getFirstName();
 

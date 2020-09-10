@@ -26,7 +26,7 @@ public class EventHandlerImpl implements EventHandler {
     }
 
     @Override
-    public List<ResponseMessage> handle(Message receivedMessage, ApplicationProperties properties) {
+    public List<ResponseMessage> handle(Message receivedMessage) {
 
         final List<ResponseMessage> responses = new ArrayList<>();
 
