@@ -40,6 +40,8 @@ public class PhaseExecutorFactory {
             case STARTED:
                 executor = new StartGamePhaseExecutor();
                 break;
+            case COMPLETED:
+                break;
         }
         return executor;
     }

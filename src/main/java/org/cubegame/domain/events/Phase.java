@@ -9,7 +9,8 @@ public enum Phase {
     CHOOSE_GAME(1),
     NUMBER_OF_PLAYERS(2),
     AWAIT_PLAYERS(3),
-    STARTED(4);
+    STARTED(4),
+    COMPLETED(5);
 
     private final int order;
 

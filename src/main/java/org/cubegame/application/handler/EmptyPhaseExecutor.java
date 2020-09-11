@@ -36,45 +36,39 @@ public final class EmptyPhaseExecutor implements PhaseExecutor {
                 break;
         }
 
+        final String unvalidatedCommand = message.getSpeech().getText();
 
-//        final Optional<UnvalidatedCommand> maybeCommand = UnvalidatedCommand.from(message.getSpeech());
+        final CommandValidator.ValidatedCommand validatedCommand;
+        try {
+            validatedCommand = CommandValidator.validateOrThrow(unvalidatedCommand);
+        } catch (EnumException exception) {
+            // TODO log it
+            System.out.println(exception.toString());
+            return new FailedResult(invalidCommand(unvalidatedCommand, message.getChatId()));
+        }
 
-//        if (maybeCommand.isPresent()) {
+        switch (validatedCommand.getValue()) {
+            case START:
+                final Phase nextPhase = Phase.getNextFor(getPhase());
 
-            final String unvalidatedCommand = message.getSpeech().getText();
+                final ChatId chatId = message.getChatId();
+                final Game createdGame = new GameBuilder()
+                        .setChatId(chatId)
+                        .setOwner(message.getAuthor().getUserId())
+                        .setPhase(nextPhase)
+                        .build();
 
-            final CommandValidator.ValidatedCommand validatedCommand;
-            try {
-                validatedCommand = CommandValidator.validateOrThrow(unvalidatedCommand);
-            } catch (EnumException exception) {
-                // TODO log it
-                System.out.println(exception.toString());
-                return new FailedResult(invalidCommand(unvalidatedCommand, message.getChatId()));
-            }
+                gameRepository.save(createdGame);
+                return new ProceduralResult();
 
-            switch (validatedCommand.getValue()) {
-                case START:
-                    final Phase nextPhase = Phase.getNextFor(getPhase());
-
-                    final ChatId chatId = message.getChatId();
-                    final Game createdGame = new GameBuilder()
-                            .setChatId(chatId)
-                            .setOwner(message.getAuthor().getUserId())
-                            .setPhase(nextPhase)
-                            .build();
-
-                    gameRepository.save(createdGame);
-                    return new ProceduralResult();
-
-                case STOP:
-                    return new FailedResult(
-                            new TextResponseMessage(
-                                    String.format("Command %s is not implemented yet.", Command.STOP),
-                                    message.getChatId()
-                            )
-                    );
-            }
-//        }
+            case STOP:
+                return new FailedResult(
+                        new TextResponseMessage(
+                                String.format("Command %s is not implemented yet.", Command.STOP),
+                                message.getChatId()
+                        )
+                );
+        }
 
         return new SkipedResult();
     }
