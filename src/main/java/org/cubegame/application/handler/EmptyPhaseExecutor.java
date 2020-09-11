@@ -7,7 +7,6 @@ import org.cubegame.application.model.SkipedResult;
 import org.cubegame.domain.events.Command;
 import org.cubegame.domain.events.CommandValidator;
 import org.cubegame.domain.events.Phase;
-import org.cubegame.domain.exceptions.EnumException;
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.game.GameBuilder;
 import org.cubegame.domain.model.identifier.ChatId;
@@ -21,6 +20,12 @@ import java.util.Optional;
 
 public final class EmptyPhaseExecutor implements PhaseExecutor {
 
+    private final CommandValidator commandValidator;
+
+    public EmptyPhaseExecutor(final CommandValidator commandValidator) {
+        this.commandValidator = commandValidator;
+    }
+
     @Override
     public Optional<ResponseMessage> initiation(final ChatId chatId) {
         return Optional.empty();
@@ -29,25 +34,15 @@ public final class EmptyPhaseExecutor implements PhaseExecutor {
     @Override
     public PhaseStatebleResponse execute(Message message, GameRepository gameRepository) {
 
-        switch (message.getSpeech().getType()) {
-            case COMMENT:
-                return new SkipedResult();
-            case APEAL:
-                break;
-        }
-
         final String unvalidatedCommand = message.getSpeech().getText();
 
-        final CommandValidator.ValidatedCommand validatedCommand;
-        try {
-            validatedCommand = CommandValidator.validateOrThrow(unvalidatedCommand);
-        } catch (EnumException exception) {
-            // TODO log it
-            System.out.println(exception.toString());
-            return new FailedResult(invalidCommand(unvalidatedCommand, message.getChatId()));
-        }
+        final Optional<CommandValidator.ValidatedCommand> validatedCommand = commandValidator
+                .validate(unvalidatedCommand);
 
-        switch (validatedCommand.getValue()) {
+        if (!validatedCommand.isPresent())
+            return new SkipedResult();
+
+        switch (validatedCommand.get().getValue()) {
             case START:
                 final Phase nextPhase = Phase.getNextFor(getPhase());
 

@@ -1,6 +1,8 @@
 package org.cubegame.application.handler;
 
+import org.cubegame.domain.events.CommandValidator;
 import org.cubegame.domain.events.Phase;
+import org.cubegame.infrastructure.properties.ApplicationProperties;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -26,7 +28,8 @@ public class PhaseExecutorFactory {
         PhaseExecutor executor = null;
         switch (phase) {
             case EMPTY:
-                executor = new EmptyPhaseExecutor();
+                final CommandValidator commandValidator = new CommandValidator(ApplicationProperties.load());
+                executor = new EmptyPhaseExecutor(commandValidator);
                 break;
             case CHOOSE_GAME:
                 executor = new ChooseGamePhaseExecutor();
