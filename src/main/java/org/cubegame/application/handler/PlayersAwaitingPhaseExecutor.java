@@ -61,8 +61,6 @@ public class PlayersAwaitingPhaseExecutor implements PhaseExecutor {
             gameRepository.save(updatedGame);
             return new ProceduralResult();
         } else {
-//            gameRepository.save(currentGameBuilder.build());
-            System.out.println("save in db");
             return new IterableResult(
                     new TextResponseMessage(
                             String.format("Await for %d players", storedGame.getNumerOfPlayers() - awaitedPlayers.size()),
