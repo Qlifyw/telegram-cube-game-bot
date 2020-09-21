@@ -6,6 +6,7 @@ import org.cubegame.application.model.PhaseStatebleResponse;
 import org.cubegame.application.model.ProcessedResult;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.game.Game;
+import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.message.Message;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.properties.ApplicationProperties;
@@ -13,12 +14,16 @@ import org.cubegame.infrastructure.repository.game.GameRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EventHandlerImpl implements EventHandler {
 
     private final GameRepository gameRepository;
     private final ApplicationProperties properties;
+
+    private final Map<ChatId, PhaseExecutor> phaseExecutors = new ConcurrentHashMap<>();
 
     public EventHandlerImpl(GameRepository gameRepository, ApplicationProperties properties) {
         this.gameRepository = gameRepository;
@@ -36,30 +41,37 @@ public class EventHandlerImpl implements EventHandler {
                 .flatMap(storedGame -> Optional.of(storedGame.getPhase()))
                 .orElse(Phase.EMPTY);
 
-        final PhaseStatebleResponse processingResult = PhaseExecutorFactory
-                .of(phase)
-                .execute(receivedMessage, gameRepository);
+        final PhaseExecutor executor = PhaseExecutorFactory.of(phase);
+
+        phaseExecutors.put(receivedMessage.getChatId(), executor);
+        final PhaseStatebleResponse processingResult = executor.execute(receivedMessage, gameRepository);
 
         switch (processingResult.getStatus()) {
-            case PROCESSED:
+            case PROCESSED: {
                 final ResponseMessage responseMessage = ((ProcessedResult) processingResult).getResponseMessage();
                 responses.add(responseMessage);
+                phaseExecutors.remove(receivedMessage.getChatId());
 
-                PhaseExecutorFactory
-                        .of(Phase.getNextFor(phase))
+                final PhaseExecutor nextExecutor = PhaseExecutorFactory.of(Phase.getNextFor(phase));
+                nextExecutor
                         .initiation(receivedMessage.getChatId())
                         .ifPresent(responses::add);
+                phaseExecutors.put(receivedMessage.getChatId(), nextExecutor);
                 break;
+            }
             case FAILED:
                 final ResponseMessage fail = ((FailedResult) processingResult).getResponseMessage();
                 responses.add(fail);
                 break;
-            case PROCEDURAL:
-                PhaseExecutorFactory
-                        .of(Phase.getNextFor(phase))
+            case PROCEDURAL: {
+                phaseExecutors.remove(receivedMessage.getChatId());
+                final PhaseExecutor nextExecutor = PhaseExecutorFactory.of(Phase.getNextFor(phase));
+                nextExecutor
                         .initiation(receivedMessage.getChatId())
                         .ifPresent(responses::add);
+                phaseExecutors.put(receivedMessage.getChatId(), nextExecutor);
                 break;
+            }
             case ITERABLE:
                 final ResponseMessage iteration = ((IterableResult) processingResult).getResponseMessage();
                 responses.add(iteration);
@@ -80,13 +92,6 @@ public class EventHandlerImpl implements EventHandler {
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboard(true);
          */
-    }
-
-    private boolean isBotMentioned(Message message) {
-        return message.getSpeech()
-                .getText()
-                .trim()
-                .startsWith("@" + properties.getBotName());
     }
 
 }
