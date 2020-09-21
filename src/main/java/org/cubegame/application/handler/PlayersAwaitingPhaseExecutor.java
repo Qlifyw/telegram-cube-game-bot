@@ -17,11 +17,12 @@ import org.cubegame.infrastructure.model.message.TextResponseMessage;
 import org.cubegame.infrastructure.repository.game.GameRepository;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 public class PlayersAwaitingPhaseExecutor implements PhaseExecutor {
+
+    final List<Player> awaitedPlayers = new ArrayList<>();
 
     @Override
     public Optional<ResponseMessage> initiation(final ChatId chatId) {
@@ -45,23 +46,26 @@ public class PlayersAwaitingPhaseExecutor implements PhaseExecutor {
         if (storedGame.getPlayers().contains(newPlayer))
             return new SkipedResult();
 
-        final ArrayList<Player> currentPlayers = new ArrayList<>(storedGame.getPlayers());
-        final List<Player> newPlayers = Collections.singletonList(newPlayer);
-        final List<Player> updatedPlayers = new ArrayList<>(CollectionUtils.union(currentPlayers, newPlayers));
+        awaitedPlayers.add(newPlayer);
 
-        final GameBuilder currentGameBuilder = GameBuilder.from(storedGame)
-                .setPlayers(updatedPlayers);
+        if (awaitedPlayers.size() == storedGame.getNumerOfPlayers()) {
+            final ArrayList<Player> currentPlayers = new ArrayList<>(storedGame.getPlayers());
+            final List<Player> updatedPlayers = new ArrayList<>(CollectionUtils.union(currentPlayers, awaitedPlayers));
 
-        if (updatedPlayers.size() == storedGame.getNumerOfPlayers()) {
             final Phase nextPhase = Phase.getNextFor(getPhase());
-            currentGameBuilder.setPhase(nextPhase);
-            gameRepository.save(currentGameBuilder.build());
+            final Game updatedGame = GameBuilder.from(storedGame)
+                    .setPlayers(updatedPlayers)
+                    .setPhase(nextPhase)
+                    .build();
+
+            gameRepository.save(updatedGame);
             return new ProceduralResult();
         } else {
-            gameRepository.save(currentGameBuilder.build());
+//            gameRepository.save(currentGameBuilder.build());
+            System.out.println("save in db");
             return new IterableResult(
                     new TextResponseMessage(
-                            String.format("Await for %d players", storedGame.getNumerOfPlayers() - updatedPlayers.size()),
+                            String.format("Await for %d players", storedGame.getNumerOfPlayers() - awaitedPlayers.size()),
                             message.getChatId()
                     )
             );
