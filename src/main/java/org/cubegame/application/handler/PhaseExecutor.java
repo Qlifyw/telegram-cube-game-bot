@@ -5,7 +5,6 @@ import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.message.Message;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
-import org.cubegame.infrastructure.repository.game.GameRepository;
 
 import java.util.Optional;
 
@@ -14,7 +13,7 @@ public interface PhaseExecutor {
 
     Optional<ResponseMessage> initiation(ChatId chatId);
 
-    PhaseStatebleResponse execute(Message message, GameRepository gameRepository);
+    PhaseStatebleResponse execute(Message message);
 
     Phase getPhase();
 }

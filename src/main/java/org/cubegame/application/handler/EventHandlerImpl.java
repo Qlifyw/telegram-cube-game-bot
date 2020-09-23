@@ -21,12 +21,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EventHandlerImpl implements EventHandler {
 
     private final GameRepository gameRepository;
+    private final PhaseExecutorFactory phaseExecutorFactory;
     private final ApplicationProperties properties;
 
     private final Map<ChatId, PhaseExecutor> phaseExecutors = new ConcurrentHashMap<>();
 
     public EventHandlerImpl(GameRepository gameRepository, ApplicationProperties properties) {
         this.gameRepository = gameRepository;
+        this.phaseExecutorFactory = new PhaseExecutorFactory((gameRepository));
         this.properties = properties;
     }
 
@@ -41,10 +43,10 @@ public class EventHandlerImpl implements EventHandler {
                 .flatMap(storedGame -> Optional.of(storedGame.getPhase()))
                 .orElse(Phase.EMPTY);
 
-        final PhaseExecutor executor = PhaseExecutorFactory.of(phase);
+        final PhaseExecutor executor = phaseExecutorFactory.newInstance(phase, receivedMessage.getChatId());
 
         phaseExecutors.put(receivedMessage.getChatId(), executor);
-        final PhaseStatebleResponse processingResult = executor.execute(receivedMessage, gameRepository);
+        final PhaseStatebleResponse processingResult = executor.execute(receivedMessage);
 
         switch (processingResult.getStatus()) {
             case PROCESSED: {
@@ -52,7 +54,7 @@ public class EventHandlerImpl implements EventHandler {
                 responses.add(responseMessage);
                 phaseExecutors.remove(receivedMessage.getChatId());
 
-                final PhaseExecutor nextExecutor = PhaseExecutorFactory.of(Phase.getNextFor(phase));
+                final PhaseExecutor nextExecutor = phaseExecutorFactory.newInstance(Phase.getNextFor(phase), receivedMessage.getChatId());
                 nextExecutor
                         .initiation(receivedMessage.getChatId())
                         .ifPresent(responses::add);
@@ -65,7 +67,7 @@ public class EventHandlerImpl implements EventHandler {
                 break;
             case PROCEDURAL: {
                 phaseExecutors.remove(receivedMessage.getChatId());
-                final PhaseExecutor nextExecutor = PhaseExecutorFactory.of(Phase.getNextFor(phase));
+                final PhaseExecutor nextExecutor = phaseExecutorFactory.newInstance(Phase.getNextFor(phase), receivedMessage.getChatId());
                 nextExecutor
                         .initiation(receivedMessage.getChatId())
                         .ifPresent(responses::add);

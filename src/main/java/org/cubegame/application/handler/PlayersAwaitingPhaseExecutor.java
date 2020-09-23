@@ -22,7 +22,19 @@ import java.util.Optional;
 
 public class PlayersAwaitingPhaseExecutor implements PhaseExecutor {
 
-    final List<Player> awaitedPlayers = new ArrayList<>();
+    private final ChatId chatId;
+    private final GameRepository gameRepository;
+    private final Game storedGame;
+
+    private final List<Player> awaitedPlayers = new ArrayList<>();
+
+    PlayersAwaitingPhaseExecutor(final ChatId chatId, final GameRepository gameRepository) {
+        this.gameRepository = gameRepository;
+        this.chatId = chatId;
+        this.storedGame = this.gameRepository
+                .get(this.chatId)
+                .orElseThrow(() -> new GameNoFoundException(this.chatId));
+    }
 
     @Override
     public Optional<ResponseMessage> initiation(final ChatId chatId) {
@@ -30,17 +42,13 @@ public class PlayersAwaitingPhaseExecutor implements PhaseExecutor {
     }
 
     @Override
-    public PhaseStatebleResponse execute(Message message, GameRepository gameRepository) {
+    public PhaseStatebleResponse execute(Message message) {
         switch (message.getSpeech().getType()) {
             case COMMENT:
                 return new SkipedResult();
             case APEAL:
                 break;
         }
-
-        final Game storedGame = gameRepository
-                .get(message.getChatId())
-                .orElseThrow(() -> new GameNoFoundException(message.getChatId()));
 
         final Player newPlayer = new Player(message.getAuthor().getUserId());
         if (storedGame.getPlayers().contains(newPlayer))

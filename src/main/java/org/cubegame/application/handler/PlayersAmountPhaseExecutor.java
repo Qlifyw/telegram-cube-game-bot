@@ -18,6 +18,14 @@ import java.util.Optional;
 
 public class PlayersAmountPhaseExecutor implements PhaseExecutor {
 
+    private final ChatId chatId;
+    private final GameRepository gameRepository;
+
+    public PlayersAmountPhaseExecutor(final ChatId chatId, final GameRepository gameRepository) {
+        this.gameRepository = gameRepository;
+        this.chatId = chatId;
+    }
+
     @Override
     public Optional<ResponseMessage> initiation(ChatId chatId) {
         final TextResponseMessage initMessage = new TextResponseMessage("Specify players amount", chatId);
@@ -25,7 +33,7 @@ public class PlayersAmountPhaseExecutor implements PhaseExecutor {
     }
 
     @Override
-    public PhaseStatebleResponse execute(Message message, GameRepository gameRepository) {
+    public PhaseStatebleResponse execute(Message message) {
         switch (message.getSpeech().getType()) {
             case COMMENT:
                 return new SkipedResult();

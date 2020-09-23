@@ -26,6 +26,14 @@ import java.util.Optional;
  */
 public class ChooseGamePhaseExecutor implements PhaseExecutor {
 
+    private final ChatId chatId;
+    private final GameRepository gameRepository;
+
+    public ChooseGamePhaseExecutor(final ChatId chatId, final GameRepository gameRepository) {
+        this.gameRepository = gameRepository;
+        this.chatId = chatId;
+    }
+
     @Override
     public Optional<ResponseMessage> initiation(ChatId chatId) {
         final NavigationResponseMessage initMessage = new NavigationResponseMessage(buildMenu(), chatId);
@@ -33,7 +41,7 @@ public class ChooseGamePhaseExecutor implements PhaseExecutor {
     }
 
     @Override
-    public PhaseStatebleResponse execute(Message message, GameRepository gameRepository) {
+    public PhaseStatebleResponse execute(Message message) {
         final Game storedGame = gameRepository
                 .get(message.getChatId())
                 .orElseThrow(() -> new GameNoFoundException(message.getChatId()));

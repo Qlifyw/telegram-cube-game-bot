@@ -26,8 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EmptyPhaseExecutorTest {
 
-    final PhaseExecutor phaseExecutor = PhaseExecutorFactory.of(Phase.EMPTY);
     final GameRepository gameRepository = new GameRepositoryImpl();
+    private final PhaseExecutorFactory phaseExecutorFactory = new PhaseExecutorFactory(gameRepository);
+    final PhaseExecutor phaseExecutor = phaseExecutorFactory.newInstance(Phase.EMPTY, CHAT_ID);
 
     final ApplicationProperties properties = ApplicationProperties.load();
 
@@ -41,7 +42,7 @@ class EmptyPhaseExecutorTest {
     void not_tagged_bot() {
         final Speech comment = new Comment("Hi averyone!");
         final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, comment, DICE);
-        final PhaseStatebleResponse response = phaseExecutor.execute(message, gameRepository);
+        final PhaseStatebleResponse response = phaseExecutor.execute(message);
 
         assertEquals(ProcessingStatus.SKIPPED, response.getStatus());
     }
@@ -51,7 +52,7 @@ class EmptyPhaseExecutorTest {
     void tag_bot_without_command() {
         final Speech comment = SpeechFactory.of(String.format("@%s ", properties.getBotName()));
         final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, comment, DICE);
-        final PhaseStatebleResponse response = phaseExecutor.execute(message, gameRepository);
+        final PhaseStatebleResponse response = phaseExecutor.execute(message);
 
         assertEquals(ProcessingStatus.SKIPPED, response.getStatus());
     }
@@ -61,7 +62,7 @@ class EmptyPhaseExecutorTest {
     void tag_bot_with_invalid_command() {
         final Speech comment = SpeechFactory.of(String.format("@%s %s", properties.getBotName(), "N/A"));
         final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, comment, DICE);
-        final PhaseStatebleResponse response = phaseExecutor.execute(message, gameRepository);
+        final PhaseStatebleResponse response = phaseExecutor.execute(message);
 
         assertEquals(ProcessingStatus.FAILED, response.getStatus());
         final ResponseMessage failedResponse = ((FailedResult) response).getResponseMessage();
@@ -73,7 +74,7 @@ class EmptyPhaseExecutorTest {
     void tag_bot_with_valid_command() {
         final Speech comment = SpeechFactory.of(String.format("@%s /%s", properties.getBotName(), Command.START));
         final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, comment, DICE);
-        final PhaseStatebleResponse response = phaseExecutor.execute(message, gameRepository);
+        final PhaseStatebleResponse response = phaseExecutor.execute(message);
 
         assertEquals(ProcessingStatus.PROCEDURAL, response.getStatus());
     }

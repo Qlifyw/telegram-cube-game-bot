@@ -21,6 +21,9 @@ dependencies {
     // TODO try to remove
     compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.1'
 
+//    compile group: 'org.springframework', name: 'spring-core', version: '5.2.9.RELEASE'
+//    compile group: 'org.springframework', name: 'spring-beans', version: '3.0.5.RELEASE'
+
     compile group: 'org.telegram', name: 'telegrambots', version: '4.9.1'
 }
 

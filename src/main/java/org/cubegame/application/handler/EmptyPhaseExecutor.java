@@ -20,10 +20,14 @@ import java.util.Optional;
 
 public final class EmptyPhaseExecutor implements PhaseExecutor {
 
+    private final ChatId chatId;
     private final CommandValidator commandValidator;
+    private final GameRepository gameRepository;
 
-    public EmptyPhaseExecutor(final CommandValidator commandValidator) {
+    public EmptyPhaseExecutor(final ChatId chatId, final CommandValidator commandValidator, final GameRepository gameRepository) {
         this.commandValidator = commandValidator;
+        this.gameRepository = gameRepository;
+        this.chatId = chatId;
     }
 
     @Override
@@ -32,7 +36,7 @@ public final class EmptyPhaseExecutor implements PhaseExecutor {
     }
 
     @Override
-    public PhaseStatebleResponse execute(Message message, GameRepository gameRepository) {
+    public PhaseStatebleResponse execute(Message message) {
 
         final String unvalidatedCommand = message.getSpeech().getText();
 
