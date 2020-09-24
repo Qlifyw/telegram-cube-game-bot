@@ -1,13 +1,15 @@
 package org.cubegame.infrastructure.repository.game;
 
-import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.game.Game;
+import org.cubegame.domain.model.identifier.ChatId;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class GameRepositoryImpl implements GameRepository {
 
-    private Game game = null;
+    private Map<ChatId, Game> games = new LinkedHashMap();
 
     @Override
     public Optional<Game> get(ChatId chatId) {
@@ -20,15 +22,16 @@ public class GameRepositoryImpl implements GameRepository {
 
 //        return Optional.of(game);
 
-        if (game == null) {
+        final Game storedGame = games.get(chatId);
+        if (storedGame == null) {
             return Optional.empty();
         } else {
-            return Optional.of(game);
+            return Optional.of(storedGame);
         }
     }
 
     @Override
     public void save(final Game game) {
-        this.game = game;
+        this.games.put(game.getChatId(), game);
     }
 }

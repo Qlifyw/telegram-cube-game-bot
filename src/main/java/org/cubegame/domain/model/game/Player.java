@@ -7,13 +7,19 @@ import java.util.Objects;
 public class Player {
 
     private final UserId userId;
+    private final String firstName;
 
-    public Player(final UserId userId) {
+    public Player(final UserId userId, final String firstName) {
         this.userId = userId;
+        this.firstName = firstName;
     }
 
     public UserId getUserId() {
         return userId;
+    }
+
+    public String getFirstName() {
+        return firstName;
     }
 
     @Override

@@ -1,9 +1,9 @@
 package org.cubegame.domain.model.message;
 
+import org.cubegame.domain.model.dice.Dice;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.identifier.UserId;
 import org.cubegame.domain.model.message.speach.Speech;
-import org.telegram.telegrambots.meta.api.objects.Dice;
 
 public class Message {
 

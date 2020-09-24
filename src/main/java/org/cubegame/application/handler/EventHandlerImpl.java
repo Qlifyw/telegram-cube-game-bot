@@ -43,9 +43,16 @@ public class EventHandlerImpl implements EventHandler {
                 .flatMap(storedGame -> Optional.of(storedGame.getPhase()))
                 .orElse(Phase.EMPTY);
 
-        final PhaseExecutor executor = phaseExecutorFactory.newInstance(phase, receivedMessage.getChatId());
 
-        phaseExecutors.put(receivedMessage.getChatId(), executor);
+        final PhaseExecutor executor;
+        if (phaseExecutors.get(receivedMessage.getChatId()) == null) {
+            final PhaseExecutor newExecutor = phaseExecutorFactory.newInstance(phase, receivedMessage.getChatId());
+            phaseExecutors.put(receivedMessage.getChatId(), newExecutor);
+            executor = newExecutor;
+        } else {
+            executor = phaseExecutors.get(receivedMessage.getChatId());
+        }
+
         final PhaseStatebleResponse processingResult = executor.execute(receivedMessage);
 
         switch (processingResult.getStatus()) {

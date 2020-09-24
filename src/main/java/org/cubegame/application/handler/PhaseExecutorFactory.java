@@ -46,6 +46,7 @@ public class PhaseExecutorFactory {
                 executor = new StartGamePhaseExecutor(chatId, gameRepository);
                 break;
             case COMPLETED:
+                executor = new CompleteGamePhaseExecutor();
                 break;
         }
         return executor;

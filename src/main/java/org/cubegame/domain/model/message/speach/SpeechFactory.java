@@ -10,6 +10,9 @@ public class SpeechFactory {
         this.value = value;
     }
 
+    // TODO SpeechFactory.EMPTY_SPEECH
+
+
     public static Speech of(String text) {
         final ApplicationProperties applicationProperties = ApplicationProperties.load();
 

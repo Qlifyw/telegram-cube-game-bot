@@ -1,18 +1,18 @@
 package org.cubegame.domain.model.round;
 
-import org.cubegame.domain.model.identifier.UserId;
+import org.cubegame.domain.model.game.Player;
 
 public class Outcome {
-    private final UserId userId;
+    private final Player player;
     private final Points points;
 
-    public Outcome(final UserId userId, final Points points) {
-        this.userId = userId;
+    public Outcome(final Player player, final Points points) {
+        this.player = player;
         this.points = points;
     }
 
-    public UserId getUserId() {
-        return userId;
+    public Player getPlayer() {
+        return player;
     }
 
     public Points getPoints() {

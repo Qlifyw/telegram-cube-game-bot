@@ -2,6 +2,7 @@ package org.cubegame.infrastructure.bot;
 
 import org.cubegame.application.handler.EventHandler;
 import org.cubegame.application.handler.EventHandlerImpl;
+import org.cubegame.domain.model.dice.Dice;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.identifier.UserId;
 import org.cubegame.domain.model.message.Message;
@@ -18,7 +19,6 @@ import org.cubegame.infrastructure.repository.round.RoundRepositoryImpl;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.Dice;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -63,7 +63,7 @@ public class CubeGameBot extends TelegramLongPollingBot {
             final ChatId chatId = new ChatId(update.getMessage().getChatId());
             final UserId userId = new UserId(update.getMessage().getFrom().getId());
             final String firstName = update.getMessage().getFrom().getFirstName();
-            final Dice dice = update.getMessage().hasDice() ? update.getMessage().getDice() : null;
+            final Dice dice = update.getMessage().hasDice() ? new Dice(update.getMessage().getDice().getValue()) : null;
 
             final Speech speech = SpeechFactory.of(receivedText);
             return new Message(chatId, userId, firstName, speech, dice);

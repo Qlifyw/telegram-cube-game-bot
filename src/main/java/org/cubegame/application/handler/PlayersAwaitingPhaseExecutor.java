@@ -17,8 +17,10 @@ import org.cubegame.infrastructure.model.message.TextResponseMessage;
 import org.cubegame.infrastructure.repository.game.GameRepository;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class PlayersAwaitingPhaseExecutor implements PhaseExecutor {
 
@@ -26,7 +28,7 @@ public class PlayersAwaitingPhaseExecutor implements PhaseExecutor {
     private final GameRepository gameRepository;
     private final Game storedGame;
 
-    private final List<Player> awaitedPlayers = new ArrayList<>();
+    private final Set<Player> awaitedPlayers = new LinkedHashSet<>();
 
     PlayersAwaitingPhaseExecutor(final ChatId chatId, final GameRepository gameRepository) {
         this.gameRepository = gameRepository;
@@ -50,8 +52,8 @@ public class PlayersAwaitingPhaseExecutor implements PhaseExecutor {
                 break;
         }
 
-        final Player newPlayer = new Player(message.getAuthor().getUserId());
-        if (storedGame.getPlayers().contains(newPlayer))
+        final Player newPlayer = new Player(message.getAuthor().getUserId(), message.getAuthor().getFirstName());
+        if (awaitedPlayers.contains(newPlayer))
             return new SkipedResult();
 
         awaitedPlayers.add(newPlayer);
