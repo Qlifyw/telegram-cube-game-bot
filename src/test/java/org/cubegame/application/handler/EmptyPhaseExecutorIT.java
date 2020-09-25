@@ -40,18 +40,8 @@ class EmptyPhaseExecutorIT {
     private static final Dice DICE = null;
 
 
-    static Stream<Arguments> argumentsStream() {
-        return Stream.of(
-                Arguments.of(speechFactory.of("Hi averyone!")),
-                Arguments.of(speechFactory.of("/start")),
-                Arguments.of(speechFactory.of(String.format("hello@%s", applicationProperties.getBotName()))),
-                Arguments.of(speechFactory.of(String.format("/todo@%s", applicationProperties.getBotName()))),
-                Arguments.of(speechFactory.of(String.format("/todo@%s", applicationProperties.getBotName())))
-        );
-    }
-
     @ParameterizedTest(name = "Skip {0} message")
-    @MethodSource("argumentsStream")
+    @MethodSource("ignoredMessages")
     void skipMessageIfNotTagged(Speech speech) {
         final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, speech, DICE);
         final List<ResponseMessage> responses = eventHandler.handle(message);
@@ -70,6 +60,16 @@ class EmptyPhaseExecutorIT {
         assertEquals(1, responses.size());
         assertEquals(message.getChatId(), responses.get(0).getChatId());
         assertEquals(ResponseType.NAVIAGTION, responses.get(0).getType());
+    }
+
+    private static Stream<Arguments> ignoredMessages() {
+        return Stream.of(
+                Arguments.of(speechFactory.of("Hi averyone!")),
+                Arguments.of(speechFactory.of("/start")),
+                Arguments.of(speechFactory.of(String.format("hello@%s", applicationProperties.getBotName()))),
+                Arguments.of(speechFactory.of(String.format("/todo@%s", applicationProperties.getBotName()))),
+                Arguments.of(speechFactory.of(String.format("/todo@%s", applicationProperties.getBotName())))
+        );
     }
 
 

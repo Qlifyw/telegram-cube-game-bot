@@ -91,7 +91,7 @@ class StartGamePhaseExecutorIT {
     }
 
     @ParameterizedTest(name = "Skip {0} message")
-    @MethodSource("argumentsStream")
+    @MethodSource("ignoredMessages")
     void skipMessageIfNotTagged(Speech speech) {
         final Message message = new Message(CHAT_ID, USER_ID_1, generateUserName(USER_ID_1), speech, null);
         final List<ResponseMessage> responses = eventHandler.handle(message);
@@ -99,7 +99,7 @@ class StartGamePhaseExecutorIT {
         assertTrue(responses.isEmpty());
     }
 
-    static Stream<Arguments> argumentsStream() {
+    private static Stream<Arguments> ignoredMessages() {
         return Stream.of(
                 Arguments.of(speechFactory.of("Hi averyone!")),
                 Arguments.of(speechFactory.of(String.valueOf(PLAYERS_AMOUNT))),
@@ -110,7 +110,7 @@ class StartGamePhaseExecutorIT {
         );
     }
 
-    final List<Reply> commands = Arrays.asList(
+    private static final List<Reply> commands = Arrays.asList(
             new Reply(USER_ID_1, speechFactory.of(String.format("%s@%s", Command.START.getValue(), BOT_NAME))),
             new Reply(USER_ID_1, speechFactory.of(GAME_NAME)),
             new Reply(USER_ID_1, speechFactory.of(String.format("@%s %d", BOT_NAME, PLAYERS_AMOUNT))),
