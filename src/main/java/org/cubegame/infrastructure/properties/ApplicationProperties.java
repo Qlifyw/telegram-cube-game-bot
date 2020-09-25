@@ -7,27 +7,27 @@ import java.util.Properties;
 
 public class ApplicationProperties {
 
-    private final static String PROPERTY_BOT_NAME = "bot_name";
-    private final static String PROPERTY_BOT_TOKEN = "bot_token";
-    private final static Properties properties = new Properties();
-    private final static File propertiesFile = new File("application.properties");
+    private static final String PROPERTY_BOT_NAME = "bot_name";
+    private static final String PROPERTY_BOT_TOKEN = "bot_token";
+    private static final Properties properties = new Properties();
+    private static final File defaultPropertiesFile = new File("application.properties");
 
 
-    private ApplicationProperties() {
+    public ApplicationProperties() {
+    }
+
+    public ApplicationProperties(final String botName) {
+        properties.put(PROPERTY_BOT_NAME, botName);
     }
 
     public static ApplicationProperties load() {
-        tryLoad();
+        tryLoad(defaultPropertiesFile);
         return new ApplicationProperties();
     }
 
-    private static void tryLoad() {
-        try {
-            properties.load(new FileInputStream(propertiesFile));
-        } catch (IOException e) {
-            // TODO replace with custom exception
-            e.printStackTrace();
-        }
+    public static ApplicationProperties load(File propsFile) {
+        tryLoad(propsFile);
+        return new ApplicationProperties();
     }
 
     public String getBotName() {
@@ -36,6 +36,15 @@ public class ApplicationProperties {
 
     public String getBotToken() {
         return properties.getProperty(PROPERTY_BOT_TOKEN);
+    }
+
+    private static void tryLoad(final File propertiesFile) {
+        try {
+            properties.load(new FileInputStream(propertiesFile));
+        } catch (IOException e) {
+            // TODO replace with custom exception
+            e.printStackTrace();
+        }
     }
 
 }
