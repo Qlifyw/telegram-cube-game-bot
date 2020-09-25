@@ -115,6 +115,7 @@ class PlayersAwaitingPhaseExecutorIT {
                 Arguments.of(speechFactory.of(String.valueOf(PLAYERS_AMOUNT))),
                 Arguments.of(speechFactory.of(String.format("@%s%s", applicationProperties.getBotName(), "Me"))),
                 Arguments.of(speechFactory.of(String.format("@%s", applicationProperties.getBotName()))),
+                Arguments.of(speechFactory.of(String.format("@%s %s %s", applicationProperties.getBotName(), "a", "b"))),
                 Arguments.of(speechFactory.of(String.format("%s@%s", "Me", applicationProperties.getBotName())))
         );
     }

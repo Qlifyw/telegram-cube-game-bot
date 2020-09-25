@@ -109,6 +109,7 @@ class PlayersAmountPhaseExecutorIT {
                 Arguments.of(speechFactory.of(String.valueOf(PLAYERS_AMOUNT))),
                 Arguments.of(speechFactory.of(String.format("@%s%d", applicationProperties.getBotName(), PLAYERS_AMOUNT))),
                 Arguments.of(speechFactory.of(String.format("@%s", applicationProperties.getBotName()))),
+                Arguments.of(speechFactory.of(String.format("@%s %s %s", applicationProperties.getBotName(), "a", "b"))),
                 Arguments.of(speechFactory.of(String.format("%d@%s", PLAYERS_AMOUNT, applicationProperties.getBotName())))
         );
     }
