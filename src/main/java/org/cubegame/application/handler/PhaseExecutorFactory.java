@@ -9,29 +9,17 @@ import org.cubegame.infrastructure.repository.game.GameRepository;
 public class PhaseExecutorFactory {
 
     private final GameRepository gameRepository;
-    private final ApplicationProperties applicationProperties;
-
     private final CommandValidator commandValidator;
-
-
-//    private static Map<Phase, PhaseExecutor> executors = new LinkedHashMap<>();
 
     public PhaseExecutorFactory(
             final GameRepository gameRepository,
             final ApplicationProperties applicationProperties
     ) {
         this.gameRepository = gameRepository;
-        this.applicationProperties = applicationProperties;
         this.commandValidator = new CommandValidator(applicationProperties);
     }
 
     public PhaseExecutor newInstance(Phase phase, ChatId chatId) {
-//        final PhaseExecutor executor = executors.get(phase);
-//        if (executor == null) {
-//            final PhaseExecutor newExecutor = createExecutor(phase, chatId);
-//            executors.put(phase, newExecutor);
-//            return newExecutor;
-//        }
         return createExecutor(phase, chatId);
     }
 
