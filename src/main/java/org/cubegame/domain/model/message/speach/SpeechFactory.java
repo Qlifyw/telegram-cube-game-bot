@@ -4,18 +4,15 @@ import org.cubegame.infrastructure.properties.ApplicationProperties;
 
 public class SpeechFactory {
 
-    private final String value;
+    private final ApplicationProperties applicationProperties;
 
-    private SpeechFactory(String value) {
-        this.value = value;
+    public SpeechFactory(final ApplicationProperties applicationProperties) {
+        this.applicationProperties = applicationProperties;
     }
 
     // TODO SpeechFactory.EMPTY_SPEECH
 
-
-    public static Speech of(String text) {
-        final ApplicationProperties applicationProperties = ApplicationProperties.load();
-
+    public Speech of(String text) {
 //        if (!text.startsWith("@"+applicationProperties.getBotName()))
 //            return Optional.empty();
 
@@ -36,15 +33,10 @@ public class SpeechFactory {
         final String message = split[CommandPart.TEXT_PART.getOrder()].trim();
         final String botName = split[CommandPart.BOT_NAME_PART.getOrder()];
 
-        if (!botName.equals("@"+applicationProperties.getBotName()))
+        if (!botName.equals("@" + applicationProperties.getBotName()))
             return new Comment(text);
 
         return new Appeal(message);
-    }
-
-    @Override
-    public String toString() {
-        return value;
     }
 
     private enum CommandPart {

@@ -29,6 +29,8 @@ public class CubeGameBot extends TelegramLongPollingBot {
 
     private final ApplicationProperties properties = ApplicationProperties.load();
 
+    private final SpeechFactory speechFactory = new SpeechFactory(properties);
+
     private final GameRepository gameRepository = new GameRepositoryImpl();
     private final RoundRepository roundRepository = new RoundRepositoryImpl();
     private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, properties);
@@ -65,7 +67,7 @@ public class CubeGameBot extends TelegramLongPollingBot {
             final String firstName = update.getMessage().getFrom().getFirstName();
             final Dice dice = update.getMessage().hasDice() ? new Dice(update.getMessage().getDice().getValue()) : null;
 
-            final Speech speech = SpeechFactory.of(receivedText);
+            final Speech speech = speechFactory.of(receivedText);
             return new Message(chatId, userId, firstName, speech, dice);
         }
 
@@ -77,7 +79,7 @@ public class CubeGameBot extends TelegramLongPollingBot {
             final UserId userId = new UserId(callbackQuery.getFrom().getId());
             final String firstName = callbackQuery.getMessage().getFrom().getFirstName();
 
-            final Speech speech = SpeechFactory.of(receivedText);
+            final Speech speech = speechFactory.of(receivedText);
             return new Message(chatId, userId, firstName, speech, null);
         }
 

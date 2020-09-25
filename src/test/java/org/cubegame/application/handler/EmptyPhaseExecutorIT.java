@@ -30,7 +30,9 @@ class EmptyPhaseExecutorIT {
     private final GameRepository gameRepository = new GameRepositoryImpl();
     private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, applicationProperties);
 
-    private static final ApplicationProperties applicationProperties = ApplicationProperties.load();
+    private static final String BOT_NAME = "my-bot";
+    private static final ApplicationProperties applicationProperties = new ApplicationProperties(BOT_NAME);
+    private static final SpeechFactory speechFactory = new SpeechFactory(applicationProperties);
 
     private static final ChatId CHAT_ID = new ChatId(123L);
     private static final UserId USER_ID = new UserId(456L);
@@ -40,11 +42,11 @@ class EmptyPhaseExecutorIT {
 
     static Stream<Arguments> argumentsStream() {
         return Stream.of(
-                Arguments.of(SpeechFactory.of("Hi averyone!")),
-                Arguments.of(SpeechFactory.of("/start")),
-                Arguments.of(SpeechFactory.of(String.format("hello@%s", applicationProperties.getBotName()))),
-                Arguments.of(SpeechFactory.of(String.format("/todo@%s", applicationProperties.getBotName()))),
-                Arguments.of(SpeechFactory.of(String.format("/todo@%s", applicationProperties.getBotName())))
+                Arguments.of(speechFactory.of("Hi averyone!")),
+                Arguments.of(speechFactory.of("/start")),
+                Arguments.of(speechFactory.of(String.format("hello@%s", applicationProperties.getBotName()))),
+                Arguments.of(speechFactory.of(String.format("/todo@%s", applicationProperties.getBotName()))),
+                Arguments.of(speechFactory.of(String.format("/todo@%s", applicationProperties.getBotName())))
         );
     }
 
@@ -60,7 +62,7 @@ class EmptyPhaseExecutorIT {
     @Test
     @DisplayName("Processed valid command message if bot tagged")
     void processedInvalidCommandMessageIfTagged() {
-        final Speech comment = SpeechFactory.of(String.format("%s@%s", Command.START.getValue(), applicationProperties.getBotName()));
+        final Speech comment = speechFactory.of(String.format("%s@%s", Command.START.getValue(), applicationProperties.getBotName()));
         final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, comment, DICE);
         final List<ResponseMessage> responses = eventHandler.handle(message);
 

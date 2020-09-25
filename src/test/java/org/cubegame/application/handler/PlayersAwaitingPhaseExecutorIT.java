@@ -29,13 +29,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PlayersAwaitingPhaseExecutorIT {
-    private static final ApplicationProperties applicationProperties = ApplicationProperties.load();
-    private static final String BOT_NAME = applicationProperties.getBotName();
+    private static final String BOT_NAME = "my-bot";
+    private static final ApplicationProperties applicationProperties = new ApplicationProperties(BOT_NAME);
+    private static final SpeechFactory speechFactory = new SpeechFactory(applicationProperties);
 
     private final GameRepository gameRepository = new GameRepositoryImpl();
     private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, applicationProperties);
 
-    private final PhaseExecutorFactory phaseExecutorFactory = new PhaseExecutorFactory(gameRepository);
+    private final PhaseExecutorFactory phaseExecutorFactory = new PhaseExecutorFactory(gameRepository, applicationProperties);
 
     private static final ChatId CHAT_ID = new ChatId(123L);
     private static final UserId USER_ID_1 = new UserId(456L);
@@ -49,20 +50,20 @@ class PlayersAwaitingPhaseExecutorIT {
     @Test
     @DisplayName("Success when all players connected")
     void suceessWhenChooseGame() {
-        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, SpeechFactory.of(""), DICE);
+        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, speechFactory.of(""), DICE);
 
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
 
-        final Speech speech = SpeechFactory.of(String.format("@%s %s", applicationProperties.getBotName(), "+"));
+        final Speech speech = speechFactory.of(String.format("@%s %s", applicationProperties.getBotName(), "+"));
         final Message message = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, speech, DICE);
         final List<ResponseMessage> responsesAfterFirstPlayer = eventHandler.handle(message);
 
         assertFalse(responsesAfterFirstPlayer.isEmpty());
         assertEquals(1, responsesAfterFirstPlayer.size());
-        assertTrue(responsesAfterFirstPlayer.get(0).getMessage().contains(String.format("%d players", PLAYERS_AMOUNT-1)));
+        assertTrue(responsesAfterFirstPlayer.get(0).getMessage().contains(String.format("%d players", PLAYERS_AMOUNT - 1)));
 
 
-        final Speech speech2 = SpeechFactory.of(String.format("@%s %s", applicationProperties.getBotName(), "+"));
+        final Speech speech2 = speechFactory.of(String.format("@%s %s", applicationProperties.getBotName(), "+"));
         final Message message2 = new Message(CHAT_ID, USER_ID_2, FIRST_NAME, speech2, DICE);
         final List<ResponseMessage> responsesAfterSecondPlayer = eventHandler.handle(message2);
 
@@ -83,16 +84,16 @@ class PlayersAwaitingPhaseExecutorIT {
     @Test
     @DisplayName("Skiped when one players connected twice")
     void skipedWhenOnePlayerConnectedTwice() {
-        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, SpeechFactory.of(""), DICE);
+        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, speechFactory.of(""), DICE);
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
 
-        final Speech speech = SpeechFactory.of(String.format("@%s %s", applicationProperties.getBotName(), "+"));
+        final Speech speech = speechFactory.of(String.format("@%s %s", applicationProperties.getBotName(), "+"));
         final Message message = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, speech, DICE);
         final List<ResponseMessage> responsesAfterFirstPlayer = eventHandler.handle(message);
 
         assertFalse(responsesAfterFirstPlayer.isEmpty());
         assertEquals(1, responsesAfterFirstPlayer.size());
-        assertTrue(responsesAfterFirstPlayer.get(0).getMessage().contains(String.format("%d players", PLAYERS_AMOUNT-1)));
+        assertTrue(responsesAfterFirstPlayer.get(0).getMessage().contains(String.format("%d players", PLAYERS_AMOUNT - 1)));
 
         final List<ResponseMessage> responsesAfterSecondPlayer = eventHandler.handle(message);
 
@@ -110,17 +111,17 @@ class PlayersAwaitingPhaseExecutorIT {
 
     static Stream<Arguments> argumentsStream() {
         return Stream.of(
-                Arguments.of(SpeechFactory.of("Hi averyone!")),
-                Arguments.of(SpeechFactory.of(String.valueOf(PLAYERS_AMOUNT))),
-                Arguments.of(SpeechFactory.of(String.format("@%s%s", applicationProperties.getBotName(), "Me"))),
-                Arguments.of(SpeechFactory.of(String.format("@%s", applicationProperties.getBotName()))),
-                Arguments.of(SpeechFactory.of(String.format("%s@%s", "Me", applicationProperties.getBotName())))
+                Arguments.of(speechFactory.of("Hi averyone!")),
+                Arguments.of(speechFactory.of(String.valueOf(PLAYERS_AMOUNT))),
+                Arguments.of(speechFactory.of(String.format("@%s%s", applicationProperties.getBotName(), "Me"))),
+                Arguments.of(speechFactory.of(String.format("@%s", applicationProperties.getBotName()))),
+                Arguments.of(speechFactory.of(String.format("%s@%s", "Me", applicationProperties.getBotName())))
         );
     }
 
     final List<Reply> commands = Arrays.asList(
-            new Reply(USER_ID_1, SpeechFactory.of(String.format("%s@%s", Command.START.getValue(), BOT_NAME))),
-            new Reply(USER_ID_1, SpeechFactory.of(GAME_NAME)),
-            new Reply(USER_ID_1, SpeechFactory.of(String.format("@%s %d", BOT_NAME, PLAYERS_AMOUNT)))
+            new Reply(USER_ID_1, speechFactory.of(String.format("%s@%s", Command.START.getValue(), BOT_NAME))),
+            new Reply(USER_ID_1, speechFactory.of(GAME_NAME)),
+            new Reply(USER_ID_1, speechFactory.of(String.format("@%s %d", BOT_NAME, PLAYERS_AMOUNT)))
     );
 }

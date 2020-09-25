@@ -26,9 +26,9 @@ public class EventHandlerImpl implements EventHandler {
 
     private final Map<ChatId, PhaseExecutor> phaseExecutors = new ConcurrentHashMap<>();
 
-    public EventHandlerImpl(GameRepository gameRepository, ApplicationProperties properties) {
+    public EventHandlerImpl(final GameRepository gameRepository, final ApplicationProperties properties) {
         this.gameRepository = gameRepository;
-        this.phaseExecutorFactory = new PhaseExecutorFactory((gameRepository));
+        this.phaseExecutorFactory = new PhaseExecutorFactory(gameRepository, properties);
         this.properties = properties;
     }
 

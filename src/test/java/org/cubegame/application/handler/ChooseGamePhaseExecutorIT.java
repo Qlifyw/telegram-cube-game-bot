@@ -27,14 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ChooseGamePhaseExecutorIT {
-
-    private static final ApplicationProperties applicationProperties = ApplicationProperties.load();
-    private static final String BOT_NAME = applicationProperties.getBotName();
+    private static final String BOT_NAME = "my-bot";
+    private static final ApplicationProperties applicationProperties = new ApplicationProperties(BOT_NAME);
+    private static final SpeechFactory speechFactory = new SpeechFactory(applicationProperties);
 
     private final GameRepository gameRepository = new GameRepositoryImpl();
-    private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, applicationProperties);
+    private final EventHandler eventHandler = new EventHandlerImpl(gameRepository,  applicationProperties);
 
-    private final PhaseExecutorFactory phaseExecutorFactory = new PhaseExecutorFactory(gameRepository);
+    private final PhaseExecutorFactory phaseExecutorFactory = new PhaseExecutorFactory(gameRepository , applicationProperties);
 
     private static final ChatId CHAT_ID = new ChatId(123L);
     private static final UserId USER_ID = new UserId(456L);
@@ -46,7 +46,7 @@ class ChooseGamePhaseExecutorIT {
     @Test
     @DisplayName("Success when choose game")
     void suceessWhenChooseGame() {
-        final Speech comment = SpeechFactory.of(GAME_NAME);
+        final Speech comment = speechFactory.of(GAME_NAME);
         final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, comment, DICE);
 
         CascadePhaseStepper.moveUp(eventHandler, message, commands);
@@ -81,9 +81,9 @@ class ChooseGamePhaseExecutorIT {
     void skipMessageIfNotTagged() {
         final UserId anotherUserId = new UserId(ThreadLocalRandom.current().nextLong());
 
-        final Message msgTemplate = new Message(CHAT_ID, USER_ID, FIRST_NAME, SpeechFactory.of(GAME_NAME), DICE);
+        final Message msgTemplate = new Message(CHAT_ID, USER_ID, FIRST_NAME, speechFactory.of(GAME_NAME), DICE);
 
-        final Speech speech = SpeechFactory.of(String.format("@%s %s", applicationProperties.getBotName(), GAME_NAME));
+        final Speech speech = speechFactory.of(String.format("@%s %s", applicationProperties.getBotName(), GAME_NAME));
         final Message message = new Message(CHAT_ID, anotherUserId, FIRST_NAME, speech, DICE);
 
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
@@ -94,7 +94,7 @@ class ChooseGamePhaseExecutorIT {
     }
 
     final List<Reply> commands = Collections.singletonList(
-            new Reply(USER_ID, SpeechFactory.of(String.format("%s@%s", Command.START.getValue(), BOT_NAME)))
+            new Reply(USER_ID, speechFactory.of(String.format("%s@%s", Command.START.getValue(), BOT_NAME)))
     );
 
 }

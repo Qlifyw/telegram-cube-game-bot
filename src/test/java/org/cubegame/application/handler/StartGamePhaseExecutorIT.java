@@ -30,17 +30,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class StartGamePhaseExecutorIT {
     private static final ApplicationProperties applicationProperties = ApplicationProperties.load();
     private static final String BOT_NAME = applicationProperties.getBotName();
+    private static final SpeechFactory speechFactory = new SpeechFactory(applicationProperties);
 
     private final GameRepository gameRepository = new GameRepositoryImpl();
     private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, applicationProperties);
 
-    private final PhaseExecutorFactory phaseExecutorFactory = new PhaseExecutorFactory(gameRepository);
+    private final PhaseExecutorFactory phaseExecutorFactory = new PhaseExecutorFactory(gameRepository, applicationProperties);
 
     private static final ChatId CHAT_ID = new ChatId(123L);
     private static final UserId USER_ID_1 = new UserId(456L);
     private static final UserId USER_ID_2 = new UserId(678L);
 
-    private static final Speech SPEECH = SpeechFactory.of("");
+    private static final Speech SPEECH = speechFactory.of("");
 
     private static final String GAME_NAME = "cube-game";
     private static final long PLAYERS_AMOUNT = 2;
@@ -48,18 +49,18 @@ class StartGamePhaseExecutorIT {
     @Test
     @DisplayName("Success when all players moved")
     void suceessWhenAllPlayersMoved() {
-        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, generateUserName(USER_ID_1), SpeechFactory.of(""), null);
+        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, generateUserName(USER_ID_1), speechFactory.of(""), null);
 
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
 
         final Dice firstDice = new Dice(4);
-        final Message message = new Message(CHAT_ID, USER_ID_1, generateUserName(USER_ID_1), SpeechFactory.of(""), firstDice);
+        final Message message = new Message(CHAT_ID, USER_ID_1, generateUserName(USER_ID_1), speechFactory.of(""), firstDice);
         final List<ResponseMessage> responsesAfterFirstPlayer = eventHandler.handle(message);
 
         assertTrue(responsesAfterFirstPlayer.isEmpty());
 
         final Dice secondDice = new Dice(2);
-        final Message message2 = new Message(CHAT_ID, USER_ID_2, generateUserName(USER_ID_2), SpeechFactory.of(""), secondDice);
+        final Message message2 = new Message(CHAT_ID, USER_ID_2, generateUserName(USER_ID_2), speechFactory.of(""), secondDice);
         final List<ResponseMessage> responsesAfterSecondPlayer = eventHandler.handle(message2);
 
         assertFalse(responsesAfterSecondPlayer.isEmpty());
@@ -69,13 +70,13 @@ class StartGamePhaseExecutorIT {
 
         final int PLAYERS = 2;
         final int TITLE = 1;
-        assertEquals(PLAYERS+TITLE, splited.length);
+        assertEquals(PLAYERS + TITLE, splited.length);
     }
 
     @Test
     @DisplayName("Skiped when one players moved twice")
     void skipedWhenOnePlayerMovedTwice() {
-        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, generateUserName(USER_ID_1), SpeechFactory.of(""), null);
+        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, generateUserName(USER_ID_1), speechFactory.of(""), null);
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
 
         final Dice dice = new Dice(2);
@@ -100,21 +101,21 @@ class StartGamePhaseExecutorIT {
 
     static Stream<Arguments> argumentsStream() {
         return Stream.of(
-                Arguments.of(SpeechFactory.of("Hi averyone!")),
-                Arguments.of(SpeechFactory.of(String.valueOf(PLAYERS_AMOUNT))),
-                Arguments.of(SpeechFactory.of(String.format("@%s%s", applicationProperties.getBotName(), "Me"))),
-                Arguments.of(SpeechFactory.of(String.format("@%s", applicationProperties.getBotName()))),
-                Arguments.of(SpeechFactory.of(String.format("%s@%s", "Me", applicationProperties.getBotName()))),
-                Arguments.of(SpeechFactory.of(String.format("@%s %s", applicationProperties.getBotName(), "Me")))
+                Arguments.of(speechFactory.of("Hi averyone!")),
+                Arguments.of(speechFactory.of(String.valueOf(PLAYERS_AMOUNT))),
+                Arguments.of(speechFactory.of(String.format("@%s%s", applicationProperties.getBotName(), "Me"))),
+                Arguments.of(speechFactory.of(String.format("@%s", applicationProperties.getBotName()))),
+                Arguments.of(speechFactory.of(String.format("%s@%s", "Me", applicationProperties.getBotName()))),
+                Arguments.of(speechFactory.of(String.format("@%s %s", applicationProperties.getBotName(), "Me")))
         );
     }
 
     final List<Reply> commands = Arrays.asList(
-            new Reply(USER_ID_1, SpeechFactory.of(String.format("%s@%s", Command.START.getValue(), BOT_NAME))),
-            new Reply(USER_ID_1, SpeechFactory.of(GAME_NAME)),
-            new Reply(USER_ID_1, SpeechFactory.of(String.format("@%s %d", BOT_NAME, PLAYERS_AMOUNT))),
-            new Reply(USER_ID_1, SpeechFactory.of(String.format("@%s %s", BOT_NAME, "+"))),
-            new Reply(USER_ID_2, SpeechFactory.of(String.format("@%s %s", BOT_NAME, "++")))
+            new Reply(USER_ID_1, speechFactory.of(String.format("%s@%s", Command.START.getValue(), BOT_NAME))),
+            new Reply(USER_ID_1, speechFactory.of(GAME_NAME)),
+            new Reply(USER_ID_1, speechFactory.of(String.format("@%s %d", BOT_NAME, PLAYERS_AMOUNT))),
+            new Reply(USER_ID_1, speechFactory.of(String.format("@%s %s", BOT_NAME, "+"))),
+            new Reply(USER_ID_2, speechFactory.of(String.format("@%s %s", BOT_NAME, "++")))
     );
 
     private static String generateUserName(UserId userId) {

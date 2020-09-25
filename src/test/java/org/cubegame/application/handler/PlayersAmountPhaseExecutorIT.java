@@ -31,13 +31,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PlayersAmountPhaseExecutorIT {
-    private static final ApplicationProperties applicationProperties = ApplicationProperties.load();
-    private static final String BOT_NAME = applicationProperties.getBotName();
+    private static final String BOT_NAME = "my-bot";
+    private static final ApplicationProperties applicationProperties = new ApplicationProperties(BOT_NAME);
+    private static final SpeechFactory speechFactory = new SpeechFactory(applicationProperties);
 
     private final GameRepository gameRepository = new GameRepositoryImpl();
     private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, applicationProperties);
 
-    private final PhaseExecutorFactory phaseExecutorFactory = new PhaseExecutorFactory(gameRepository);
+    private final PhaseExecutorFactory phaseExecutorFactory = new PhaseExecutorFactory(gameRepository, applicationProperties);
 
     private static final ChatId CHAT_ID = new ChatId(123L);
     private static final UserId USER_ID = new UserId(456L);
@@ -50,11 +51,11 @@ class PlayersAmountPhaseExecutorIT {
     @Test
     @DisplayName("Success when specified valid amount")
     void suceessWhenChooseGame() {
-        final Message msgTemplate = new Message(CHAT_ID, USER_ID, FIRST_NAME, SpeechFactory.of(""), DICE);
+        final Message msgTemplate = new Message(CHAT_ID, USER_ID, FIRST_NAME, speechFactory.of(""), DICE);
 
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
 
-        final Speech speech = SpeechFactory.of(String.format("@%s %d", applicationProperties.getBotName(), PLAYERS_AMOUNT));
+        final Speech speech = speechFactory.of(String.format("@%s %d", applicationProperties.getBotName(), PLAYERS_AMOUNT));
         final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, speech, DICE);
         final List<ResponseMessage> responses = eventHandler.handle(message);
 
@@ -81,9 +82,9 @@ class PlayersAmountPhaseExecutorIT {
     void skipMessageIfNotTagged() {
         final UserId anotherUserId = new UserId(ThreadLocalRandom.current().nextLong());
 
-        final Message msgTemplate = new Message(CHAT_ID, USER_ID, FIRST_NAME, SpeechFactory.of(GAME_NAME), DICE);
+        final Message msgTemplate = new Message(CHAT_ID, USER_ID, FIRST_NAME, speechFactory.of(GAME_NAME), DICE);
 
-        final Speech speech = SpeechFactory.of(String.format("@%s %d", applicationProperties.getBotName(), PLAYERS_AMOUNT));
+        final Speech speech = speechFactory.of(String.format("@%s %d", applicationProperties.getBotName(), PLAYERS_AMOUNT));
         final Message message = new Message(CHAT_ID, anotherUserId, FIRST_NAME, speech, DICE);
 
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
@@ -104,16 +105,16 @@ class PlayersAmountPhaseExecutorIT {
 
     static Stream<Arguments> argumentsStream() {
         return Stream.of(
-                Arguments.of(SpeechFactory.of("Hi averyone!")),
-                Arguments.of(SpeechFactory.of(String.valueOf(PLAYERS_AMOUNT))),
-                Arguments.of(SpeechFactory.of(String.format("@%s%d", applicationProperties.getBotName(), PLAYERS_AMOUNT))),
-                Arguments.of(SpeechFactory.of(String.format("@%s", applicationProperties.getBotName()))),
-                Arguments.of(SpeechFactory.of(String.format("%d@%s", PLAYERS_AMOUNT, applicationProperties.getBotName())))
+                Arguments.of(speechFactory.of("Hi averyone!")),
+                Arguments.of(speechFactory.of(String.valueOf(PLAYERS_AMOUNT))),
+                Arguments.of(speechFactory.of(String.format("@%s%d", applicationProperties.getBotName(), PLAYERS_AMOUNT))),
+                Arguments.of(speechFactory.of(String.format("@%s", applicationProperties.getBotName()))),
+                Arguments.of(speechFactory.of(String.format("%d@%s", PLAYERS_AMOUNT, applicationProperties.getBotName())))
         );
     }
 
     final List<Reply> commands = Arrays.asList(
-            new Reply(USER_ID, SpeechFactory.of(String.format("%s@%s", Command.START.getValue(), BOT_NAME))),
-            new Reply(USER_ID, SpeechFactory.of(GAME_NAME))
+            new Reply(USER_ID, speechFactory.of(String.format("%s@%s", Command.START.getValue(), BOT_NAME))),
+            new Reply(USER_ID, speechFactory.of(GAME_NAME))
     );
 }

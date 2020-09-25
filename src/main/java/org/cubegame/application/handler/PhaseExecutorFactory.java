@@ -9,11 +9,20 @@ import org.cubegame.infrastructure.repository.game.GameRepository;
 public class PhaseExecutorFactory {
 
     private final GameRepository gameRepository;
+    private final ApplicationProperties applicationProperties;
+
+    private final CommandValidator commandValidator;
+
 
 //    private static Map<Phase, PhaseExecutor> executors = new LinkedHashMap<>();
 
-    PhaseExecutorFactory(final GameRepository gameRepository) {
+    public PhaseExecutorFactory(
+            final GameRepository gameRepository,
+            final ApplicationProperties applicationProperties
+    ) {
         this.gameRepository = gameRepository;
+        this.applicationProperties = applicationProperties;
+        this.commandValidator = new CommandValidator(applicationProperties);
     }
 
     public PhaseExecutor newInstance(Phase phase, ChatId chatId) {
@@ -30,7 +39,6 @@ public class PhaseExecutorFactory {
         PhaseExecutor executor = null;
         switch (phase) {
             case EMPTY:
-                final CommandValidator commandValidator = new CommandValidator(ApplicationProperties.load());
                 executor = new EmptyPhaseExecutor(chatId, commandValidator, gameRepository);
                 break;
             case CHOOSE_GAME:
