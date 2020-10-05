@@ -9,7 +9,7 @@ public final class GameNoFoundException extends Incident {
     public GameNoFoundException(ChatId chatId) {
         super(
                 String.format("Cannot find game session for chat with id '%d'", chatId.getValue()),
-                IncidentType.GAME_NOT_FOUND
-        );
+                IncidentType.GAME_NOT_FOUND,
+                null);
     }
 }

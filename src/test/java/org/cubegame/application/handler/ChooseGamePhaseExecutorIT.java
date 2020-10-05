@@ -70,7 +70,7 @@ class ChooseGamePhaseExecutorIT {
         assertEquals(message.getChatId(), nextPhaseIntro.getChatId());
         assertEquals(ResponseType.TEXT, nextPhaseIntro.getType());
 
-        phaseExecutor.initiation(message.getChatId())
+        phaseExecutor.initiation()
                 .ifPresent(responseMessage ->
                         assertEquals(responseMessage.getMessage(), nextPhaseIntro.getMessage())
                 );

@@ -63,7 +63,7 @@ public class EventHandlerImpl implements EventHandler {
 
                 final PhaseExecutor nextExecutor = phaseExecutorFactory.newInstance(Phase.getNextFor(phase), receivedMessage.getChatId());
                 nextExecutor
-                        .initiation(receivedMessage.getChatId())
+                        .initiation()
                         .ifPresent(responses::add);
                 phaseExecutors.put(receivedMessage.getChatId(), nextExecutor);
                 break;
@@ -76,7 +76,7 @@ public class EventHandlerImpl implements EventHandler {
                 phaseExecutors.remove(receivedMessage.getChatId());
                 final PhaseExecutor nextExecutor = phaseExecutorFactory.newInstance(Phase.getNextFor(phase), receivedMessage.getChatId());
                 nextExecutor
-                        .initiation(receivedMessage.getChatId())
+                        .initiation()
                         .ifPresent(responses::add);
                 phaseExecutors.put(receivedMessage.getChatId(), nextExecutor);
                 break;

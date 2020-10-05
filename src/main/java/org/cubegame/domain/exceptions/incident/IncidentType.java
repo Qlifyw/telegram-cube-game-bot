@@ -2,7 +2,8 @@ package org.cubegame.domain.exceptions.incident;
 
 public enum IncidentType {
 
-    GAME_NOT_FOUND("1");
+    GAME_NOT_FOUND("1"),
+    DISK_IO_ERROR("2");
 
     private final String value;
     private static final String PREFIX = "INC";

@@ -76,7 +76,7 @@ class PlayersAwaitingPhaseExecutorIT {
                 message.getChatId()
         );
 
-        phaseExecutor.initiation(message.getChatId())
+        phaseExecutor.initiation()
                 .ifPresent(responseMessage ->
                         assertEquals(responseMessage.getMessage(), responsesAfterSecondPlayer.get(0).getMessage())
                 );

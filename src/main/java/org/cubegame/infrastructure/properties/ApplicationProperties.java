@@ -1,5 +1,7 @@
 package org.cubegame.infrastructure.properties;
 
+import org.cubegame.domain.exceptions.DiskIOException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -39,11 +41,10 @@ public class ApplicationProperties {
     }
 
     private static void tryLoad(final File propertiesFile) {
-        try {
-            properties.load(new FileInputStream(propertiesFile));
+        try (FileInputStream fileInputStream = new FileInputStream(propertiesFile)) {
+            properties.load(fileInputStream);
         } catch (IOException e) {
-            // TODO replace with custom exception
-            e.printStackTrace();
+            throw new DiskIOException(String.format("Cannot load property file '%s'", propertiesFile), e);
         }
     }
 

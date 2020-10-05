@@ -20,10 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * TODO tests
- * if game pick not game owner
- */
 public class ChooseGamePhaseExecutor implements PhaseExecutor {
 
     private final ChatId chatId;
@@ -35,7 +31,7 @@ public class ChooseGamePhaseExecutor implements PhaseExecutor {
     }
 
     @Override
-    public Optional<ResponseMessage> initiation(ChatId chatId) {
+    public Optional<ResponseMessage> initiation() {
         final NavigationResponseMessage initMessage = new NavigationResponseMessage(buildMenu(), chatId);
         return Optional.of(initMessage);
     }

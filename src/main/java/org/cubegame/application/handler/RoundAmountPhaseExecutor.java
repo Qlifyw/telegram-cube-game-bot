@@ -28,7 +28,7 @@ public class RoundAmountPhaseExecutor implements PhaseExecutor {
     }
 
     @Override
-    public Optional<ResponseMessage> initiation(ChatId chatId) {
+    public Optional<ResponseMessage> initiation() {
         final TextResponseMessage initMessage = new TextResponseMessage("Specify rounds amount for win", chatId);
         return Optional.of(initMessage);
     }
