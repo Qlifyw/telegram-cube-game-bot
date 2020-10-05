@@ -35,6 +35,9 @@ public class PhaseExecutorFactory {
             case NUMBER_OF_PLAYERS:
                 executor = new PlayersAmountPhaseExecutor(chatId, gameRepository);
                 break;
+            case NUMBER_OF_ROUNDS:
+                executor = new RoundAmountPhaseExecutor(chatId, gameRepository);
+                break;
             case AWAIT_PLAYERS:
                 executor = new PlayersAwaitingPhaseExecutor(chatId, gameRepository);
                 break;

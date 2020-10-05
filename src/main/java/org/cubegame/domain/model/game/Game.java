@@ -13,7 +13,8 @@ public class Game {
     private final GameId gameId;
     private final ChatId chatId;
     private final String gameName;
-    private final int numerOfPlayers;
+    private final int numberOfPlayers;
+    private final int numberOfRounds;
     private final Phase phase;
     private final List<Player> players;
     private final UserId owner;
@@ -24,7 +25,8 @@ public class Game {
             final ChatId chatId,
             final Phase phase,
             final String gameName,
-            int numerOfPlayers,
+            int numberOfPlayers,
+            final int numberOfRounds,
             final List<Player> players,
             final UserId owner
     ) {
@@ -32,7 +34,8 @@ public class Game {
         this.chatId = chatId;
         this.phase = phase;
         this.gameName = gameName;
-        this.numerOfPlayers = numerOfPlayers;
+        this.numberOfPlayers = numberOfPlayers;
+        this.numberOfRounds = numberOfRounds;
         this.players = players;
         this.owner = owner;
     }
@@ -45,8 +48,8 @@ public class Game {
         return gameName;
     }
 
-    public int getNumerOfPlayers() {
-        return numerOfPlayers;
+    public int getNumberOfPlayers() {
+        return numberOfPlayers;
     }
 
     public UserId getOwner() {
@@ -66,5 +69,9 @@ public class Game {
             return Collections.emptyList();
         else
             return players;
+    }
+
+    public int getNumberOfRounds() {
+        return numberOfRounds;
     }
 }

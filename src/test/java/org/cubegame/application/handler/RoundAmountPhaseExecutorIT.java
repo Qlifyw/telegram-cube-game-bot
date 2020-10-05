@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class PlayersAmountPhaseExecutorIT {
+class RoundAmountPhaseExecutorIT {
     private static final String BOT_NAME = "my-bot";
     private static final ApplicationProperties applicationProperties = new ApplicationProperties(BOT_NAME);
     private static final SpeechFactory speechFactory = new SpeechFactory(applicationProperties);
@@ -46,7 +46,6 @@ class PlayersAmountPhaseExecutorIT {
     private static final Dice DICE = null;
 
     private static final String GAME_NAME = "cube-game";
-    private static final long PLAYERS_AMOUNT = 2;
     private static final long ROUNDS_AMOUNT = 2;
 
     @Test
@@ -56,13 +55,12 @@ class PlayersAmountPhaseExecutorIT {
 
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
 
-        final Speech speech = speechFactory.of(String.format("@%s %d", applicationProperties.getBotName(), PLAYERS_AMOUNT));
+        final Speech speech = speechFactory.of(String.format("@%s %d", applicationProperties.getBotName(), ROUNDS_AMOUNT));
         final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, speech, DICE);
         final List<ResponseMessage> responses = eventHandler.handle(message);
 
-        // TODO get phase from DB
         final PhaseExecutor phaseExecutor = phaseExecutorFactory.newInstance(
-                Phase.getNextFor(Phase.NUMBER_OF_PLAYERS),
+                Phase.getNextFor(Phase.NUMBER_OF_ROUNDS),
                 message.getChatId()
         );
 
@@ -79,6 +77,25 @@ class PlayersAmountPhaseExecutorIT {
                 );
     }
 
+    @ParameterizedTest
+    @MethodSource("invalidNumbers")
+    @DisplayName("Failed when specified invalid amount")
+    void failedWhenInvalidNumber(Speech speech) {
+        final Message msgTemplate = new Message(CHAT_ID, USER_ID, FIRST_NAME, speechFactory.of(""), DICE);
+
+        CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
+
+        final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, speech, DICE);
+        final List<ResponseMessage> responses = eventHandler.handle(message);
+
+        assertFalse(responses.isEmpty());
+        assertEquals(1, responses.size());
+
+        final ResponseMessage responseMessage = responses.get(0);
+        assertEquals(message.getChatId(), responseMessage.getChatId());
+        assertTrue(responseMessage.getMessage().contains("Invalid"));
+    }
+
     @Test
     @DisplayName("Skip if user is not owner")
     void skipMessageIfNotTagged() {
@@ -86,7 +103,7 @@ class PlayersAmountPhaseExecutorIT {
 
         final Message msgTemplate = new Message(CHAT_ID, USER_ID, FIRST_NAME, speechFactory.of(GAME_NAME), DICE);
 
-        final Speech speech = speechFactory.of(String.format("@%s %d", applicationProperties.getBotName(), PLAYERS_AMOUNT));
+        final Speech speech = speechFactory.of(String.format("@%s %d", applicationProperties.getBotName(), ROUNDS_AMOUNT));
         final Message message = new Message(CHAT_ID, anotherUserId, FIRST_NAME, speech, DICE);
 
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
@@ -108,17 +125,25 @@ class PlayersAmountPhaseExecutorIT {
     private static Stream<Arguments> ignoredMessages() {
         return Stream.of(
                 Arguments.of(speechFactory.of("Hi averyone!")),
-                Arguments.of(speechFactory.of(String.valueOf(PLAYERS_AMOUNT))),
-                Arguments.of(speechFactory.of(String.format("@%s%d", applicationProperties.getBotName(), PLAYERS_AMOUNT))),
+                Arguments.of(speechFactory.of(String.valueOf(ROUNDS_AMOUNT))),
+                Arguments.of(speechFactory.of(String.format("@%s%d", applicationProperties.getBotName(), ROUNDS_AMOUNT))),
                 Arguments.of(speechFactory.of(String.format("@%s", applicationProperties.getBotName()))),
                 Arguments.of(speechFactory.of(String.format("@%s %s %s", applicationProperties.getBotName(), "a", "b"))),
-                Arguments.of(speechFactory.of(String.format("%d@%s", PLAYERS_AMOUNT, applicationProperties.getBotName())))
+                Arguments.of(speechFactory.of(String.format("%d@%s", ROUNDS_AMOUNT, applicationProperties.getBotName())))
+        );
+    }
+
+
+    private static Stream<Arguments> invalidNumbers() {
+        return Stream.of(
+                Arguments.of(speechFactory.of(String.format("@%s %d", applicationProperties.getBotName(), 0))),
+                Arguments.of(speechFactory.of(String.format("@%s %f", applicationProperties.getBotName(), 1.2))),
+                Arguments.of(speechFactory.of(String.format("@%s %d", applicationProperties.getBotName(), -1)))
         );
     }
 
     private static final List<Reply> commands = Arrays.asList(
             new Reply(USER_ID, speechFactory.of(String.format("%s@%s", Command.START.getValue(), BOT_NAME))),
-            new Reply(USER_ID, speechFactory.of(GAME_NAME)),
-            new Reply(USER_ID, speechFactory.of(String.format("@%s %d", BOT_NAME, ROUNDS_AMOUNT)))
+            new Reply(USER_ID, speechFactory.of(GAME_NAME))
     );
 }

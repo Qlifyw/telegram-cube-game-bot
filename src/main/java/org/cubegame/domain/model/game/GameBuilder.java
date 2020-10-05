@@ -12,7 +12,8 @@ public class GameBuilder {
     private ChatId chatId;
     private Phase phase;
     private String gameName;
-    private int numerOfPlayers;
+    private int numberOfPlayers;
+    private int numberOfRounds;
     private List<Player> players;
     private UserId owner;
 
@@ -32,8 +33,8 @@ public class GameBuilder {
         return this;
     }
 
-    public GameBuilder setNumerOfPlayers(final int numerOfPlayers) {
-        this.numerOfPlayers = numerOfPlayers;
+    public GameBuilder setNumberOfPlayers(final int numberOfPlayers) {
+        this.numberOfPlayers = numberOfPlayers;
         return this;
     }
 
@@ -52,19 +53,24 @@ public class GameBuilder {
         return this;
     }
 
+    public GameBuilder setNumberOfRounds(final int numberOfRounds) {
+        this.numberOfRounds = numberOfRounds;
+        return this;
+    }
+
     public static GameBuilder from(Game game) {
         return new GameBuilder()
                 .setGameId(game.getGameId())
                 .setChatId(game.getChatId())
                 .setGameName(game.getGameName())
                 .setPhase(game.getPhase())
-                .setNumerOfPlayers(game.getNumerOfPlayers())
+                .setNumberOfPlayers(game.getNumberOfPlayers())
+                .setNumberOfRounds(game.getNumberOfRounds())
                 .setPlayers(game.getPlayers())
                 .setOwner(game.getOwner());
     }
 
     public Game build() {
-        return new Game(gameId, chatId, phase, gameName, numerOfPlayers, players, owner);
+        return new Game(gameId, chatId, phase, gameName, numberOfPlayers, numberOfRounds, players, owner);
     }
-
 }

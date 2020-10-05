@@ -10,8 +10,8 @@ public final class Comment implements Speech {
     }
 
     @Override
-    public SpeaehType getType() {
-        return SpeaehType.COMMENT;
+    public SpeechType getType() {
+        return SpeechType.COMMENT;
     }
 
     @Override

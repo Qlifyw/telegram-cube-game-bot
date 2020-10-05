@@ -10,8 +10,8 @@ public final class Appeal implements Speech {
     }
 
     @Override
-    public SpeaehType getType() {
-        return SpeaehType.APEAL;
+    public SpeechType getType() {
+        return SpeechType.APEAL;
     }
 
     @Override

@@ -1,14 +1,17 @@
 package org.cubegame.domain.model.round;
 
-import java.util.List;
+import org.cubegame.domain.model.game.Player;
+
+import java.util.Comparator;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Round {
     private final UUID id;
-    private final List<Outcome> results;
+    private final Outcomes results;
 
-    public Round(final UUID id, final List<Outcome> results) {
-        this.id = id;
+    public Round(final Outcomes results) {
+        this.id = UUID.randomUUID();
         this.results = results;
     }
 
@@ -16,7 +19,13 @@ public class Round {
         return id;
     }
 
-    public List<Outcome> getResults() {
+    public Outcomes getResults() {
         return results;
+    }
+
+    public Optional<Player> getWinner() {
+        return results.stream()
+                .max(Comparator.comparing(Outcome::getPoints))
+                .map(Outcome::getPlayer);
     }
 }

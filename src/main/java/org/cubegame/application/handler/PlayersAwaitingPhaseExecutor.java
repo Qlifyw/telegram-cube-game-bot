@@ -58,7 +58,7 @@ public class PlayersAwaitingPhaseExecutor implements PhaseExecutor {
 
         awaitedPlayers.add(newPlayer);
 
-        if (awaitedPlayers.size() == storedGame.getNumerOfPlayers()) {
+        if (awaitedPlayers.size() == storedGame.getNumberOfPlayers()) {
             final ArrayList<Player> currentPlayers = new ArrayList<>(storedGame.getPlayers());
             final List<Player> updatedPlayers = new ArrayList<>(CollectionUtils.union(currentPlayers, awaitedPlayers));
 
@@ -73,7 +73,7 @@ public class PlayersAwaitingPhaseExecutor implements PhaseExecutor {
         } else {
             return new IterableResult(
                     new TextResponseMessage(
-                            String.format("Await for %d players", storedGame.getNumerOfPlayers() - awaitedPlayers.size()),
+                            String.format("Await for %d players", storedGame.getNumberOfPlayers() - awaitedPlayers.size()),
                             message.getChatId()
                     )
             );

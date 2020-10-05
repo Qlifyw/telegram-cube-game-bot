@@ -14,8 +14,6 @@ import org.cubegame.infrastructure.model.message.TextualResponseMessage;
 import org.cubegame.infrastructure.properties.ApplicationProperties;
 import org.cubegame.infrastructure.repository.game.GameRepository;
 import org.cubegame.infrastructure.repository.game.GameRepositoryImpl;
-import org.cubegame.infrastructure.repository.round.RoundRepository;
-import org.cubegame.infrastructure.repository.round.RoundRepositoryImpl;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -32,7 +30,6 @@ public class CubeGameBot extends TelegramLongPollingBot {
     private final SpeechFactory speechFactory = new SpeechFactory(properties);
 
     private final GameRepository gameRepository = new GameRepositoryImpl();
-    private final RoundRepository roundRepository = new RoundRepositoryImpl();
     private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, properties);
 
     @Override

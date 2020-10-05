@@ -46,6 +46,7 @@ class PlayersAwaitingPhaseExecutorIT {
 
     private static final String GAME_NAME = "cube-game";
     private static final long PLAYERS_AMOUNT = 2;
+    private static final long ROUNDS_AMOUNT = 2;
 
     @Test
     @DisplayName("Success when all players connected")
@@ -123,6 +124,7 @@ class PlayersAwaitingPhaseExecutorIT {
     private static final List<Reply> commands = Arrays.asList(
             new Reply(USER_ID_1, speechFactory.of(String.format("%s@%s", Command.START.getValue(), BOT_NAME))),
             new Reply(USER_ID_1, speechFactory.of(GAME_NAME)),
+            new Reply(USER_ID_1, speechFactory.of(String.format("@%s %d", BOT_NAME, ROUNDS_AMOUNT))),
             new Reply(USER_ID_1, speechFactory.of(String.format("@%s %d", BOT_NAME, PLAYERS_AMOUNT)))
     );
 }

@@ -7,10 +7,11 @@ import java.util.stream.Stream;
 public enum Phase {
     EMPTY(0),
     CHOOSE_GAME(1),
-    NUMBER_OF_PLAYERS(2),
-    AWAIT_PLAYERS(3),
-    STARTED(4),
-    COMPLETED(5);
+    NUMBER_OF_ROUNDS(2),
+    NUMBER_OF_PLAYERS(3),
+    AWAIT_PLAYERS(4),
+    STARTED(5),
+    COMPLETED(6);
 
     private final int order;
 

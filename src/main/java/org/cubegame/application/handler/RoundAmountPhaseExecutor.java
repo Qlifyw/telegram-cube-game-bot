@@ -1,7 +1,8 @@
 package org.cubegame.application.handler;
 
+import org.cubegame.application.model.FailedResult;
 import org.cubegame.application.model.PhaseStatebleResponse;
-import org.cubegame.application.model.ProcessedResult;
+import org.cubegame.application.model.ProceduralResult;
 import org.cubegame.application.model.SkipedResult;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.exceptions.GameNoFoundException;
@@ -16,19 +17,19 @@ import org.cubegame.infrastructure.repository.game.GameRepository;
 
 import java.util.Optional;
 
-public class PlayersAmountPhaseExecutor implements PhaseExecutor {
+public class RoundAmountPhaseExecutor implements PhaseExecutor {
 
     private final ChatId chatId;
     private final GameRepository gameRepository;
 
-    public PlayersAmountPhaseExecutor(final ChatId chatId, final GameRepository gameRepository) {
+    public RoundAmountPhaseExecutor(final ChatId chatId, final GameRepository gameRepository) {
         this.gameRepository = gameRepository;
         this.chatId = chatId;
     }
 
     @Override
     public Optional<ResponseMessage> initiation(ChatId chatId) {
-        final TextResponseMessage initMessage = new TextResponseMessage("Specify players amount", chatId);
+        final TextResponseMessage initMessage = new TextResponseMessage("Specify rounds amount for win", chatId);
         return Optional.of(initMessage);
     }
 
@@ -48,21 +49,21 @@ public class PlayersAmountPhaseExecutor implements PhaseExecutor {
         if (!message.getAuthor().getUserId().equals(storedGame.getOwner()))
             return new SkipedResult();
 
-        final int numberOfPlayers;
+        final int numberOfRounds;
         try {
-            numberOfPlayers = Integer.parseInt(message.getSpeech().getText());
+            numberOfRounds = Integer.parseInt(message.getSpeech().getText());
         } catch (NumberFormatException exception) {
-            return new ProcessedResult(
+            return new FailedResult(
                     new ErrorResponseMessage(
-                            "Invalid number of players. Please enter integer value.",
+                            "Invalid number of round. Please enter integer value.",
                             message.getChatId()
                     )
             );
         }
-        if (numberOfPlayers <= 0) {
-            return new ProcessedResult(
+        if (numberOfRounds <= 0) {
+            return new FailedResult(
                     new ErrorResponseMessage(
-                            "Invalid number of players. Number must be greater than 0.",
+                            "Invalid number of round. Number must be greater than 0.",
                             message.getChatId()
                     )
             );
@@ -72,20 +73,15 @@ public class PlayersAmountPhaseExecutor implements PhaseExecutor {
 
         final Game updatedGame = GameBuilder.from(storedGame)
                 .setPhase(nextPhase)
-                .setNumberOfPlayers(numberOfPlayers)
+                .setNumberOfRounds(numberOfRounds)
                 .build();
         gameRepository.save(updatedGame);
 
-        return new ProcessedResult(
-                new TextResponseMessage(
-                        String.format("Await for %d players", updatedGame.getNumberOfPlayers()),
-                        message.getChatId()
-                )
-        );
+        return new ProceduralResult();
     }
 
     @Override
     public Phase getPhase() {
-        return Phase.NUMBER_OF_PLAYERS;
+        return Phase.NUMBER_OF_ROUNDS;
     }
 }
