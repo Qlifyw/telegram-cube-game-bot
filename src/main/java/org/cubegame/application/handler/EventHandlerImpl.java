@@ -68,10 +68,12 @@ public class EventHandlerImpl implements EventHandler {
                 phaseExecutors.put(receivedMessage.getChatId(), nextExecutor);
                 break;
             }
+
             case FAILED:
                 final ResponseMessage fail = ((FailedResult) processingResult).getResponseMessage();
                 responses.add(fail);
                 break;
+
             case PROCEDURAL: {
                 phaseExecutors.remove(receivedMessage.getChatId());
                 final PhaseExecutor nextExecutor = phaseExecutorFactory.newInstance(Phase.getNextFor(phase), receivedMessage.getChatId());
@@ -81,26 +83,17 @@ public class EventHandlerImpl implements EventHandler {
                 phaseExecutors.put(receivedMessage.getChatId(), nextExecutor);
                 break;
             }
+
             case ITERABLE:
                 final ResponseMessage iteration = ((IterableResult) processingResult).getResponseMessage();
                 responses.add(iteration);
                 break;
+
             case SKIPPED:
                 break;
         }
 
         return responses;
-
-
-        /*
-            ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        KeyboardRow keyboardButtons = new KeyboardRow();
-        keyboardButtons.add("/start");
-        keyboardButtons.add("/stop");
-        replyKeyboardMarkup.setKeyboard(Collections.singletonList(keyboardButtons));
-        replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboard(true);
-         */
     }
 
 }

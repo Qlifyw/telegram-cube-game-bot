@@ -11,7 +11,6 @@ import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.game.GameBuilder;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.message.Message;
-import org.cubegame.infrastructure.model.message.ErrorResponseMessage;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextResponseMessage;
 import org.cubegame.infrastructure.repository.game.GameRepository;
@@ -40,8 +39,7 @@ public final class EmptyPhaseExecutor implements PhaseExecutor {
 
         final String unvalidatedCommand = message.getSpeech().getText();
 
-        final Optional<CommandValidator.ValidatedCommand> validatedCommand = commandValidator
-                .validate(unvalidatedCommand);
+        final Optional<CommandValidator.ValidatedCommand> validatedCommand = commandValidator.validate(unvalidatedCommand);
 
         if (!validatedCommand.isPresent())
             return new SkipedResult();
@@ -50,7 +48,6 @@ public final class EmptyPhaseExecutor implements PhaseExecutor {
             case START:
                 final Phase nextPhase = Phase.getNextFor(getPhase());
 
-                final ChatId chatId = message.getChatId();
                 final Game createdGame = new GameBuilder()
                         .setChatId(chatId)
                         .setOwner(message.getAuthor().getUserId())
@@ -61,12 +58,11 @@ public final class EmptyPhaseExecutor implements PhaseExecutor {
                 return new ProceduralResult();
 
             case STOP:
-                return new FailedResult(
-                        new TextResponseMessage(
-                                String.format("Command %s is not implemented yet.", Command.STOP),
-                                message.getChatId()
-                        )
+                final TextResponseMessage failDescription = new TextResponseMessage(
+                        String.format("Command %s is not implemented yet.", Command.STOP),
+                        message.getChatId()
                 );
+                return new FailedResult(failDescription);
         }
 
         return new SkipedResult();
@@ -75,13 +71,6 @@ public final class EmptyPhaseExecutor implements PhaseExecutor {
     @Override
     public Phase getPhase() {
         return Phase.EMPTY;
-    }
-
-    private ResponseMessage invalidCommand(String command, ChatId chatId) {
-        return new ErrorResponseMessage(
-                String.format("Invalid command: '%s'", command),
-                chatId
-        );
     }
 
 }

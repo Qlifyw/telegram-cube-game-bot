@@ -17,6 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,14 +68,13 @@ public class ChooseGamePhaseExecutor implements PhaseExecutor {
     }
 
     private InlineKeyboardMarkup buildMenu() {
-        final InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton("cube");
-        inlineKeyboardButton1.setCallbackData("cube-game");
-        final InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton("darts");
-        inlineKeyboardButton2.setUrl("https://google.com");
+        final InlineKeyboardButton cubeGameButton = new InlineKeyboardButton("cube");
+        cubeGameButton.setCallbackData("cube-game");
+        final InlineKeyboardButton dartsGameButton = new InlineKeyboardButton("darts");
+        dartsGameButton.setUrl("https://google.com");
 
-        final List<InlineKeyboardButton> buttons = Arrays.asList(inlineKeyboardButton1, inlineKeyboardButton2);
-        InlineKeyboardMarkup menu = new InlineKeyboardMarkup(Arrays.asList(buttons));
-        return menu;
+        final List<InlineKeyboardButton> buttonsRaw = Arrays.asList(cubeGameButton, dartsGameButton);
+        return new InlineKeyboardMarkup(Collections.singletonList(buttonsRaw));
     }
 
 }

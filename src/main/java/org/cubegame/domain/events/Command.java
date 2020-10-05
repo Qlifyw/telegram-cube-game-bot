@@ -15,17 +15,11 @@ public enum Command {
 
     private final String value;
 
-    private final static Map<String, Command> enumsByValue = Stream.of(values())
+    private static final Map<String, Command> enumsByValue = Stream.of(values())
             .collect(Collectors.toMap(
                     command -> command.getValue().toUpperCase(),
                     command -> command)
             );
-
-    static {
-        for (Command item : values()) {
-            enumsByValue.put(item.value.toUpperCase(), item);
-        }
-    }
 
     Command(String value) {
         this.value = value;

@@ -1,11 +1,10 @@
 package org.cubegame.domain.model.message.speach;
 
-public final class Comment implements Speech {
+final class Comment implements Speech {
 
     private final String text;
 
-    // TODO make it private
-    public Comment(final String text) {
+    Comment(final String text) {
         this.text = text;
     }
 

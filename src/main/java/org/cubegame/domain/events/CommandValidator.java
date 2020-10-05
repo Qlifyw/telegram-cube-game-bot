@@ -2,10 +2,13 @@ package org.cubegame.domain.events;
 
 import org.cubegame.domain.exceptions.EnumException;
 import org.cubegame.infrastructure.properties.ApplicationProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
 public final class CommandValidator {
+    private static final Logger LOG = LoggerFactory.getLogger(CommandValidator.class);
 
     private final ApplicationProperties properties;
 
@@ -28,17 +31,15 @@ public final class CommandValidator {
         final Command command;
         try {
             command = Command.from(commandPart);
-            ;
         } catch (EnumException exception) {
-            // TODO log it
-            System.out.println(exception.toString());
+            LOG.error("Cannot find command {}", commandPart);
             return Optional.empty();
         }
         return Optional.of(new ValidatedCommand(command));
     }
 
     public static final class ValidatedCommand {
-        final private Command value;
+        private final Command value;
 
         private ValidatedCommand(final Command value) {
             this.value = value;

@@ -25,7 +25,7 @@ public class Game {
             final ChatId chatId,
             final Phase phase,
             final String gameName,
-            int numberOfPlayers,
+            final int numberOfPlayers,
             final int numberOfRounds,
             final List<Player> players,
             final UserId owner
