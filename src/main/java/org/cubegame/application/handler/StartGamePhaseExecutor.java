@@ -10,6 +10,7 @@ import org.cubegame.domain.model.dice.Dice;
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.game.Player;
 import org.cubegame.domain.model.identifier.ChatId;
+import org.cubegame.domain.model.identifier.GameId;
 import org.cubegame.domain.model.identifier.UserId;
 import org.cubegame.domain.model.message.Message;
 import org.cubegame.domain.model.round.Outcome;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class StartGamePhaseExecutor implements PhaseExecutor {
@@ -42,7 +44,7 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
 
     private final int numberOfRounds;
     private Outcomes outcomes = new Outcomes();
-    private final GameSession gameSession = new GameSession();
+    private final GameSession gameSession;
 
     public StartGamePhaseExecutor(
             final ChatId chatId,
@@ -56,6 +58,8 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
         this.storedGame = gameRepository
                 .get(this.chatId)
                 .orElseThrow(() -> new GameNoFoundException(this.chatId));
+
+        this.gameSession = new GameSession(storedGame.getGameId());
 
         this.playersIds = this.storedGame
                 .getPlayers()
@@ -101,7 +105,7 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
 
                 final String resultBuilder = "Round results:" + "\n" + results;
 
-                // TODO save round
+                roundRepository.save(currentRound);
                 gameSession.completeActiveRound();
 
 
@@ -156,6 +160,8 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
     }
 
     public static void main(String[] args) {
+        final GameId gameId = new GameId(UUID.randomUUID());
+
         final Outcomes outcomes1 = new Outcomes();
         outcomes1.add(new Outcome(new Player(new UserId(1l), "1"), new Points(1)));
         outcomes1.add(new Outcome(new Player(new UserId(2l), "2"), new Points(2)));
@@ -179,10 +185,10 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
 
 
         final List<Round> rounds = new ArrayList();
-        rounds.add(new Round(outcomes1));
-        rounds.add(new Round(outcomes2));
-        rounds.add(new Round(outcomes3));
-        rounds.add(new Round(outcomes4));
+        rounds.add(new Round(outcomes1, gameId));
+        rounds.add(new Round(outcomes2, gameId));
+        rounds.add(new Round(outcomes3, gameId));
+        rounds.add(new Round(outcomes4, gameId));
 
 
         final Map<Player, Long> collect = rounds

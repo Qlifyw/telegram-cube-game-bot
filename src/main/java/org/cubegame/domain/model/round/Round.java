@@ -1,6 +1,7 @@
 package org.cubegame.domain.model.round;
 
 import org.cubegame.domain.model.game.Player;
+import org.cubegame.domain.model.identifier.GameId;
 
 import java.util.Comparator;
 import java.util.Optional;
@@ -8,10 +9,12 @@ import java.util.UUID;
 
 public class Round {
     private final UUID id;
+    private final GameId relatedGame;
     private final Outcomes results;
 
-    public Round(final Outcomes results) {
+    public Round(final Outcomes results, final GameId relatedGame) {
         this.id = UUID.randomUUID();
+        this.relatedGame = relatedGame;
         this.results = results;
     }
 
@@ -21,6 +24,10 @@ public class Round {
 
     public Outcomes getResults() {
         return results;
+    }
+
+    public GameId getRelatedGame() {
+        return relatedGame;
     }
 
     public Optional<Player> getWinner() {

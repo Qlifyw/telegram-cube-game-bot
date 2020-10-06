@@ -32,7 +32,7 @@ public final class CommandValidator {
         try {
             command = Command.from(commandPart);
         } catch (EnumException exception) {
-            LOG.error("Cannot find command {}", commandPart);
+            LOG.error("Cannot find command '{}'", commandPart);
             return Optional.empty();
         }
         return Optional.of(new ValidatedCommand(command));
