@@ -10,18 +10,9 @@ public class SpeechFactory {
         this.applicationProperties = applicationProperties;
     }
 
-    // TODO SpeechFactory.EMPTY_SPEECH
+    public static final Speech EMPTY_SPEECH = new Comment("");
 
     public Speech of(String text) {
-//        if (!text.startsWith("@"+applicationProperties.getBotName()))
-//            return Optional.empty();
-
-        /**
-         * TODO handle cases:
-         * '  @Bot 123'
-         * '@Bot 123 qwe'
-         */
-
 
         /* @BotName 123 */
         final String[] split = text.split(" ");
@@ -29,7 +20,6 @@ public class SpeechFactory {
         if (split.length != CommandPart.values().length)
             return new Comment(text);
 
-        // TODO delete .trim()
         final String message = split[CommandPart.TEXT_PART.getOrder()].trim();
         final String botName = split[CommandPart.BOT_NAME_PART.getOrder()];
 

@@ -20,6 +20,7 @@ import org.cubegame.domain.model.session.GameSession;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextResponseMessage;
 import org.cubegame.infrastructure.repository.game.GameRepository;
+import org.cubegame.infrastructure.repository.round.RoundRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +35,7 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
 
     private final ChatId chatId;
     private final GameRepository gameRepository;
+    private final RoundRepository roundRepository;
 
     private final Game storedGame;
     private final Set<UserId> playersIds;
@@ -42,8 +44,13 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
     private Outcomes outcomes = new Outcomes();
     private final GameSession gameSession = new GameSession();
 
-    public StartGamePhaseExecutor(final ChatId chatId, final GameRepository gameRepository) {
+    public StartGamePhaseExecutor(
+            final ChatId chatId,
+            final GameRepository gameRepository,
+            final RoundRepository roundRepository
+    ) {
         this.gameRepository = gameRepository;
+        this.roundRepository = roundRepository;
         this.chatId = chatId;
 
         this.storedGame = gameRepository
@@ -98,7 +105,6 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
                 gameSession.completeActiveRound();
 
 
-
                 // ============
 
                 // TODO hasWinner()
@@ -130,11 +136,6 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
                 }
 
                 // ============
-
-
-
-
-
 
 
                 return new IterableResult(
@@ -193,7 +194,6 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
 
         final Long max = Collections.max(collect.values());
         final LinkedHashMap<Object, Object> objectObjectLinkedHashMap = new LinkedHashMap<>();
-
 
 
 //        final OptionalLong max = collect.entrySet()

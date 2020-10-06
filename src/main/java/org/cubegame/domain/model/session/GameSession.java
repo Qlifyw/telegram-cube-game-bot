@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Stack;
 
 public class GameSession {
-    Stack<Round> rounds = new Stack<>();
+    private final Stack<Round> rounds = new Stack<>();
 
     public GameSession() {
         this.rounds.push(new Round(new Outcomes()));
@@ -18,10 +18,9 @@ public class GameSession {
         return this.rounds.peek();
     }
 
-    // TODO write docs
     public Round completeActiveRound() {
         final Outcomes nextRoundOutcomes = new Outcomes();
-        final Round nextRound = new Round(new Outcomes());
+        final Round nextRound = new Round(nextRoundOutcomes);
         this.rounds.push(nextRound);
         return nextRound;
     }

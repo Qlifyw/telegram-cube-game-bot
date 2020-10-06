@@ -11,6 +11,7 @@ import org.cubegame.domain.model.message.Message;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.properties.ApplicationProperties;
 import org.cubegame.infrastructure.repository.game.GameRepository;
+import org.cubegame.infrastructure.repository.round.RoundRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,14 +22,20 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EventHandlerImpl implements EventHandler {
 
     private final GameRepository gameRepository;
+    private final RoundRepository roundRepository;
     private final PhaseExecutorFactory phaseExecutorFactory;
     private final ApplicationProperties properties;
 
     private final Map<ChatId, PhaseExecutor> phaseExecutors = new ConcurrentHashMap<>();
 
-    public EventHandlerImpl(final GameRepository gameRepository, final ApplicationProperties properties) {
+    public EventHandlerImpl(
+            final GameRepository gameRepository,
+            final RoundRepository roundRepository,
+            final ApplicationProperties properties
+    ) {
         this.gameRepository = gameRepository;
-        this.phaseExecutorFactory = new PhaseExecutorFactory(gameRepository, properties);
+        this.roundRepository = roundRepository;
+        this.phaseExecutorFactory = new PhaseExecutorFactory(gameRepository, roundRepository, properties);
         this.properties = properties;
     }
 

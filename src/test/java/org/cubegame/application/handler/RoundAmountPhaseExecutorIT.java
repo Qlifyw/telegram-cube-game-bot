@@ -15,6 +15,8 @@ import org.cubegame.infrastructure.model.message.ResponseType;
 import org.cubegame.infrastructure.properties.ApplicationProperties;
 import org.cubegame.infrastructure.repository.game.GameRepository;
 import org.cubegame.infrastructure.repository.game.GameRepositoryImpl;
+import org.cubegame.infrastructure.repository.round.RoundRepository;
+import org.cubegame.infrastructure.repository.round.RoundRepositoryImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,9 +38,10 @@ class RoundAmountPhaseExecutorIT {
     private static final SpeechFactory speechFactory = new SpeechFactory(applicationProperties);
 
     private final GameRepository gameRepository = new GameRepositoryImpl();
-    private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, applicationProperties);
+    private final RoundRepository roundRepository = new RoundRepositoryImpl();
+    private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, roundRepository, applicationProperties);
 
-    private final PhaseExecutorFactory phaseExecutorFactory = new PhaseExecutorFactory(gameRepository, applicationProperties);
+    private final PhaseExecutorFactory phaseExecutorFactory = new PhaseExecutorFactory(gameRepository, roundRepository, applicationProperties);
 
     private static final ChatId CHAT_ID = new ChatId(123L);
     private static final UserId USER_ID = new UserId(456L);
@@ -51,7 +54,7 @@ class RoundAmountPhaseExecutorIT {
     @Test
     @DisplayName("Success when specified valid amount")
     void suceessWhenChooseGame() {
-        final Message msgTemplate = new Message(CHAT_ID, USER_ID, FIRST_NAME, speechFactory.of(""), DICE);
+        final Message msgTemplate = new Message(CHAT_ID, USER_ID, FIRST_NAME, SpeechFactory.EMPTY_SPEECH, DICE);
 
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
 
@@ -81,7 +84,7 @@ class RoundAmountPhaseExecutorIT {
     @MethodSource("invalidNumbers")
     @DisplayName("Failed when specified invalid amount")
     void failedWhenInvalidNumber(Speech speech) {
-        final Message msgTemplate = new Message(CHAT_ID, USER_ID, FIRST_NAME, speechFactory.of(""), DICE);
+        final Message msgTemplate = new Message(CHAT_ID, USER_ID, FIRST_NAME, SpeechFactory.EMPTY_SPEECH, DICE);
 
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
 

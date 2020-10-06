@@ -13,6 +13,8 @@ import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.properties.ApplicationProperties;
 import org.cubegame.infrastructure.repository.game.GameRepository;
 import org.cubegame.infrastructure.repository.game.GameRepositoryImpl;
+import org.cubegame.infrastructure.repository.round.RoundRepository;
+import org.cubegame.infrastructure.repository.round.RoundRepositoryImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,15 +35,16 @@ class StartGamePhaseExecutorIT {
     private static final SpeechFactory speechFactory = new SpeechFactory(applicationProperties);
 
     private final GameRepository gameRepository = new GameRepositoryImpl();
-    private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, applicationProperties);
+    private final RoundRepository roundRepository = new RoundRepositoryImpl();
+    private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, roundRepository, applicationProperties);
 
-    private final PhaseExecutorFactory phaseExecutorFactory = new PhaseExecutorFactory(gameRepository, applicationProperties);
+    private final PhaseExecutorFactory phaseExecutorFactory = new PhaseExecutorFactory(gameRepository, roundRepository, applicationProperties);
 
     private static final ChatId CHAT_ID = new ChatId(123L);
     private static final UserId USER_ID_1 = new UserId(456L);
     private static final UserId USER_ID_2 = new UserId(678L);
 
-    private static final Speech SPEECH = speechFactory.of("");
+    private static final Speech SPEECH = SpeechFactory.EMPTY_SPEECH;
 
     private static final String GAME_NAME = "cube-game";
     private static final long PLAYERS_AMOUNT = 2;
@@ -50,18 +53,18 @@ class StartGamePhaseExecutorIT {
     @Test
     @DisplayName("Success when all players moved")
     void suceessWhenAllPlayersMoved() {
-        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, generateUserName(USER_ID_1), speechFactory.of(""), null);
+        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, generateUserName(USER_ID_1), SpeechFactory.EMPTY_SPEECH, null);
 
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
 
         final Dice firstDice = new Dice(4);
-        final Message message = new Message(CHAT_ID, USER_ID_1, generateUserName(USER_ID_1), speechFactory.of(""), firstDice);
+        final Message message = new Message(CHAT_ID, USER_ID_1, generateUserName(USER_ID_1), SpeechFactory.EMPTY_SPEECH, firstDice);
         final List<ResponseMessage> responsesAfterFirstPlayer = eventHandler.handle(message);
 
         assertTrue(responsesAfterFirstPlayer.isEmpty());
 
         final Dice secondDice = new Dice(2);
-        final Message message2 = new Message(CHAT_ID, USER_ID_2, generateUserName(USER_ID_2), speechFactory.of(""), secondDice);
+        final Message message2 = new Message(CHAT_ID, USER_ID_2, generateUserName(USER_ID_2), SpeechFactory.EMPTY_SPEECH, secondDice);
         final List<ResponseMessage> responsesAfterSecondPlayer = eventHandler.handle(message2);
 
         assertFalse(responsesAfterSecondPlayer.isEmpty());
@@ -77,7 +80,7 @@ class StartGamePhaseExecutorIT {
     @Test
     @DisplayName("Skiped when one players moved twice")
     void skipedWhenOnePlayerMovedTwice() {
-        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, generateUserName(USER_ID_1), speechFactory.of(""), null);
+        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, generateUserName(USER_ID_1), SpeechFactory.EMPTY_SPEECH, null);
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
 
         final Dice dice = new Dice(2);

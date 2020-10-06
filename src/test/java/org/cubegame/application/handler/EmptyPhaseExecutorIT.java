@@ -12,6 +12,8 @@ import org.cubegame.infrastructure.model.message.ResponseType;
 import org.cubegame.infrastructure.properties.ApplicationProperties;
 import org.cubegame.infrastructure.repository.game.GameRepository;
 import org.cubegame.infrastructure.repository.game.GameRepositoryImpl;
+import org.cubegame.infrastructure.repository.round.RoundRepository;
+import org.cubegame.infrastructure.repository.round.RoundRepositoryImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,7 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class EmptyPhaseExecutorIT {
 
     private final GameRepository gameRepository = new GameRepositoryImpl();
-    private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, applicationProperties);
+    private final RoundRepository roundRepository = new RoundRepositoryImpl();
+    private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, roundRepository, applicationProperties);
 
     private static final String BOT_NAME = "my-bot";
     private static final ApplicationProperties applicationProperties = new ApplicationProperties(BOT_NAME);

@@ -14,6 +14,8 @@ import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.properties.ApplicationProperties;
 import org.cubegame.infrastructure.repository.game.GameRepository;
 import org.cubegame.infrastructure.repository.game.GameRepositoryImpl;
+import org.cubegame.infrastructure.repository.round.RoundRepository;
+import org.cubegame.infrastructure.repository.round.RoundRepositoryImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,9 +36,10 @@ class PlayersAwaitingPhaseExecutorIT {
     private static final SpeechFactory speechFactory = new SpeechFactory(applicationProperties);
 
     private final GameRepository gameRepository = new GameRepositoryImpl();
-    private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, applicationProperties);
+    private final RoundRepository roundRepository = new RoundRepositoryImpl();
+    private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, roundRepository, applicationProperties);
 
-    private final PhaseExecutorFactory phaseExecutorFactory = new PhaseExecutorFactory(gameRepository, applicationProperties);
+    private final PhaseExecutorFactory phaseExecutorFactory = new PhaseExecutorFactory(gameRepository, roundRepository, applicationProperties);
 
     private static final ChatId CHAT_ID = new ChatId(123L);
     private static final UserId USER_ID_1 = new UserId(456L);
@@ -51,7 +54,7 @@ class PlayersAwaitingPhaseExecutorIT {
     @Test
     @DisplayName("Success when all players connected")
     void suceessWhenChooseGame() {
-        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, speechFactory.of(""), DICE);
+        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, SpeechFactory.EMPTY_SPEECH, DICE);
 
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
 
@@ -85,7 +88,7 @@ class PlayersAwaitingPhaseExecutorIT {
     @Test
     @DisplayName("Skiped when one players connected twice")
     void skipedWhenOnePlayerConnectedTwice() {
-        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, speechFactory.of(""), DICE);
+        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, SpeechFactory.EMPTY_SPEECH, DICE);
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
 
         final Speech speech = speechFactory.of(String.format("@%s %s", applicationProperties.getBotName(), "+"));

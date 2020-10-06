@@ -9,7 +9,7 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class Outcomes implements Iterable {
+public class Outcomes implements Iterable<Outcome> {
 
     private final Map<UserId, Outcome> results = new LinkedHashMap<>();
 
@@ -34,17 +34,17 @@ public class Outcomes implements Iterable {
     }
 
     @Override
-    public Iterator iterator() {
+    public Iterator<Outcome> iterator() {
         return results.values().iterator();
     }
 
     @Override
-    public void forEach(final Consumer consumer) {
+    public void forEach(final Consumer<? super Outcome> consumer) {
         results.values().forEach(consumer);
     }
 
     @Override
-    public Spliterator spliterator() {
+    public Spliterator<Outcome> spliterator() {
         return results.values().spliterator();
     }
 

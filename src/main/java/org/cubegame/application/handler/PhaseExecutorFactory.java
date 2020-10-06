@@ -5,17 +5,21 @@ import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.infrastructure.properties.ApplicationProperties;
 import org.cubegame.infrastructure.repository.game.GameRepository;
+import org.cubegame.infrastructure.repository.round.RoundRepository;
 
 public class PhaseExecutorFactory {
 
     private final GameRepository gameRepository;
+    private final RoundRepository roundRepository;
     private final CommandValidator commandValidator;
 
     public PhaseExecutorFactory(
             final GameRepository gameRepository,
+            final RoundRepository roundRepository,
             final ApplicationProperties applicationProperties
     ) {
         this.gameRepository = gameRepository;
+        this.roundRepository = roundRepository;
         this.commandValidator = new CommandValidator(applicationProperties);
     }
 
@@ -42,7 +46,7 @@ public class PhaseExecutorFactory {
                 executor = new PlayersAwaitingPhaseExecutor(chatId, gameRepository);
                 break;
             case STARTED:
-                executor = new StartGamePhaseExecutor(chatId, gameRepository);
+                executor = new StartGamePhaseExecutor(chatId, gameRepository, roundRepository);
                 break;
             case COMPLETED:
                 executor = new CompleteGamePhaseExecutor();
