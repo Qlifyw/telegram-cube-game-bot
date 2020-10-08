@@ -3,8 +3,8 @@ package org.cubegame.application.handler;
 import org.cubegame.application.handler.stepper.CascadePhaseStepper;
 import org.cubegame.application.model.Reply;
 import org.cubegame.domain.events.Command;
-import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.dice.Dice;
+import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.identifier.UserId;
 import org.cubegame.domain.model.message.Message;
@@ -63,11 +63,9 @@ class PlayersAmountPhaseExecutorIT {
         final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, speech, DICE);
         final List<ResponseMessage> responses = eventHandler.handle(message);
 
-        // TODO get phase from DB
-        final PhaseExecutor phaseExecutor = phaseExecutorFactory.newInstance(
-                Phase.getNextFor(Phase.NUMBER_OF_PLAYERS),
-                message.getChatId()
-        );
+        final Game storedGame = gameRepository.get(CHAT_ID).get();
+        final PhaseExecutor phaseExecutor = phaseExecutorFactory
+                .newInstance(storedGame.getPhase(), message.getChatId());
 
         assertFalse(responses.isEmpty());
         assertEquals(1, responses.size());

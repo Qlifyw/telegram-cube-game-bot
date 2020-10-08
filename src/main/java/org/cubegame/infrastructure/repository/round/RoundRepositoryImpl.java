@@ -13,6 +13,7 @@ public class RoundRepositoryImpl implements RoundRepository {
 
     @Override
     public Optional<Round> get(final GameId gameId) {
+        final Round stored = rounds.get(gameId);
         return Optional.empty();
     }
 

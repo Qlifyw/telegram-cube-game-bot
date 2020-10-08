@@ -5,6 +5,7 @@ import org.cubegame.application.model.Reply;
 import org.cubegame.domain.events.Command;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.dice.Dice;
+import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.identifier.UserId;
 import org.cubegame.domain.model.message.Message;
@@ -74,10 +75,9 @@ class PlayersAwaitingPhaseExecutorIT {
         assertFalse(responsesAfterSecondPlayer.isEmpty());
         assertEquals(1, responsesAfterSecondPlayer.size());
 
-        final PhaseExecutor phaseExecutor = phaseExecutorFactory.newInstance(
-                Phase.getNextFor(Phase.NUMBER_OF_PLAYERS),
-                message.getChatId()
-        );
+        final Game storedGame = gameRepository.get(CHAT_ID).get();
+        final PhaseExecutor phaseExecutor = phaseExecutorFactory
+                .newInstance(Phase.NUMBER_OF_PLAYERS, message.getChatId());
 
         phaseExecutor.initiation()
                 .ifPresent(responseMessage ->
