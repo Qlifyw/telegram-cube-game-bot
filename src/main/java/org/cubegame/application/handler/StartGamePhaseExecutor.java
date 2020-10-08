@@ -35,12 +35,15 @@ import java.util.stream.Collectors;
 
 public class StartGamePhaseExecutor implements PhaseExecutor {
 
+    private static final int NO_WINNER = 0;
+    private static final int HAS_WINNER = 1;
+
     private final ChatId chatId;
     private final GameRepository gameRepository;
     private final RoundRepository roundRepository;
 
     private final Game storedGame;
-    private final Set<UserId> playersIds;
+    private final Set<UserId> invitedPlayersIds;
 
     private final int numberOfRounds;
     private Outcomes outcomes = new Outcomes();
@@ -61,7 +64,7 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
 
         this.gameSession = new GameSession(storedGame.getGameId());
 
-        this.playersIds = this.storedGame
+        this.invitedPlayersIds = this.storedGame
                 .getPlayers()
                 .stream()
                 .map(Player::getUserId)
@@ -85,65 +88,42 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
         if (message.hasDice()) {
             final Dice dice = message.getDice();
 
-            if (!playersIds.contains(message.getAuthor().getUserId()))
+            if (!invitedPlayersIds.contains(message.getAuthor().getUserId()))
                 return new SkipedResult();
 
             final Round currentRound = gameSession.getActiveRound();
             final Outcomes currentRoundOutcomes = currentRound.getResults();
+            final UserId currentPlayer = message.getAuthor().getUserId();
 
-            if (currentRoundOutcomes.contains(message.getAuthor().getUserId()))
+            if (currentRoundOutcomes.contains(currentPlayer))
                 return new SkipedResult();
 
-            final Player newPlayer = new Player(message.getAuthor().getUserId(), message.getAuthor().getFirstName());
+            final Player newPlayer = new Player(currentPlayer, message.getAuthor().getFirstName());
             final Outcome playerOutcome = new Outcome(newPlayer, new Points(dice.getValue()));
             currentRoundOutcomes.add(playerOutcome);
 
-            if (currentRoundOutcomes.size() == playersIds.size()) {
-                final String results = currentRoundOutcomes.stream()
-                        .map(outcome -> String.format("User %s has %d point", outcome.getPlayer().getFirstName(), outcome.getPoints().getAmount()))
-                        .collect(Collectors.joining("\n"));
-
-                final String resultBuilder = "Round results:" + "\n" + results;
+            if (currentRoundOutcomes.size() == invitedPlayersIds.size()) {
+                final String outcomeTextRepresentation = summarize(currentRoundOutcomes);
 
                 roundRepository.save(currentRound);
                 gameSession.completeActiveRound();
 
-
-                // ============
-
-                // TODO hasWinner()
-                final Map<Player, Long> collect = gameSession.getAllRounds()
-                        .stream()
-                        .map(Round::getWinner)
-                        .filter(Optional::isPresent)
-                        .map(Optional::get)
-                        .collect(Collectors.groupingBy(player -> player, Collectors.counting()));
-
-                final Long max = Collections.max(collect.values());
-                final List<Player> winners = new ArrayList<>();
-
-                collect.forEach((player, aLong) -> {
-                    if ((max == storedGame.getNumberOfRounds()) && (aLong.equals(max)))
-                        winners.add(player);
-                });
-
+                final List<Player> winners = getWinners(gameSession.getAllRounds());
 
                 switch (winners.size()) {
-                    case 0:
-                        break;
-                    case 1:
+                    case HAS_WINNER:
                         return new ProcessedResult(
-                                new TextResponseMessage(winners.get(0).getFirstName(), message.getChatId())
+                                new TextResponseMessage(winners.get(0).getFirstName() + " win", message.getChatId())
                         );
+                    case NO_WINNER:
+                        break;
                     default:
+                        // Need overtime
                         break;
                 }
 
-                // ============
-
-
                 return new IterableResult(
-                        new TextResponseMessage(resultBuilder, message.getChatId())
+                        new TextResponseMessage(outcomeTextRepresentation, message.getChatId())
                 );
             }
 
@@ -157,6 +137,33 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
     @Override
     public Phase getPhase() {
         return Phase.STARTED;
+    }
+
+    private String summarize(Outcomes outcomes) {
+        final String results = outcomes.stream()
+                .map(outcome -> String.format("User %s has %d point", outcome.getPlayer().getFirstName(), outcome.getPoints().getAmount()))
+                .collect(Collectors.joining("\n"));
+
+        return "Round results:" + "\n" + results;
+    }
+
+    private List<Player> getWinners(List<Round> rounds) {
+        final Map<Player, Long> collect = rounds
+                .stream()
+                .map(Round::getWinner)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.groupingBy(player -> player, Collectors.counting()));
+
+        final Long max = Collections.max(collect.values());
+        final List<Player> winners = new ArrayList<>();
+
+        collect.forEach((player, aLong) -> {
+            if ((max == storedGame.getNumberOfRounds()) && (aLong.equals(max)))
+                winners.add(player);
+        });
+
+        return winners;
     }
 
     public static void main(String[] args) {
