@@ -22,9 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EventHandlerImpl implements EventHandler {
 
     private final GameRepository gameRepository;
-    private final RoundRepository roundRepository;
     private final PhaseExecutorFactory phaseExecutorFactory;
-    private final ApplicationProperties properties;
 
     private final Map<ChatId, PhaseExecutor> phaseExecutors = new ConcurrentHashMap<>();
 
@@ -34,9 +32,7 @@ public class EventHandlerImpl implements EventHandler {
             final ApplicationProperties properties
     ) {
         this.gameRepository = gameRepository;
-        this.roundRepository = roundRepository;
         this.phaseExecutorFactory = new PhaseExecutorFactory(gameRepository, roundRepository, properties);
-        this.properties = properties;
     }
 
     @Override
