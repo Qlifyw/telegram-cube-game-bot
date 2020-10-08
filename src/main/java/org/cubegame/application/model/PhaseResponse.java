@@ -1,5 +1,5 @@
 package org.cubegame.application.model;
 
-public interface PhaseStatebleResponse {
+public interface PhaseResponse {
     ProcessingStatus getStatus();
 }

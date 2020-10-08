@@ -70,7 +70,6 @@ class EmptyPhaseExecutorIT {
                 Arguments.of(speechFactory.of("Hi averyone!")),
                 Arguments.of(speechFactory.of("/start")),
                 Arguments.of(speechFactory.of(String.format("hello@%s", applicationProperties.getBotName()))),
-                Arguments.of(speechFactory.of(String.format("/todo@%s", applicationProperties.getBotName()))),
                 Arguments.of(speechFactory.of(String.format("/todo@%s", applicationProperties.getBotName())))
         );
     }

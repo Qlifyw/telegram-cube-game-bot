@@ -2,7 +2,7 @@ package org.cubegame.application.model;
 
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 
-public final class FailedResult implements PhaseStatebleResponse {
+public final class FailedResult implements PhaseResponse {
 
     private final ResponseMessage responseMessage;
 

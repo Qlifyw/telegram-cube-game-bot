@@ -1,7 +1,7 @@
 package org.cubegame.application.handler;
 
 import org.cubegame.application.model.IterableResult;
-import org.cubegame.application.model.PhaseStatebleResponse;
+import org.cubegame.application.model.PhaseResponse;
 import org.cubegame.application.model.ProcessedResult;
 import org.cubegame.application.model.SkipedResult;
 import org.cubegame.domain.events.Phase;
@@ -80,7 +80,7 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
     }
 
     @Override
-    public PhaseStatebleResponse execute(Message message) {
+    public PhaseResponse execute(Message message) {
 
         if (message.hasDice()) {
             final Dice dice = message.getDice();

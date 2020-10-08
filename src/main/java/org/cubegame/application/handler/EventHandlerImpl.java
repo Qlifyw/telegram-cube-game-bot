@@ -2,7 +2,7 @@ package org.cubegame.application.handler;
 
 import org.cubegame.application.model.FailedResult;
 import org.cubegame.application.model.IterableResult;
-import org.cubegame.application.model.PhaseStatebleResponse;
+import org.cubegame.application.model.PhaseResponse;
 import org.cubegame.application.model.ProcessedResult;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.game.Game;
@@ -60,7 +60,7 @@ public class EventHandlerImpl implements EventHandler {
             executor = phaseExecutors.get(receivedMessage.getChatId());
         }
 
-        final PhaseStatebleResponse processingResult = executor.execute(receivedMessage);
+        final PhaseResponse processingResult = executor.execute(receivedMessage);
 
         switch (processingResult.getStatus()) {
             case PROCESSED: {

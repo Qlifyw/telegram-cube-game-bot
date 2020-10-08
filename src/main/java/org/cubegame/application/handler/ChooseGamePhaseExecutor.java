@@ -1,6 +1,6 @@
 package org.cubegame.application.handler;
 
-import org.cubegame.application.model.PhaseStatebleResponse;
+import org.cubegame.application.model.PhaseResponse;
 import org.cubegame.application.model.ProcessedResult;
 import org.cubegame.application.model.SkipedResult;
 import org.cubegame.domain.events.Phase;
@@ -38,7 +38,7 @@ public class ChooseGamePhaseExecutor implements PhaseExecutor {
     }
 
     @Override
-    public PhaseStatebleResponse execute(Message message) {
+    public PhaseResponse execute(Message message) {
         final Game storedGame = gameRepository
                 .get(message.getChatId())
                 .orElseThrow(() -> new GameNoFoundException(message.getChatId()));

@@ -1,6 +1,6 @@
 package org.cubegame.application.handler;
 
-import org.cubegame.application.model.PhaseStatebleResponse;
+import org.cubegame.application.model.PhaseResponse;
 import org.cubegame.application.model.ProcessedResult;
 import org.cubegame.application.model.SkipedResult;
 import org.cubegame.domain.events.Phase;
@@ -33,7 +33,7 @@ public class PlayersAmountPhaseExecutor implements PhaseExecutor {
     }
 
     @Override
-    public PhaseStatebleResponse execute(Message message) {
+    public PhaseResponse execute(Message message) {
         switch (message.getSpeech().getType()) {
             case COMMENT:
                 return new SkipedResult();
