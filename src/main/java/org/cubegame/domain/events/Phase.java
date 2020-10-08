@@ -15,7 +15,7 @@ public enum Phase {
 
     private final int order;
 
-    private final static Map<Integer, Phase> enumsByOrder = Stream.of(values())
+    private static final Map<Integer, Phase> enumsByOrder = Stream.of(values())
             .collect(Collectors.toMap(Phase::getOrder, phase -> phase));
 
     Phase(Integer order) {

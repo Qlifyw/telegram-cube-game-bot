@@ -46,7 +46,6 @@ public class EventHandlerImpl implements EventHandler {
                 .flatMap(storedGame -> Optional.of(storedGame.getPhase()))
                 .orElse(Phase.EMPTY);
 
-
         final PhaseExecutor executor;
         if (phaseExecutors.get(receivedMessage.getChatId()) == null) {
             final PhaseExecutor newExecutor = phaseExecutorFactory.newInstance(phase, receivedMessage.getChatId());
@@ -65,10 +64,12 @@ public class EventHandlerImpl implements EventHandler {
                 phaseExecutors.remove(receivedMessage.getChatId());
 
                 final PhaseExecutor nextExecutor = phaseExecutorFactory.newInstance(Phase.getNextFor(phase), receivedMessage.getChatId());
-                nextExecutor
-                        .initiation()
-                        .ifPresent(responses::add);
-                phaseExecutors.put(receivedMessage.getChatId(), nextExecutor);
+                if (nextExecutor != null) {
+                    nextExecutor
+                            .initiation()
+                            .ifPresent(responses::add);
+                    phaseExecutors.put(receivedMessage.getChatId(), nextExecutor);
+                }
                 break;
             }
 

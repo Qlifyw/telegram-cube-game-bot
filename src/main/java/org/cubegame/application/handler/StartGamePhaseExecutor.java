@@ -8,6 +8,7 @@ import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.exceptions.GameNoFoundException;
 import org.cubegame.domain.model.dice.Dice;
 import org.cubegame.domain.model.game.Game;
+import org.cubegame.domain.model.game.GameBuilder;
 import org.cubegame.domain.model.game.Player;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.identifier.UserId;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class StartGamePhaseExecutor implements PhaseExecutor {
@@ -109,6 +111,12 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
 
                 switch (winners.size()) {
                     case HAS_WINNER:
+                        final Phase nextPhase = Phase.getNextFor(getPhase());
+                        final Game updatedGame = GameBuilder.from(storedGame)
+                                .setPhase(nextPhase)
+                                .build();
+                        gameRepository.save(updatedGame);
+
                         return new ProcessedResult(
                                 new TextResponseMessage(winners.get(0).getFirstName() + " win", message.getChatId())
                         );
@@ -119,6 +127,7 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
                         break;
                 }
 
+                awaitForLastPlayerAnimation();
                 return new IterableResult(
                         new TextResponseMessage(outcomeTextRepresentation, message.getChatId())
                 );
@@ -161,6 +170,14 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
         });
 
         return winners;
+    }
+
+    private void awaitForLastPlayerAnimation() {
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }
