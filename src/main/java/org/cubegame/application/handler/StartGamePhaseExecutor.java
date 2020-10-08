@@ -10,7 +10,6 @@ import org.cubegame.domain.model.dice.Dice;
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.game.Player;
 import org.cubegame.domain.model.identifier.ChatId;
-import org.cubegame.domain.model.identifier.GameId;
 import org.cubegame.domain.model.identifier.UserId;
 import org.cubegame.domain.model.message.Message;
 import org.cubegame.domain.model.round.Outcome;
@@ -25,12 +24,10 @@ import org.cubegame.infrastructure.repository.round.RoundRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class StartGamePhaseExecutor implements PhaseExecutor {
@@ -164,63 +161,6 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
         });
 
         return winners;
-    }
-
-    public static void main(String[] args) {
-        final GameId gameId = new GameId(UUID.randomUUID());
-
-        final Outcomes outcomes1 = new Outcomes();
-        outcomes1.add(new Outcome(new Player(new UserId(1l), "1"), new Points(1)));
-        outcomes1.add(new Outcome(new Player(new UserId(2l), "2"), new Points(2)));
-        outcomes1.add(new Outcome(new Player(new UserId(3l), "3"), new Points(3)));
-
-        final Outcomes outcomes2 = new Outcomes();
-        outcomes2.add(new Outcome(new Player(new UserId(1l), "1"), new Points(1)));
-        outcomes2.add(new Outcome(new Player(new UserId(2l), "2"), new Points(2)));
-        outcomes2.add(new Outcome(new Player(new UserId(3l), "3"), new Points(5)));
-
-
-        final Outcomes outcomes3 = new Outcomes();
-        outcomes3.add(new Outcome(new Player(new UserId(1l), "1"), new Points(6)));
-        outcomes3.add(new Outcome(new Player(new UserId(2l), "2"), new Points(2)));
-        outcomes3.add(new Outcome(new Player(new UserId(3l), "3"), new Points(3)));
-
-        final Outcomes outcomes4 = new Outcomes();
-        outcomes4.add(new Outcome(new Player(new UserId(1l), "1"), new Points(1)));
-        outcomes4.add(new Outcome(new Player(new UserId(2l), "2"), new Points(6)));
-        outcomes4.add(new Outcome(new Player(new UserId(3l), "3"), new Points(3)));
-
-
-        final List<Round> rounds = new ArrayList();
-        rounds.add(new Round(outcomes1, gameId));
-        rounds.add(new Round(outcomes2, gameId));
-        rounds.add(new Round(outcomes3, gameId));
-        rounds.add(new Round(outcomes4, gameId));
-
-
-        final Map<Player, Long> collect = rounds
-                .stream()
-                .map(Round::getWinner)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.groupingBy(player -> player, Collectors.counting()));
-
-        final Long max = Collections.max(collect.values());
-        final LinkedHashMap<Object, Object> objectObjectLinkedHashMap = new LinkedHashMap<>();
-
-
-//        final OptionalLong max = collect.entrySet()
-//                .stream()
-//                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey))
-//                .keySet().stream()
-//                .mapToLong(l -> l)
-//                .max();
-
-//        System.out.println(max);
-
-
-        System.out.println(collect.size());
-        System.out.println(collect);
     }
 
 }
