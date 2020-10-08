@@ -44,8 +44,7 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
     private final Game storedGame;
     private final Set<UserId> invitedPlayersIds;
 
-    private final int numberOfRounds;
-    private Outcomes outcomes = new Outcomes();
+    private final Outcomes outcomes = new Outcomes();
     private final GameSession gameSession;
 
     public StartGamePhaseExecutor(
@@ -68,8 +67,6 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
                 .stream()
                 .map(Player::getUserId)
                 .collect(Collectors.toSet());
-
-        this.numberOfRounds = this.storedGame.getNumberOfRounds();
     }
 
     @Override
