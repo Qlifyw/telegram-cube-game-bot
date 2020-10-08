@@ -44,7 +44,7 @@ public class EventHandlerImpl implements EventHandler {
 
         final List<ResponseMessage> responses = new ArrayList<>();
 
-        final Optional<Game> game = gameRepository.get(receivedMessage.getChatId());
+        final Optional<Game> game = gameRepository.getActive(receivedMessage.getChatId());
 
         final Phase phase = game
                 .flatMap(storedGame -> Optional.of(storedGame.getPhase()))

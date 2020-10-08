@@ -56,7 +56,7 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
         this.chatId = chatId;
 
         this.storedGame = gameRepository
-                .get(this.chatId)
+                .getActive(this.chatId)
                 .orElseThrow(() -> new GameNoFoundException(this.chatId));
 
         this.gameSession = new GameSession(storedGame.getGameId());

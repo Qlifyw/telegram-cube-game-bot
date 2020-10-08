@@ -56,7 +56,7 @@ class ChooseGamePhaseExecutorIT {
 
         final List<ResponseMessage> responses = eventHandler.handle(message);
 
-        final Game storedGame = gameRepository.get(CHAT_ID).get();
+        final Game storedGame = gameRepository.getActive(CHAT_ID).get();
         final PhaseExecutor phaseExecutor = phaseExecutorFactory
                 .newInstance(storedGame.getPhase(), message.getChatId());
 

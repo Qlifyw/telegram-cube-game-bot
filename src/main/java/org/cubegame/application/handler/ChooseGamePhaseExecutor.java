@@ -40,7 +40,7 @@ public class ChooseGamePhaseExecutor implements PhaseExecutor {
     @Override
     public PhaseResponse execute(Message message) {
         final Game storedGame = gameRepository
-                .get(message.getChatId())
+                .getActive(message.getChatId())
                 .orElseThrow(() -> new GameNoFoundException(message.getChatId()));
 
         if (!message.getAuthor().getUserId().equals(storedGame.getOwner()))

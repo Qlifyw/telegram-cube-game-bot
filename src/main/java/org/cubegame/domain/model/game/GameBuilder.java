@@ -6,6 +6,7 @@ import org.cubegame.domain.model.identifier.GameId;
 import org.cubegame.domain.model.identifier.UserId;
 
 import java.util.List;
+import java.util.UUID;
 
 public class GameBuilder {
     private GameId gameId;
@@ -71,6 +72,7 @@ public class GameBuilder {
     }
 
     public Game build() {
-        return new Game(gameId, chatId, phase, gameName, numberOfPlayers, numberOfRounds, players, owner);
+        final GameId gameIdentifier = gameId == null ? new GameId(UUID.randomUUID()) : gameId;
+        return new Game(gameIdentifier, chatId, phase, gameName, numberOfPlayers, numberOfRounds, players, owner);
     }
 }

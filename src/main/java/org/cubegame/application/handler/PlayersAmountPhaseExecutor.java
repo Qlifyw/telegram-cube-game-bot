@@ -42,7 +42,7 @@ public class PlayersAmountPhaseExecutor implements PhaseExecutor {
         }
 
         final Game storedGame = gameRepository
-                .get(message.getChatId())
+                .getActive(message.getChatId())
                 .orElseThrow(() -> new GameNoFoundException(message.getChatId()));
 
         if (!message.getAuthor().getUserId().equals(storedGame.getOwner()))

@@ -3,7 +3,6 @@ package org.cubegame.application.handler;
 import org.cubegame.application.handler.stepper.CascadePhaseStepper;
 import org.cubegame.application.model.Reply;
 import org.cubegame.domain.events.Command;
-import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.dice.Dice;
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.identifier.ChatId;
@@ -75,9 +74,9 @@ class PlayersAwaitingPhaseExecutorIT {
         assertFalse(responsesAfterSecondPlayer.isEmpty());
         assertEquals(1, responsesAfterSecondPlayer.size());
 
-        final Game storedGame = gameRepository.get(CHAT_ID).get();
+        final Game storedGame = gameRepository.getActive(CHAT_ID).get();
         final PhaseExecutor phaseExecutor = phaseExecutorFactory
-                .newInstance(Phase.NUMBER_OF_PLAYERS, message.getChatId());
+                .newInstance(storedGame.getPhase(), message.getChatId());
 
         phaseExecutor.initiation()
                 .ifPresent(responseMessage ->

@@ -1,6 +1,5 @@
 package org.cubegame.application.handler;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.cubegame.application.model.IterableResult;
 import org.cubegame.application.model.PhaseResponse;
 import org.cubegame.application.model.ProceduralResult;
@@ -18,7 +17,6 @@ import org.cubegame.infrastructure.repository.game.GameRepository;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -34,7 +32,7 @@ public class PlayersAwaitingPhaseExecutor implements PhaseExecutor {
         this.gameRepository = gameRepository;
         this.chatId = chatId;
         this.storedGame = this.gameRepository
-                .get(this.chatId)
+                .getActive(this.chatId)
                 .orElseThrow(() -> new GameNoFoundException(this.chatId));
     }
 
@@ -59,12 +57,10 @@ public class PlayersAwaitingPhaseExecutor implements PhaseExecutor {
         awaitedPlayers.add(newPlayer);
 
         if (awaitedPlayers.size() == storedGame.getNumberOfPlayers()) {
-            final ArrayList<Player> currentPlayers = new ArrayList<>(storedGame.getPlayers());
-            final List<Player> updatedPlayers = new ArrayList<>(CollectionUtils.union(currentPlayers, awaitedPlayers));
 
             final Phase nextPhase = Phase.getNextFor(getPhase());
             final Game updatedGame = GameBuilder.from(storedGame)
-                    .setPlayers(updatedPlayers)
+                    .setPlayers(new ArrayList<>(awaitedPlayers))
                     .setPhase(nextPhase)
                     .build();
 

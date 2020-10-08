@@ -62,7 +62,7 @@ class RoundAmountPhaseExecutorIT {
         final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, speech, DICE);
         final List<ResponseMessage> responses = eventHandler.handle(message);
 
-        final Game storedGame = gameRepository.get(CHAT_ID).get();
+        final Game storedGame = gameRepository.getActive(CHAT_ID).get();
         final PhaseExecutor phaseExecutor = phaseExecutorFactory
                 .newInstance(storedGame.getPhase(), message.getChatId());
 
