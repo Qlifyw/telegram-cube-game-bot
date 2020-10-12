@@ -3,6 +3,7 @@ package org.cubegame.application.handler;
 import org.cubegame.application.handler.stepper.CascadePhaseStepper;
 import org.cubegame.application.model.Reply;
 import org.cubegame.domain.events.Command;
+import org.cubegame.domain.events.CommandValidator;
 import org.cubegame.domain.model.dice.Dice;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.identifier.UserId;
@@ -36,9 +37,10 @@ class StartGamePhaseExecutorIT {
 
     private final GameRepository gameRepository = new GameRepositoryImpl();
     private final RoundRepository roundRepository = new RoundRepositoryImpl();
+    private final CommandValidator commandValidator = new CommandValidator(applicationProperties);
     private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, roundRepository, applicationProperties);
 
-    private final PhaseExecutorFactory phaseExecutorFactory = new PhaseExecutorFactory(gameRepository, roundRepository, applicationProperties);
+    private final PhaseExecutorFactory phaseExecutorFactory = new PhaseExecutorFactory(gameRepository, roundRepository, commandValidator);
 
     private static final ChatId CHAT_ID = new ChatId(123L);
     private static final UserId USER_ID_1 = new UserId(456L);

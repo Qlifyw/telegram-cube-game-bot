@@ -3,7 +3,6 @@ package org.cubegame.application.handler;
 import org.cubegame.domain.events.CommandValidator;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.identifier.ChatId;
-import org.cubegame.infrastructure.properties.ApplicationProperties;
 import org.cubegame.infrastructure.repository.game.GameRepository;
 import org.cubegame.infrastructure.repository.round.RoundRepository;
 
@@ -16,11 +15,11 @@ public class PhaseExecutorFactory {
     public PhaseExecutorFactory(
             final GameRepository gameRepository,
             final RoundRepository roundRepository,
-            final ApplicationProperties applicationProperties
+            final CommandValidator commandValidator
     ) {
         this.gameRepository = gameRepository;
         this.roundRepository = roundRepository;
-        this.commandValidator = new CommandValidator(applicationProperties);
+        this.commandValidator = commandValidator;
     }
 
     public PhaseExecutor newInstance(Phase phase, ChatId chatId) {

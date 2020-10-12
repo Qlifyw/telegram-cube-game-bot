@@ -4,6 +4,7 @@ import org.cubegame.application.model.FailedResult;
 import org.cubegame.application.model.IterableResult;
 import org.cubegame.application.model.PhaseResponse;
 import org.cubegame.application.model.ProcessedResult;
+import org.cubegame.domain.events.CommandValidator;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.identifier.ChatId;
@@ -23,6 +24,7 @@ public class EventHandlerImpl implements EventHandler {
 
     private final GameRepository gameRepository;
     private final PhaseExecutorFactory phaseExecutorFactory;
+    private final CommandValidator commandValidator;
 
     private final Map<ChatId, PhaseExecutor> phaseExecutors = new ConcurrentHashMap<>();
 
@@ -32,7 +34,8 @@ public class EventHandlerImpl implements EventHandler {
             final ApplicationProperties properties
     ) {
         this.gameRepository = gameRepository;
-        this.phaseExecutorFactory = new PhaseExecutorFactory(gameRepository, roundRepository, properties);
+        this.commandValidator = new CommandValidator(properties);
+        this.phaseExecutorFactory = new PhaseExecutorFactory(gameRepository, roundRepository, commandValidator);
     }
 
     @Override
