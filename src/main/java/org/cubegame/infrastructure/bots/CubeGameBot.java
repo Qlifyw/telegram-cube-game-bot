@@ -1,4 +1,4 @@
-package org.cubegame.infrastructure.bot;
+package org.cubegame.infrastructure.bots;
 
 import org.cubegame.application.handler.EventHandler;
 import org.cubegame.application.handler.EventHandlerImpl;
