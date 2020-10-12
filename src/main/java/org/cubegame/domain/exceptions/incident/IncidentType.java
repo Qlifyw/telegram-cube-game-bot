@@ -8,7 +8,7 @@ public enum IncidentType {
     private final String value;
     private static final String PREFIX = "INC";
 
-    private IncidentType(final String code) {
+    IncidentType(final String code) {
         this.value = PREFIX + code;
     }
 
