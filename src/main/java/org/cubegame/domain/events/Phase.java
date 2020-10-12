@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum Phase {
+    CANCELED(-1),
+
     EMPTY(0),
     CHOOSE_GAME(1),
     NUMBER_OF_ROUNDS(2),
