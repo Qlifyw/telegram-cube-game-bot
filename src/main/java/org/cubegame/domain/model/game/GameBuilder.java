@@ -1,6 +1,6 @@
 package org.cubegame.domain.model.game;
 
-import org.cubegame.domain.events.Phase;
+import org.cubegame.domain.model.game.state.Phase;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.identifier.GameId;
 import org.cubegame.domain.model.identifier.UserId;

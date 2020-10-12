@@ -1,7 +1,7 @@
 package org.cubegame.infrastructure.repositories.game;
 
-import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.game.Game;
+import org.cubegame.domain.model.game.state.Phase;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.identifier.GameId;
 

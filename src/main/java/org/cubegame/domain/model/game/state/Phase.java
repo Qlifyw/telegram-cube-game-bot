@@ -1,4 +1,4 @@
-package org.cubegame.domain.events;
+package org.cubegame.domain.model.game.state;
 
 import java.util.Map;
 import java.util.stream.Collectors;

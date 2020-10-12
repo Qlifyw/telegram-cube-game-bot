@@ -1,6 +1,6 @@
 package org.cubegame.application.handler;
 
-import org.cubegame.domain.events.Phase;
+import org.cubegame.domain.model.game.state.Phase;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.infrastructure.repositories.game.GameRepository;
 import org.cubegame.infrastructure.repositories.round.RoundRepository;
