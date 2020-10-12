@@ -5,7 +5,6 @@ import org.cubegame.application.model.IterableResult;
 import org.cubegame.application.model.PhaseResponse;
 import org.cubegame.application.model.ProcessedResult;
 import org.cubegame.domain.events.Command;
-import org.cubegame.domain.events.CommandValidator;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.game.GameBuilder;
@@ -15,6 +14,7 @@ import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.properties.ApplicationProperties;
 import org.cubegame.infrastructure.repositories.game.GameRepository;
 import org.cubegame.infrastructure.repositories.round.RoundRepository;
+import org.cubegame.infrastructure.services.CommandValidator;
 
 import java.util.ArrayList;
 import java.util.List;

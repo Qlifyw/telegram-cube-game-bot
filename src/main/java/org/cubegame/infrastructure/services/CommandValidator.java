@@ -1,5 +1,6 @@
-package org.cubegame.domain.events;
+package org.cubegame.infrastructure.services;
 
+import org.cubegame.domain.events.Command;
 import org.cubegame.domain.exceptions.EnumException;
 import org.cubegame.infrastructure.properties.ApplicationProperties;
 import org.slf4j.Logger;

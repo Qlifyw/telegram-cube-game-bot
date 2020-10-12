@@ -5,7 +5,6 @@ import org.cubegame.application.model.PhaseResponse;
 import org.cubegame.application.model.ProceduralResult;
 import org.cubegame.application.model.SkipedResult;
 import org.cubegame.domain.events.Command;
-import org.cubegame.domain.events.CommandValidator;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.game.GameBuilder;
@@ -14,6 +13,7 @@ import org.cubegame.domain.model.message.Message;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextResponseMessage;
 import org.cubegame.infrastructure.repositories.game.GameRepository;
+import org.cubegame.infrastructure.services.CommandValidator;
 
 import java.util.Optional;
 
