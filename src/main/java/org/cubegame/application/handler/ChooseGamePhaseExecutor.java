@@ -12,7 +12,7 @@ import org.cubegame.domain.model.message.Message;
 import org.cubegame.infrastructure.model.message.NavigationResponseMessage;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextResponseMessage;
-import org.cubegame.infrastructure.repository.game.GameRepository;
+import org.cubegame.infrastructure.repositories.game.GameRepository;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 

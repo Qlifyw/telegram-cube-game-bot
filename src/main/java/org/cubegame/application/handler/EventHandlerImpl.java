@@ -13,8 +13,8 @@ import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.message.Message;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.properties.ApplicationProperties;
-import org.cubegame.infrastructure.repository.game.GameRepository;
-import org.cubegame.infrastructure.repository.round.RoundRepository;
+import org.cubegame.infrastructure.repositories.game.GameRepository;
+import org.cubegame.infrastructure.repositories.round.RoundRepository;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,8 +3,8 @@ package org.cubegame.application.handler;
 import org.cubegame.domain.events.CommandValidator;
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.identifier.ChatId;
-import org.cubegame.infrastructure.repository.game.GameRepository;
-import org.cubegame.infrastructure.repository.round.RoundRepository;
+import org.cubegame.infrastructure.repositories.game.GameRepository;
+import org.cubegame.infrastructure.repositories.round.RoundRepository;
 
 public class PhaseExecutorFactory {
 

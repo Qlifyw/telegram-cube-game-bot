@@ -13,7 +13,7 @@ import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.message.Message;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextResponseMessage;
-import org.cubegame.infrastructure.repository.game.GameRepository;
+import org.cubegame.infrastructure.repositories.game.GameRepository;
 
 import java.util.Optional;
 

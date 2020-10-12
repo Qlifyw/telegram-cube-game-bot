@@ -1,4 +1,4 @@
-package org.cubegame.infrastructure.repository.game;
+package org.cubegame.infrastructure.repositories.game;
 
 import org.cubegame.domain.events.Phase;
 import org.cubegame.domain.model.game.Game;

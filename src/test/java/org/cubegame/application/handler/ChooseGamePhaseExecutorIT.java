@@ -14,10 +14,10 @@ import org.cubegame.domain.model.message.speach.SpeechFactory;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.ResponseType;
 import org.cubegame.infrastructure.properties.ApplicationProperties;
-import org.cubegame.infrastructure.repository.game.GameRepository;
-import org.cubegame.infrastructure.repository.game.GameRepositoryImpl;
-import org.cubegame.infrastructure.repository.round.RoundRepository;
-import org.cubegame.infrastructure.repository.round.RoundRepositoryImpl;
+import org.cubegame.infrastructure.repositories.game.GameRepository;
+import org.cubegame.infrastructure.repositories.game.GameRepositoryImpl;
+import org.cubegame.infrastructure.repositories.round.RoundRepository;
+import org.cubegame.infrastructure.repositories.round.RoundRepositoryImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package org.cubegame.infrastructure.repository.round;
+package org.cubegame.infrastructure.repositories.round;
 
 import org.cubegame.domain.model.identifier.GameId;
 import org.cubegame.domain.model.round.Round;

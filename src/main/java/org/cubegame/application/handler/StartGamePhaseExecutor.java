@@ -20,8 +20,8 @@ import org.cubegame.domain.model.round.Round;
 import org.cubegame.domain.model.session.GameSession;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextResponseMessage;
-import org.cubegame.infrastructure.repository.game.GameRepository;
-import org.cubegame.infrastructure.repository.round.RoundRepository;
+import org.cubegame.infrastructure.repositories.game.GameRepository;
+import org.cubegame.infrastructure.repositories.round.RoundRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
