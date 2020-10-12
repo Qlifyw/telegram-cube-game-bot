@@ -44,7 +44,6 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
     private final Game storedGame;
     private final Set<UserId> invitedPlayersIds;
 
-    private final Outcomes outcomes = new Outcomes();
     private final GameSession gameSession;
 
     public StartGamePhaseExecutor(
