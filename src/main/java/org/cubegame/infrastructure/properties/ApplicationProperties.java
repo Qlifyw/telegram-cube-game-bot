@@ -1,6 +1,6 @@
 package org.cubegame.infrastructure.properties;
 
-import org.cubegame.domain.exceptions.DiskIOException;
+import org.cubegame.infrastructure.exceptions.DiskIOException;
 
 import java.io.File;
 import java.io.FileInputStream;

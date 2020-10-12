@@ -1,4 +1,4 @@
-package org.cubegame.domain.exceptions;
+package org.cubegame.infrastructure.exceptions;
 
 import org.cubegame.domain.exceptions.incident.Incident;
 import org.cubegame.domain.exceptions.incident.IncidentType;
