@@ -1,4 +1,4 @@
-package org.cubegame.domain.exceptions.fail;
+package org.cubegame.application.exceptions.fail;
 
 public class Incident extends RuntimeException {
 

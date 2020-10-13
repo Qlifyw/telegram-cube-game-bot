@@ -1,4 +1,4 @@
-package org.cubegame.domain.exceptions.fail.error;
+package org.cubegame.application.exceptions.fail.error;
 
 public enum ExternalErrorType {
 

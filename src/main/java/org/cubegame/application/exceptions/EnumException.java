@@ -1,4 +1,4 @@
-package org.cubegame.domain.exceptions;
+package org.cubegame.application.exceptions;
 
 import java.util.List;
 

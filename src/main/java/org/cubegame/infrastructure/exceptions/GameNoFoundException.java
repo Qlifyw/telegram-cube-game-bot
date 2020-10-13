@@ -1,7 +1,7 @@
 package org.cubegame.infrastructure.exceptions;
 
-import org.cubegame.domain.exceptions.fail.incident.InternalError;
-import org.cubegame.domain.exceptions.fail.incident.InternalErrorType;
+import org.cubegame.application.exceptions.fail.incident.InternalError;
+import org.cubegame.application.exceptions.fail.incident.InternalErrorType;
 import org.cubegame.domain.model.identifier.ChatId;
 
 public final class GameNoFoundException extends InternalError {

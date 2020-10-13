@@ -1,6 +1,6 @@
 package org.cubegame.domain.events;
 
-import org.cubegame.domain.exceptions.EnumException;
+import org.cubegame.application.exceptions.EnumException;
 
 import java.util.Arrays;
 import java.util.List;

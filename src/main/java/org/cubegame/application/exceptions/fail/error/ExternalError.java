@@ -1,6 +1,6 @@
-package org.cubegame.domain.exceptions.fail.error;
+package org.cubegame.application.exceptions.fail.error;
 
-import org.cubegame.domain.exceptions.fail.Incident;
+import org.cubegame.application.exceptions.fail.Incident;
 
 public class ExternalError extends Incident {
 
