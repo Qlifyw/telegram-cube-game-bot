@@ -1,5 +1,6 @@
-package org.cubegame.application.handler;
+package org.cubegame.application.executors.phase;
 
+import org.cubegame.application.executors.factory.PhaseExecutor;
 import org.cubegame.application.model.IterableResult;
 import org.cubegame.application.model.PhaseResponse;
 import org.cubegame.application.model.ProceduralResult;
@@ -28,7 +29,7 @@ public class PlayersAwaitingPhaseExecutor implements PhaseExecutor {
 
     private final Set<Player> awaitedPlayers = new LinkedHashSet<>();
 
-    PlayersAwaitingPhaseExecutor(final ChatId chatId, final GameRepository gameRepository) {
+    public PlayersAwaitingPhaseExecutor(final ChatId chatId, final GameRepository gameRepository) {
         this.gameRepository = gameRepository;
         this.chatId = chatId;
         this.storedGame = this.gameRepository

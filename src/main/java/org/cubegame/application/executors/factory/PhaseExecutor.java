@@ -1,4 +1,4 @@
-package org.cubegame.application.handler;
+package org.cubegame.application.executors.factory;
 
 import org.cubegame.application.model.PhaseResponse;
 import org.cubegame.domain.model.game.state.Phase;

@@ -1,5 +1,11 @@
-package org.cubegame.application.handler;
+package org.cubegame.application.executors.factory;
 
+import org.cubegame.application.executors.phase.ChooseGamePhaseExecutor;
+import org.cubegame.application.executors.phase.EmptyPhaseExecutor;
+import org.cubegame.application.executors.phase.PlayersAmountPhaseExecutor;
+import org.cubegame.application.executors.phase.PlayersAwaitingPhaseExecutor;
+import org.cubegame.application.executors.phase.RoundAmountPhaseExecutor;
+import org.cubegame.application.executors.phase.StartGamePhaseExecutor;
 import org.cubegame.domain.model.game.state.Phase;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.infrastructure.repositories.game.GameRepository;
@@ -47,8 +53,8 @@ public class PhaseExecutorFactory {
             case STARTED:
                 executor = new StartGamePhaseExecutor(chatId, gameRepository, roundRepository);
                 break;
+            case CANCELED:
             case COMPLETED:
-//                executor = new CompleteGamePhaseExecutor();
                 break;
         }
         return executor;

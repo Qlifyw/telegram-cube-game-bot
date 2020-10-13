@@ -1,5 +1,6 @@
-package org.cubegame.application.handler;
+package org.cubegame.application.executors.phase;
 
+import org.cubegame.application.executors.factory.PhaseExecutor;
 import org.cubegame.application.model.PhaseResponse;
 import org.cubegame.application.model.SkipedResult;
 import org.cubegame.domain.model.game.state.Phase;
