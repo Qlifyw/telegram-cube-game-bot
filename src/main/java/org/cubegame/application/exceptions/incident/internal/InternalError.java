@@ -1,6 +1,6 @@
-package org.cubegame.application.exceptions.fail.incident;
+package org.cubegame.application.exceptions.incident.internal;
 
-import org.cubegame.application.exceptions.fail.Incident;
+import org.cubegame.application.exceptions.incident.Incident;
 
 public class InternalError extends Incident {
 

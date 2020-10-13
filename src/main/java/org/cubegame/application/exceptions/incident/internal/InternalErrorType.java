@@ -1,4 +1,4 @@
-package org.cubegame.application.exceptions.fail.incident;
+package org.cubegame.application.exceptions.incident.internal;
 
 public enum InternalErrorType {
 
