@@ -25,7 +25,7 @@ public class GameRepositoryImpl implements GameRepository {
 
         List<Game> activeGames =
                 gamesForChat.values().stream()
-                        .filter(game -> game.getPhase() != Phase.COMPLETED)
+                        .filter(game -> isActiveGame(game.getPhase()))
                         .collect(Collectors.toList());
 
         if (activeGames.isEmpty()) {
@@ -47,5 +47,23 @@ public class GameRepositoryImpl implements GameRepository {
             chatGames.put(game.getGameId(), game);
             this.games.put(game.getChatId(), chatGames);
         }
+    }
+
+    private boolean isActiveGame(Phase phase) {
+        switch (phase) {
+            case EMPTY:
+            case CHOOSE_GAME:
+            case NUMBER_OF_ROUNDS:
+            case NUMBER_OF_PLAYERS:
+            case AWAIT_PLAYERS:
+            case STARTED:
+                return true;
+
+            case CANCELED:
+            case COMPLETED:
+                return false;
+        }
+
+        return false;
     }
 }

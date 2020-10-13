@@ -8,6 +8,7 @@ import org.cubegame.domain.model.identifier.UserId;
 import org.cubegame.domain.model.message.Message;
 import org.cubegame.domain.model.message.speach.Speech;
 import org.cubegame.domain.model.message.speach.SpeechFactory;
+import org.cubegame.infrastructure.exceptions.NotSupportedEventException;
 import org.cubegame.infrastructure.model.message.NavigationResponseMessage;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextualResponseMessage;
@@ -24,13 +25,13 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
+import java.util.Optional;
 
 public class CubeGameBot extends TelegramLongPollingBot {
 
     private final ApplicationProperties properties = ApplicationProperties.load();
 
     private final SpeechFactory speechFactory = new SpeechFactory(properties);
-
     private final GameRepository gameRepository = new GameRepositoryImpl();
     private final RoundRepository roundRepository = new RoundRepositoryImpl();
     private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, roundRepository, properties);
@@ -38,7 +39,9 @@ public class CubeGameBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
 
-        final Message receivedMessage = getMessage(update);
+        final Message receivedMessage = extractMessageFromEvent(update)
+                .orElseThrow(() -> new NotSupportedEventException(update));
+
         final List<ResponseMessage> responseMessages = eventHandler.handle(receivedMessage);
 
         for (ResponseMessage responseMessage : responseMessages) {
@@ -58,19 +61,23 @@ public class CubeGameBot extends TelegramLongPollingBot {
 
     }
 
-    public Message getMessage(Update update) {
+    public Optional<Message> extractMessageFromEvent(Update update) {
 
+        // In case if the event is a usual message from the user
         if (update.hasMessage()) {
-            final String receivedText = update.getMessage().hasText() ? update.getMessage().getText() : "";
-            final ChatId chatId = new ChatId(update.getMessage().getChatId());
-            final UserId userId = new UserId(update.getMessage().getFrom().getId());
-            final String firstName = update.getMessage().getFrom().getFirstName();
-            final Dice dice = update.getMessage().hasDice() ? new Dice(update.getMessage().getDice().getValue()) : null;
+            final org.telegram.telegrambots.meta.api.objects.Message receivedMessage = update.getMessage();
+            final String receivedText = receivedMessage.hasText() ? receivedMessage.getText() : "";
+            final ChatId chatId = new ChatId(receivedMessage.getChatId());
+            final UserId userId = new UserId(receivedMessage.getFrom().getId());
+            final String firstName = receivedMessage.getFrom().getFirstName();
+            final Dice dice = receivedMessage.hasDice() ? new Dice(receivedMessage.getDice().getValue()) : null;
 
             final Speech speech = speechFactory.of(receivedText);
-            return new Message(chatId, userId, firstName, speech, dice);
+            final Message createdMessage = new Message(chatId, userId, firstName, speech, dice);
+            return Optional.of(createdMessage);
         }
 
+        // In case if user interact with showed menu
         if (update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
 
@@ -80,10 +87,12 @@ public class CubeGameBot extends TelegramLongPollingBot {
             final String firstName = callbackQuery.getMessage().getFrom().getFirstName();
 
             final Speech speech = speechFactory.of(receivedText);
-            return new Message(chatId, userId, firstName, speech, null);
+
+            final Message createdMessage = new Message(chatId, userId, firstName, speech, null);
+            return Optional.of(createdMessage);
         }
 
-        return null;
+        return Optional.empty();
     }
 
     @Override

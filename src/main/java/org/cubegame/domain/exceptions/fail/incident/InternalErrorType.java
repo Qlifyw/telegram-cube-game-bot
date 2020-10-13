@@ -1,14 +1,14 @@
-package org.cubegame.domain.exceptions.incident;
+package org.cubegame.domain.exceptions.fail.incident;
 
-public enum IncidentType {
+public enum InternalErrorType {
 
     GAME_NOT_FOUND("1"),
     DISK_IO_ERROR("2");
 
     private final String value;
-    private static final String PREFIX = "INC";
+    private static final String PREFIX = "IE";
 
-    IncidentType(final String code) {
+    InternalErrorType(final String code) {
         this.value = PREFIX + code;
     }
 
