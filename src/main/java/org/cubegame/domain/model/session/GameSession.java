@@ -4,12 +4,13 @@ import org.cubegame.domain.model.identifier.GameId;
 import org.cubegame.domain.model.round.Outcomes;
 import org.cubegame.domain.model.round.Round;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
-import java.util.Stack;
 
 public class GameSession {
-    private final Stack<Round> rounds = new Stack<>();
+    private final Deque<Round> rounds = new ArrayDeque<>();
     private final GameId relatedGame;
 
     public GameSession(final GameId gameId) {
