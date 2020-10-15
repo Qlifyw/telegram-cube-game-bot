@@ -114,6 +114,7 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
                                 .build();
                         gameRepository.save(updatedGame);
 
+                        awaitForLastPlayerAnimation();
                         return new ProcessedResult(
                                 new TextResponseMessage(winners.get(0).getFirstName() + " win", message.getChatId())
                         );

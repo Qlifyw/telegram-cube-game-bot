@@ -19,6 +19,7 @@ import org.cubegame.infrastructure.repositories.round.RoundRepository;
 import org.cubegame.infrastructure.services.CommandValidator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -49,7 +50,13 @@ public class EventHandlerImpl implements EventHandler {
 
         // Check is it command and process it if need
         final Optional<CommandValidator.ValidatedCommand> maybeCommand = commandValidator.validate(receivedMessage.getSpeech().getText());
-        maybeCommand.ifPresent(command -> processCommand(command.getValue(), game.orElse(null)));
+        final Optional<List<ResponseMessage>> commandResponses = maybeCommand
+                .flatMap(command -> processCommand(command.getValue(), game.orElse(null)));
+
+        if (commandResponses.isPresent()) {
+            phaseExecutors.remove(chatId);
+            return commandResponses.get();
+        }
 
         final Phase phase = game
                 .flatMap(storedGame -> Optional.of(storedGame.getPhase()))
@@ -62,19 +69,20 @@ public class EventHandlerImpl implements EventHandler {
         return responses;
     }
 
-    private void cancelGame(Game game) {
-        final GameBuilder builder = GameBuilder.from(game).setPhase(Phase.CANCELED);
-        gameRepository.save(builder.build());
-    }
-
-    private void processCommand(Command command, Game game) {
+    private Optional<List<ResponseMessage>> processCommand(Command command, Game game) {
         switch (command) {
             case START:
-                break;
+                return Optional.empty();
             case STOP:
                 if (game != null) cancelGame(game);
                 break;
         }
+        return Optional.of(Collections.emptyList());
+    }
+
+    private void cancelGame(Game game) {
+        final GameBuilder builder = GameBuilder.from(game).setPhase(Phase.CANCELED);
+        gameRepository.save(builder.build());
     }
 
     private PhaseExecutor getExecutor(Phase phase, ChatId chatId) {
