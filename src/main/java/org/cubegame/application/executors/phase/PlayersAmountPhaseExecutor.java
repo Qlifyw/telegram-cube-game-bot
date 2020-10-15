@@ -1,6 +1,7 @@
 package org.cubegame.application.executors.phase;
 
 import org.cubegame.application.executors.factory.PhaseExecutor;
+import org.cubegame.application.model.FailedResult;
 import org.cubegame.application.model.PhaseResponse;
 import org.cubegame.application.model.ProcessedResult;
 import org.cubegame.application.model.SkipedResult;
@@ -53,7 +54,7 @@ public class PlayersAmountPhaseExecutor implements PhaseExecutor {
         try {
             numberOfPlayers = Integer.parseInt(message.getSpeech().getText());
         } catch (NumberFormatException exception) {
-            return new ProcessedResult(
+            return new FailedResult(
                     new ErrorResponseMessage(
                             "Invalid number of players. Please enter integer value.",
                             message.getChatId()
@@ -61,7 +62,7 @@ public class PlayersAmountPhaseExecutor implements PhaseExecutor {
             );
         }
         if (numberOfPlayers <= 0) {
-            return new ProcessedResult(
+            return new FailedResult(
                     new ErrorResponseMessage(
                             "Invalid number of players. Number must be greater than 0.",
                             message.getChatId()

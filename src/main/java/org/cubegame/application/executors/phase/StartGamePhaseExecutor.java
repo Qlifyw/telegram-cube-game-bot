@@ -172,7 +172,7 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
 
     private void awaitForLastPlayerAnimation() {
         try {
-            TimeUnit.SECONDS.sleep(2);
+            TimeUnit.SECONDS.sleep(3);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
