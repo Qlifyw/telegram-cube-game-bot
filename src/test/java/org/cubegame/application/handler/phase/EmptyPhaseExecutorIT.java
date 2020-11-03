@@ -1,5 +1,7 @@
-package org.cubegame.application.handler;
+package org.cubegame.application.handler.phase;
 
+import org.cubegame.application.handler.EventHandler;
+import org.cubegame.application.handler.EventHandlerImpl;
 import org.cubegame.domain.events.Command;
 import org.cubegame.domain.model.dice.Dice;
 import org.cubegame.domain.model.identifier.ChatId;

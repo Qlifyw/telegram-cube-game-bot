@@ -1,7 +1,9 @@
-package org.cubegame.application.handler;
+package org.cubegame.application.handler.phase;
 
 import org.cubegame.application.executors.factory.PhaseExecutor;
 import org.cubegame.application.executors.factory.PhaseExecutorFactory;
+import org.cubegame.application.handler.EventHandler;
+import org.cubegame.application.handler.EventHandlerImpl;
 import org.cubegame.application.handler.stepper.CascadePhaseStepper;
 import org.cubegame.application.model.Reply;
 import org.cubegame.domain.events.Command;
@@ -22,20 +24,16 @@ import org.cubegame.infrastructure.repositories.round.RoundRepositoryImpl;
 import org.cubegame.infrastructure.services.CommandValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class PlayersAmountPhaseExecutorIT {
+class ChooseGamePhaseExecutorIT {
     private static final String BOT_NAME = "my-bot";
     private static final ApplicationProperties applicationProperties = new ApplicationProperties(BOT_NAME);
     private static final SpeechFactory speechFactory = new SpeechFactory(applicationProperties);
@@ -53,18 +51,15 @@ class PlayersAmountPhaseExecutorIT {
     private static final Dice DICE = null;
 
     private static final String GAME_NAME = "cube-game";
-    private static final long PLAYERS_AMOUNT = 2;
-    private static final long ROUNDS_AMOUNT = 2;
 
     @Test
-    @DisplayName("Success when specified valid amount")
+    @DisplayName("Success when choose game")
     void suceessWhenChooseGame() {
-        final Message msgTemplate = new Message(CHAT_ID, USER_ID, FIRST_NAME, SpeechFactory.EMPTY_SPEECH, DICE);
+        final Speech comment = speechFactory.of(GAME_NAME);
+        final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, comment, DICE);
 
-        CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
+        CascadePhaseStepper.moveUp(eventHandler, message, commands);
 
-        final Speech speech = speechFactory.of(String.format("@%s %d", applicationProperties.getBotName(), PLAYERS_AMOUNT));
-        final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, speech, DICE);
         final List<ResponseMessage> responses = eventHandler.handle(message);
 
         final Game storedGame = gameRepository.getActive(CHAT_ID).get();
@@ -72,9 +67,14 @@ class PlayersAmountPhaseExecutorIT {
                 .newInstance(storedGame.getPhase(), message.getChatId());
 
         assertFalse(responses.isEmpty());
-        assertEquals(1, responses.size());
+        assertEquals(2, responses.size());
 
-        final ResponseMessage nextPhaseIntro = responses.get(0);
+        final ResponseMessage chooseGameResponse = responses.get(0);
+        assertEquals(message.getChatId(), chooseGameResponse.getChatId());
+        assertEquals(ResponseType.TEXT, chooseGameResponse.getType());
+        assertTrue(chooseGameResponse.getMessage().contains(message.getSpeech().getText()));
+
+        final ResponseMessage nextPhaseIntro = responses.get(1);
         assertEquals(message.getChatId(), nextPhaseIntro.getChatId());
         assertEquals(ResponseType.TEXT, nextPhaseIntro.getType());
 
@@ -91,7 +91,7 @@ class PlayersAmountPhaseExecutorIT {
 
         final Message msgTemplate = new Message(CHAT_ID, USER_ID, FIRST_NAME, speechFactory.of(GAME_NAME), DICE);
 
-        final Speech speech = speechFactory.of(String.format("@%s %d", applicationProperties.getBotName(), PLAYERS_AMOUNT));
+        final Speech speech = speechFactory.of(String.format("@%s %s", applicationProperties.getBotName(), GAME_NAME));
         final Message message = new Message(CHAT_ID, anotherUserId, FIRST_NAME, speech, DICE);
 
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
@@ -101,29 +101,8 @@ class PlayersAmountPhaseExecutorIT {
         assertTrue(responses.isEmpty());
     }
 
-    @ParameterizedTest(name = "Skip {0} message")
-    @MethodSource("ignoredMessages")
-    void skipMessageIfNotTagged(Speech speech) {
-        final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, speech, DICE);
-        final List<ResponseMessage> responses = eventHandler.handle(message);
-
-        assertTrue(responses.isEmpty());
-    }
-
-    private static Stream<Arguments> ignoredMessages() {
-        return Stream.of(
-                Arguments.of(speechFactory.of("Hi averyone!")),
-                Arguments.of(speechFactory.of(String.valueOf(PLAYERS_AMOUNT))),
-                Arguments.of(speechFactory.of(String.format("@%s%d", applicationProperties.getBotName(), PLAYERS_AMOUNT))),
-                Arguments.of(speechFactory.of(String.format("@%s", applicationProperties.getBotName()))),
-                Arguments.of(speechFactory.of(String.format("@%s %s %s", applicationProperties.getBotName(), "a", "b"))),
-                Arguments.of(speechFactory.of(String.format("%d@%s", PLAYERS_AMOUNT, applicationProperties.getBotName())))
-        );
-    }
-
-    private static final List<Reply> commands = Arrays.asList(
-            new Reply(USER_ID, speechFactory.of(String.format("%s@%s", Command.START.getValue(), BOT_NAME))),
-            new Reply(USER_ID, speechFactory.of(GAME_NAME)),
-            new Reply(USER_ID, speechFactory.of(String.format("@%s %d", BOT_NAME, ROUNDS_AMOUNT)))
+    final List<Reply> commands = Collections.singletonList(
+            new Reply(USER_ID, speechFactory.of(String.format("%s@%s", Command.START.getValue(), BOT_NAME)))
     );
+
 }

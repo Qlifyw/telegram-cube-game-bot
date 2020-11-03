@@ -8,8 +8,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class Round {
-    private final UUID id;
     private final GameId relatedGame;
+    private final UUID id;
     private final Outcomes results;
 
     public Round(final Outcomes results, final GameId relatedGame) {

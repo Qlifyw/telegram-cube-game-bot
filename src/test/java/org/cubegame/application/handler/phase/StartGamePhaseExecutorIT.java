@@ -1,6 +1,8 @@
-package org.cubegame.application.handler;
+package org.cubegame.application.handler.phase;
 
 import org.cubegame.application.executors.factory.PhaseExecutorFactory;
+import org.cubegame.application.handler.EventHandler;
+import org.cubegame.application.handler.EventHandlerImpl;
 import org.cubegame.application.handler.stepper.CascadePhaseStepper;
 import org.cubegame.application.model.Reply;
 import org.cubegame.domain.events.Command;
