@@ -30,6 +30,7 @@ public class GameRepositoryImpl implements GameRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(GameRepositoryImpl.class);
 
+    // TODO delete comments
 //    private Map<ChatId, Map<GameId, Game>> games = new LinkedHashMap();
 
     private static final String DATABASE_NAME = "cube-game";
