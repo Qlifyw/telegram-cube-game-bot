@@ -1,0 +1,10 @@
+
+# install mongo db
+docker run --name <cube-game-db> -d mongo:4.0.20-xenial
+
+# entry in container
+docker exec -it <cube-game-db> mongo
+
+ > use <cube-game>                  # create DB
+ > db.createCollection("rounds")    # create collections for storing rounds
+ > db.createCollection("games")     # create collections for storing games

@@ -76,7 +76,7 @@ public class RoundAmountPhaseExecutor implements PhaseExecutor {
                 .setPhase(nextPhase)
                 .setNumberOfRounds(numberOfRounds)
                 .build();
-        gameRepository.save(updatedGame);
+        gameRepository.update(updatedGame);
 
         return new ProceduralResult();
     }

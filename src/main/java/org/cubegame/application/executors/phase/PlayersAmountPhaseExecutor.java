@@ -76,7 +76,7 @@ public class PlayersAmountPhaseExecutor implements PhaseExecutor {
                 .setPhase(nextPhase)
                 .setNumberOfPlayers(numberOfPlayers)
                 .build();
-        gameRepository.save(updatedGame);
+        gameRepository.update(updatedGame);
 
         return new ProcessedResult(
                 new TextResponseMessage(

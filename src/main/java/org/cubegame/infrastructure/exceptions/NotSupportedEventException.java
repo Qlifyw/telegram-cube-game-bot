@@ -7,6 +7,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public final class NotSupportedEventException extends InternalError {
 
     public NotSupportedEventException(final Update update) {
-        super("Not supported event. " + update, InternalErrorType.GAME_NOT_FOUND, null);
+        super(InternalErrorType.GAME_NOT_FOUND, "Not supported event. " + update, null);
     }
 }

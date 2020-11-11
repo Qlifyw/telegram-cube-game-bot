@@ -53,7 +53,7 @@ public class ChooseGamePhaseExecutor implements PhaseExecutor {
                 .setPhase(nextPhase)
                 .setGameName(message.getSpeech().getText())
                 .build();
-        gameRepository.save(updatedGame);
+        gameRepository.update(updatedGame);
 
         return new ProcessedResult(
                 new TextResponseMessage(

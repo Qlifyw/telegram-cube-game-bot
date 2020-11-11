@@ -65,7 +65,7 @@ public class PlayersAwaitingPhaseExecutor implements PhaseExecutor {
                     .setPhase(nextPhase)
                     .build();
 
-            gameRepository.save(updatedGame);
+            gameRepository.update(updatedGame);
             return new ProceduralResult();
         } else {
             return new IterableResult(

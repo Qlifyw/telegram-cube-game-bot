@@ -11,4 +11,5 @@ public interface GameRepository {
 
     void save(Game game);
 
+    void update(Game game);
 }

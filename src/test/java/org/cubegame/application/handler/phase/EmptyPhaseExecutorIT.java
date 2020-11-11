@@ -1,5 +1,8 @@
 package org.cubegame.application.handler.phase;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.MongoClient;
+import org.cubegame.application.configuration.TestDatabaseConfiguration;
 import org.cubegame.application.handler.EventHandler;
 import org.cubegame.application.handler.EventHandlerImpl;
 import org.cubegame.domain.events.Command;
@@ -16,11 +19,13 @@ import org.cubegame.infrastructure.repositories.game.GameRepository;
 import org.cubegame.infrastructure.repositories.game.GameRepositoryImpl;
 import org.cubegame.infrastructure.repositories.round.RoundRepository;
 import org.cubegame.infrastructure.repositories.round.RoundRepositoryImpl;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.testcontainers.containers.MongoDBContainer;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -31,8 +36,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class EmptyPhaseExecutorIT {
 
-    private final GameRepository gameRepository = new GameRepositoryImpl();
-    private final RoundRepository roundRepository = new RoundRepositoryImpl();
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final static MongoDBContainer dbContainer = TestDatabaseConfiguration.getInstance();
+    private final static MongoClient mongoClient = new MongoClient(dbContainer.getHost(), dbContainer.getFirstMappedPort());
+    private final RoundRepository roundRepository = new RoundRepositoryImpl(mongoClient, objectMapper);
+    private final GameRepository gameRepository = new GameRepositoryImpl(mongoClient, objectMapper);
+
     private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, roundRepository, applicationProperties);
 
     private static final String BOT_NAME = "my-bot";
@@ -44,6 +53,10 @@ class EmptyPhaseExecutorIT {
     private static final String FIRST_NAME = "First name";
     private static final Dice DICE = null;
 
+    @AfterEach
+    void cleanUp() {
+        mongoClient.dropDatabase("cube-game");
+    }
 
     @ParameterizedTest(name = "Skip {0} message")
     @MethodSource("ignoredMessages")

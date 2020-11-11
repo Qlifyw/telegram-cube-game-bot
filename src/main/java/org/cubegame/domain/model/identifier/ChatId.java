@@ -3,6 +3,8 @@ package org.cubegame.domain.model.identifier;
 import java.util.Objects;
 
 public final class ChatId {
+
+    // TODO use primitive
     private final Long value;
 
     public ChatId(Long value) {
@@ -24,5 +26,10 @@ public final class ChatId {
     @Override
     public int hashCode() {
         return Objects.hash(value);
+    }
+
+    @Override
+    public String toString() {
+        return value.toString();
     }
 }

@@ -1,5 +1,8 @@
 package org.cubegame.application.handler.phase;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.MongoClient;
+import org.cubegame.application.configuration.TestDatabaseConfiguration;
 import org.cubegame.application.executors.factory.PhaseExecutorFactory;
 import org.cubegame.application.handler.EventHandler;
 import org.cubegame.application.handler.EventHandlerImpl;
@@ -24,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.testcontainers.containers.MongoDBContainer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,8 +42,12 @@ class StartGamePhaseExecutorIT {
     private static final String BOT_NAME = applicationProperties.getBotName();
     private static final SpeechFactory speechFactory = new SpeechFactory(applicationProperties);
 
-    private final GameRepository gameRepository = new GameRepositoryImpl();
-    private final RoundRepository roundRepository = new RoundRepositoryImpl();
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final static MongoDBContainer dbContainer = TestDatabaseConfiguration.getInstance();
+    private final static MongoClient mongoClient = new MongoClient(dbContainer.getHost(), dbContainer.getFirstMappedPort());
+    private final RoundRepository roundRepository = new RoundRepositoryImpl(mongoClient, objectMapper);
+    private final GameRepository gameRepository = new GameRepositoryImpl(mongoClient, objectMapper);
+
     private final CommandValidator commandValidator = new CommandValidator(applicationProperties);
     private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, roundRepository, applicationProperties);
 

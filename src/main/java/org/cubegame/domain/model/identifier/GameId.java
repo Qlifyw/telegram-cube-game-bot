@@ -12,4 +12,9 @@ public final class GameId {
     public UUID getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return getValue().toString();
+    }
 }

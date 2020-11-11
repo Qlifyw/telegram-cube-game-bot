@@ -112,7 +112,7 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
                         final Game updatedGame = GameBuilder.from(storedGame)
                                 .setPhase(nextPhase)
                                 .build();
-                        gameRepository.save(updatedGame);
+                        gameRepository.update(updatedGame);
 
                         awaitForLastPlayerAnimation();
                         return new ProcessedResult(

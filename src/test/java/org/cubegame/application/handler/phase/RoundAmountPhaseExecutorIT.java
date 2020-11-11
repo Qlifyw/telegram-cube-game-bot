@@ -1,5 +1,8 @@
 package org.cubegame.application.handler.phase;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.MongoClient;
+import org.cubegame.application.configuration.TestDatabaseConfiguration;
 import org.cubegame.application.executors.factory.PhaseExecutor;
 import org.cubegame.application.executors.factory.PhaseExecutorFactory;
 import org.cubegame.application.handler.EventHandler;
@@ -22,11 +25,13 @@ import org.cubegame.infrastructure.repositories.game.GameRepositoryImpl;
 import org.cubegame.infrastructure.repositories.round.RoundRepository;
 import org.cubegame.infrastructure.repositories.round.RoundRepositoryImpl;
 import org.cubegame.infrastructure.services.CommandValidator;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.testcontainers.containers.MongoDBContainer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,8 +47,12 @@ class RoundAmountPhaseExecutorIT {
     private static final ApplicationProperties applicationProperties = new ApplicationProperties(BOT_NAME);
     private static final SpeechFactory speechFactory = new SpeechFactory(applicationProperties);
 
-    private final GameRepository gameRepository = new GameRepositoryImpl();
-    private final RoundRepository roundRepository = new RoundRepositoryImpl();
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final MongoDBContainer dbContainer = TestDatabaseConfiguration.getInstance();
+    private final MongoClient mongoClient = new MongoClient(dbContainer.getHost(), dbContainer.getFirstMappedPort());
+    private final RoundRepository roundRepository = new RoundRepositoryImpl(mongoClient, objectMapper);
+    private final GameRepository gameRepository = new GameRepositoryImpl(mongoClient, objectMapper);
+
     private final CommandValidator commandValidator = new CommandValidator(applicationProperties);
     private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, roundRepository, applicationProperties);
 
@@ -56,6 +65,11 @@ class RoundAmountPhaseExecutorIT {
 
     private static final String GAME_NAME = "cube-game";
     private static final long ROUNDS_AMOUNT = 2;
+
+    @AfterEach
+    void cleanUp() {
+        mongoClient.dropDatabase("cube-game");
+    }
 
     @Test
     @DisplayName("Success when specified valid amount")
@@ -81,7 +95,7 @@ class RoundAmountPhaseExecutorIT {
 
         phaseExecutor.initiation()
                 .ifPresent(responseMessage ->
-                        assertEquals(responseMessage.getMessage(), nextPhaseIntro.getMessage())
+                        assertEquals(nextPhaseIntro.getMessage(), responseMessage.getMessage())
                 );
     }
 

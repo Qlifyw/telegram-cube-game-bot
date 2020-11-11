@@ -20,6 +20,12 @@ public enum Phase {
     private static final Map<Integer, Phase> enumsByOrder = Stream.of(values())
             .collect(Collectors.toMap(Phase::getOrder, phase -> phase));
 
+    private static final Map<String, Phase> enumsByValue = Stream.of(values())
+            .collect(Collectors.toMap(
+                    Enum::name,
+                    phase -> phase)
+            );
+
     Phase(Integer order) {
         this.order = order;
     }
@@ -30,6 +36,15 @@ public enum Phase {
 
     public static Phase getNextFor(Phase phase) {
         return enumsByOrder.get(phase.getOrder() + 1);
+    }
+
+    public static Phase fromString(String value) {
+        return enumsByValue.get(value);
+    }
+
+    @Override
+    public String toString() {
+        return this.name();
     }
 
 }

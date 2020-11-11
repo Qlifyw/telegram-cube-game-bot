@@ -8,8 +8,8 @@ public final class GameNoFoundException extends InternalError {
 
     public GameNoFoundException(final ChatId chatId) {
         super(
-                String.format("Cannot find game session for chat with id '%d'", chatId.getValue()),
                 InternalErrorType.GAME_NOT_FOUND,
+                String.format("Cannot find game session for chat with id '%d'", chatId.getValue()),
                 null
         );
     }
