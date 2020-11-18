@@ -6,8 +6,8 @@ public class ExternalError extends Incident {
 
     private final ExternalErrorType type;
 
-    public ExternalError(final String s, final ExternalErrorType type, final Exception cause) {
-        super(s, cause);
+    public ExternalError(final String description, final ExternalErrorType type, final Exception cause) {
+        super(description, cause);
         this.type = type;
     }
 

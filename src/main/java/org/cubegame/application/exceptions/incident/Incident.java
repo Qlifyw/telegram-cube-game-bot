@@ -1,11 +1,11 @@
 package org.cubegame.application.exceptions.incident;
 
-public class Incident extends RuntimeException {
+public abstract class Incident extends RuntimeException {
 
     final Exception cause;
 
-    public Incident(final String s, final Exception cause) {
-        super(s);
+    public Incident(final String description, final Exception cause) {
+        super(description);
         this.cause = cause;
     }
 
