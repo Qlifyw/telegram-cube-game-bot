@@ -1,7 +1,12 @@
 package org.cubegame.infrastructure.bots;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.MongoClient;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import org.bson.Document;
 import org.cubegame.application.handler.EventHandler;
 import org.cubegame.application.handler.EventHandlerImpl;
 import org.cubegame.domain.model.dice.Dice;
@@ -28,6 +33,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class CubeGameBot extends TelegramLongPollingBot {
 
@@ -35,12 +41,29 @@ public class CubeGameBot extends TelegramLongPollingBot {
 
     private final SpeechFactory speechFactory = new SpeechFactory(properties);
 
-    private final MongoClient mongoClient = new MongoClient("172.17.0.2", 27017);
+    private final ConnectionString connectionString = new ConnectionString(getConnectionUrl(properties));
+    private final MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
+            .applyConnectionString(connectionString)
+            .retryReads(true)
+            .retryWrites(true)
+            .build();
+
+    private final MongoClient mongoClient = MongoClients.create(mongoClientSettings);
+
+
+//    private final MongoCredential mongoCredential = MongoCredential.createCredential("mng-client", "cube-game", "mng-client-pass".toCharArray());
+//    private final MongoClient mongoClient = new MongoClient (new ServerAddress("localhost", 27017), mongoCredential);
+
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final GameRepository gameRepository = new GameRepositoryImpl(mongoClient, objectMapper);
     private final RoundRepository roundRepository = new RoundRepositoryImpl(mongoClient, objectMapper);
 
     private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, roundRepository, properties);
+
+    public CubeGameBot() {
+        final FindIterable<Document> games = mongoClient.getDatabase("cube-game").getCollection("games").find();
+        games.forEach((Consumer<Document>) System.out::println);
+    }
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -132,5 +155,15 @@ public class CubeGameBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+    }
+
+    private String getConnectionUrl(ApplicationProperties properties) {
+        final String dbHost = properties.getDatabaseHost();
+        final String dbPort = properties.getDatabasePort();
+        final String dbUser = properties.getDatabaseUser();
+        final String dbPass = properties.getDatabasePass();
+        final String dbName = properties.getDatabaseName();
+
+        return "mongodb://"+dbUser+":"+dbPass+"@"+dbHost+":"+dbPort+"/"+dbName;
     }
 }

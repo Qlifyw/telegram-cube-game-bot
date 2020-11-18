@@ -1,7 +1,11 @@
 package org.cubegame.application.handler.phase;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.MongoClient;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import org.cubegame.application.configuration.TestDatabaseConfiguration;
 import org.cubegame.application.executors.factory.PhaseExecutor;
 import org.cubegame.application.executors.factory.PhaseExecutorFactory;
@@ -45,7 +49,16 @@ class ChooseGamePhaseExecutorIT {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final MongoDBContainer dbContainer = TestDatabaseConfiguration.getInstance();
-    private final MongoClient mongoClient = new MongoClient(dbContainer.getHost(), dbContainer.getFirstMappedPort());
+
+    private final ConnectionString connectionString = new ConnectionString("mongodb://"+dbContainer.getHost()+":"+dbContainer.getFirstMappedPort());
+    private final MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
+            .applyConnectionString(connectionString)
+            .retryReads(true)
+            .retryWrites(true)
+            .build();
+
+    private final MongoClient mongoClient = MongoClients.create(mongoClientSettings);
+
     private final RoundRepository roundRepository = new RoundRepositoryImpl(mongoClient, objectMapper);
     private final GameRepository gameRepository = new GameRepositoryImpl(mongoClient, objectMapper);
 
@@ -63,7 +76,8 @@ class ChooseGamePhaseExecutorIT {
 
     @AfterEach
     void cleanUp() {
-        mongoClient.dropDatabase("cube-game");
+        final MongoDatabase database = mongoClient.getDatabase("cube-game");
+        database.drop();
     }
 
     @Test

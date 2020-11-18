@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    container_name: "cube-game-app-tmp"
+    ports:
+    - 8080:8080
+    depends_on:
+      - database
+    restart: always
+
+  database:
+    image: 'mongo:4.0.20-xenial'
+    container_name: "cube-game-db-tmp"
+    ports:
+    - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: pass
+    restart: always
