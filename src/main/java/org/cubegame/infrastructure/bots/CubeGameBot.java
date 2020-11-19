@@ -7,6 +7,9 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import org.bson.Document;
+import org.cubegame.application.exceptions.incident.Incident;
+import org.cubegame.application.exceptions.incident.external.ExternalError;
+import org.cubegame.application.exceptions.incident.internal.InternalError;
 import org.cubegame.application.handler.EventHandler;
 import org.cubegame.application.handler.EventHandlerImpl;
 import org.cubegame.domain.model.dice.Dice;
@@ -24,6 +27,8 @@ import org.cubegame.infrastructure.repositories.game.GameRepository;
 import org.cubegame.infrastructure.repositories.game.GameRepositoryImpl;
 import org.cubegame.infrastructure.repositories.round.RoundRepository;
 import org.cubegame.infrastructure.repositories.round.RoundRepositoryImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -36,6 +41,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class CubeGameBot extends TelegramLongPollingBot {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CubeGameBot.class);
 
     private final ApplicationProperties properties = ApplicationProperties.load();
 
@@ -67,7 +74,20 @@ public class CubeGameBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
+        try {
+            receive(update);
+        } catch (Incident incident) {
+            if (incident instanceof InternalError) {
+                final InternalError error = (InternalError) incident;
+                LOG.error("Internal error. "+ error.toString(), error.getReason());
+            } else {
+                final ExternalError error = (ExternalError) incident;
+                LOG.error("Internal error. "+ error.toString(), error.getReason());
+            }
+        }
+    }
 
+    public void receive(Update update) {
         final Message receivedMessage = extractMessageFromEvent(update)
                 .orElseThrow(() -> new NotSupportedEventException(update));
 
@@ -87,7 +107,6 @@ public class CubeGameBot extends TelegramLongPollingBot {
                 }
             }
         }
-
     }
 
     public Optional<Message> extractMessageFromEvent(Update update) {

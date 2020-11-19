@@ -4,9 +4,11 @@ import org.cubegame.application.exceptions.incident.internal.InternalError;
 import org.cubegame.application.exceptions.incident.internal.InternalErrorType;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.Collections;
+
 public final class NotSupportedEventException extends InternalError {
 
     public NotSupportedEventException(final Update update) {
-        super(InternalErrorType.GAME_NOT_FOUND, "Not supported event. " + update, null);
+        super(InternalErrorType.GAME_NOT_FOUND, "Not supported event. " + update, Collections.emptyMap(),null);
     }
 }

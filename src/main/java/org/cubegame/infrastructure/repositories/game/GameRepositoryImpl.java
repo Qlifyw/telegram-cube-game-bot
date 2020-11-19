@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -172,6 +173,7 @@ public class GameRepositoryImpl implements GameRepository {
             throw new InternalError(
                     InternalErrorType.JSON_MAPPING,
                     "Cannot serialize object.",
+                    Collections.emptyMap(),
                     null
             );
         }
@@ -188,6 +190,7 @@ public class GameRepositoryImpl implements GameRepository {
             throw new InternalError(
                     InternalErrorType.JSON_PARSING,
                     "Cannot deserialize object.",
+                    Collections.emptyMap(),
                     null
             );
         }
