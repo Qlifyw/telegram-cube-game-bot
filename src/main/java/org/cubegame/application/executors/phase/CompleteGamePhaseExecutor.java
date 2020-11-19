@@ -12,7 +12,7 @@ import java.util.Optional;
 public class CompleteGamePhaseExecutor implements PhaseExecutor {
 
     @Override
-    public Optional<ResponseMessage> initiation() {
+    public Optional<ResponseMessage> inception() {
         return Optional.empty();
     }
 

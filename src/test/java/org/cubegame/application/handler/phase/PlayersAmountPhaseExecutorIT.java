@@ -108,7 +108,7 @@ class PlayersAmountPhaseExecutorIT {
         assertEquals(message.getChatId(), nextPhaseIntro.getChatId());
         assertEquals(ResponseType.TEXT, nextPhaseIntro.getType());
 
-        phaseExecutor.initiation()
+        phaseExecutor.inception()
                 .ifPresent(responseMessage ->
                         // TODO replace everywhere  expected and actual value
                         assertEquals(nextPhaseIntro.getMessage(), responseMessage.getMessage())

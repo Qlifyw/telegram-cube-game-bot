@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface PhaseExecutor {
 
-    Optional<ResponseMessage> initiation();
+    Optional<ResponseMessage> inception();
 
     PhaseResponse execute(Message message);
 

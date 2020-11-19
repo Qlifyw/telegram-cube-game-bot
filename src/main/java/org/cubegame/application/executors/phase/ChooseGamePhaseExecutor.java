@@ -33,7 +33,7 @@ public class ChooseGamePhaseExecutor implements PhaseExecutor {
     }
 
     @Override
-    public Optional<ResponseMessage> initiation() {
+    public Optional<ResponseMessage> inception() {
         final NavigationResponseMessage initMessage = new NavigationResponseMessage(buildMenu(), chatId);
         return Optional.of(initMessage);
     }

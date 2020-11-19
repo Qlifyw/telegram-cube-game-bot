@@ -114,7 +114,7 @@ public class EventHandlerImpl implements EventHandler {
         if (nextExecutor != null) {
             phaseExecutors.put(chatId, nextExecutor);
             return nextExecutor
-                    .initiation();
+                    .inception();
         }
         return Optional.empty();
     }

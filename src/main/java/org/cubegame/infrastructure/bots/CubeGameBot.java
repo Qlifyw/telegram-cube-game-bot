@@ -76,14 +76,12 @@ public class CubeGameBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         try {
             receive(update);
+        } catch (InternalError incident) {
+            LOG.error("Internal error. " + incident.toString(), incident.getReason());
+        } catch (ExternalError incident) {
+            LOG.error("External error. " + incident.toString(), incident.getReason());
         } catch (Incident incident) {
-            if (incident instanceof InternalError) {
-                final InternalError error = (InternalError) incident;
-                LOG.error("Internal error. "+ error.toString(), error.getReason());
-            } else {
-                final ExternalError error = (ExternalError) incident;
-                LOG.error("Internal error. "+ error.toString(), error.getReason());
-            }
+            LOG.error("Unclassified error. " + incident.toString(), incident);
         }
     }
 
@@ -183,6 +181,6 @@ public class CubeGameBot extends TelegramLongPollingBot {
         final String dbPass = properties.getDatabasePass();
         final String dbName = properties.getDatabaseName();
 
-        return "mongodb://"+dbUser+":"+dbPass+"@"+dbHost+":"+dbPort+"/"+dbName;
+        return "mongodb://" + dbUser + ":" + dbPass + "@" + dbHost + ":" + dbPort + "/" + dbName;
     }
 }

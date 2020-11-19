@@ -29,7 +29,7 @@ public class PlayersAmountPhaseExecutor implements PhaseExecutor {
     }
 
     @Override
-    public Optional<ResponseMessage> initiation() {
+    public Optional<ResponseMessage> inception() {
         final TextResponseMessage initMessage = new TextResponseMessage("Specify players amount", chatId);
         return Optional.of(initMessage);
     }

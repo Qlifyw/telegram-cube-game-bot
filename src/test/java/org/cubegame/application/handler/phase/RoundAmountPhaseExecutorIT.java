@@ -106,7 +106,7 @@ class RoundAmountPhaseExecutorIT {
         assertEquals(message.getChatId(), nextPhaseIntro.getChatId());
         assertEquals(ResponseType.TEXT, nextPhaseIntro.getType());
 
-        phaseExecutor.initiation()
+        phaseExecutor.inception()
                 .ifPresent(responseMessage ->
                         assertEquals(nextPhaseIntro.getMessage(), responseMessage.getMessage())
                 );

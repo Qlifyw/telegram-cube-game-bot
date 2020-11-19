@@ -31,7 +31,7 @@ public final class EmptyPhaseExecutor implements PhaseExecutor {
     }
 
     @Override
-    public Optional<ResponseMessage> initiation() {
+    public Optional<ResponseMessage> inception() {
         return Optional.empty();
     }
 

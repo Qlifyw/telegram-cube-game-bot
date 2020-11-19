@@ -112,7 +112,7 @@ class PlayersAwaitingPhaseExecutorIT {
         final PhaseExecutor phaseExecutor = phaseExecutorFactory
                 .newInstance(storedGame.getPhase(), message.getChatId());
 
-        phaseExecutor.initiation()
+        phaseExecutor.inception()
                 .ifPresent(responseMessage ->
                         assertEquals(responseMessage.getMessage(), responsesAfterSecondPlayer.get(0).getMessage())
                 );

@@ -38,7 +38,7 @@ public class PlayersAwaitingPhaseExecutor implements PhaseExecutor {
     }
 
     @Override
-    public Optional<ResponseMessage> initiation() {
+    public Optional<ResponseMessage> inception() {
         return Optional.empty();
     }
 

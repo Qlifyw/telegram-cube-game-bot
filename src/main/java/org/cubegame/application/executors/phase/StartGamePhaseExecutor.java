@@ -70,7 +70,7 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
     }
 
     @Override
-    public Optional<ResponseMessage> initiation() {
+    public Optional<ResponseMessage> inception() {
         final TextResponseMessage initMessage = new TextResponseMessage(
                 "Congratulation! Game is started",
                 chatId
