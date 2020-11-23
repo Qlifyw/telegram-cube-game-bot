@@ -1,4 +1,4 @@
-package org.cubegame.infrastructure.repositories.game;
+package org.cubegame.application.repositories.game;
 
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.identifier.ChatId;

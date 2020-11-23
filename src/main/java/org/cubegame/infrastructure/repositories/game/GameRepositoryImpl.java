@@ -10,6 +10,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.cubegame.application.exceptions.incident.internal.Internal;
 import org.cubegame.application.exceptions.incident.internal.InternalError;
+import org.cubegame.application.repositories.game.GameRepository;
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.game.state.Phase;
 import org.cubegame.domain.model.identifier.ChatId;

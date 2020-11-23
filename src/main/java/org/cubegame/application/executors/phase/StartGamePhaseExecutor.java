@@ -8,6 +8,8 @@ import org.cubegame.application.model.IterableResult;
 import org.cubegame.application.model.PhaseResponse;
 import org.cubegame.application.model.ProcessedResult;
 import org.cubegame.application.model.SkipedResult;
+import org.cubegame.application.repositories.game.GameRepository;
+import org.cubegame.application.repositories.round.RoundRepository;
 import org.cubegame.domain.model.dice.Dice;
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.game.GameBuilder;
@@ -23,8 +25,6 @@ import org.cubegame.domain.model.round.Round;
 import org.cubegame.domain.model.session.GameSession;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextResponseMessage;
-import org.cubegame.infrastructure.repositories.game.GameRepository;
-import org.cubegame.infrastructure.repositories.round.RoundRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;

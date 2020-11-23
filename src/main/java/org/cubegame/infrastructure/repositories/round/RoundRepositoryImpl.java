@@ -8,6 +8,7 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.cubegame.application.exceptions.incident.internal.Internal;
 import org.cubegame.application.exceptions.incident.internal.InternalError;
+import org.cubegame.application.repositories.round.RoundRepository;
 import org.cubegame.domain.model.identifier.GameId;
 import org.cubegame.domain.model.round.Round;
 import org.cubegame.infrastructure.repositories.round.entity.OutcomeEntity;

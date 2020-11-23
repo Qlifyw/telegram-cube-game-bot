@@ -8,6 +8,7 @@ import org.cubegame.application.model.FailedResult;
 import org.cubegame.application.model.PhaseResponse;
 import org.cubegame.application.model.ProcessedResult;
 import org.cubegame.application.model.SkipedResult;
+import org.cubegame.application.repositories.game.GameRepository;
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.game.GameBuilder;
 import org.cubegame.domain.model.game.state.Phase;
@@ -16,7 +17,6 @@ import org.cubegame.domain.model.message.Message;
 import org.cubegame.infrastructure.model.message.ErrorResponseMessage;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextResponseMessage;
-import org.cubegame.infrastructure.repositories.game.GameRepository;
 
 import java.util.Collections;
 import java.util.Optional;

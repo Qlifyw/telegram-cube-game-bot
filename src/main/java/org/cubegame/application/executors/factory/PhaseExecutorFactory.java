@@ -9,10 +9,10 @@ import org.cubegame.application.executors.phase.PlayersAmountPhaseExecutor;
 import org.cubegame.application.executors.phase.PlayersAwaitingPhaseExecutor;
 import org.cubegame.application.executors.phase.RoundAmountPhaseExecutor;
 import org.cubegame.application.executors.phase.StartGamePhaseExecutor;
+import org.cubegame.application.repositories.game.GameRepository;
+import org.cubegame.application.repositories.round.RoundRepository;
 import org.cubegame.domain.model.game.state.Phase;
 import org.cubegame.domain.model.identifier.ChatId;
-import org.cubegame.infrastructure.repositories.game.GameRepository;
-import org.cubegame.infrastructure.repositories.round.RoundRepository;
 import org.cubegame.infrastructure.services.CommandValidator;
 
 import java.util.Collections;

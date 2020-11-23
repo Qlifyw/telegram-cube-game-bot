@@ -6,6 +6,8 @@ import org.cubegame.application.model.FailedResult;
 import org.cubegame.application.model.IterableResult;
 import org.cubegame.application.model.PhaseResponse;
 import org.cubegame.application.model.ProcessedResult;
+import org.cubegame.application.repositories.game.GameRepository;
+import org.cubegame.application.repositories.round.RoundRepository;
 import org.cubegame.domain.events.Command;
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.game.GameBuilder;
@@ -14,8 +16,6 @@ import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.message.Message;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.properties.ApplicationProperties;
-import org.cubegame.infrastructure.repositories.game.GameRepository;
-import org.cubegame.infrastructure.repositories.round.RoundRepository;
 import org.cubegame.infrastructure.services.CommandValidator;
 
 import java.util.ArrayList;
