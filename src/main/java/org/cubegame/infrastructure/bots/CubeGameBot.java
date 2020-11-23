@@ -9,6 +9,7 @@ import com.mongodb.client.MongoClients;
 import org.bson.Document;
 import org.cubegame.application.exceptions.incident.Incident;
 import org.cubegame.application.exceptions.incident.external.ExternalError;
+import org.cubegame.application.exceptions.incident.internal.Internal;
 import org.cubegame.application.exceptions.incident.internal.InternalError;
 import org.cubegame.application.handler.EventHandler;
 import org.cubegame.application.handler.EventHandlerImpl;
@@ -18,7 +19,6 @@ import org.cubegame.domain.model.identifier.UserId;
 import org.cubegame.domain.model.message.Message;
 import org.cubegame.domain.model.message.speach.Speech;
 import org.cubegame.domain.model.message.speach.SpeechFactory;
-import org.cubegame.infrastructure.exceptions.NotSupportedEventException;
 import org.cubegame.infrastructure.model.message.NavigationResponseMessage;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextualResponseMessage;
@@ -36,6 +36,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -87,7 +88,7 @@ public class CubeGameBot extends TelegramLongPollingBot {
 
     public void receive(Update update) {
         final Message receivedMessage = extractMessageFromEvent(update)
-                .orElseThrow(() -> new NotSupportedEventException(update));
+                .orElseThrow(() -> notSupportedEventException(update));
 
         final List<ResponseMessage> responseMessages = eventHandler.handle(receivedMessage);
 
@@ -182,5 +183,15 @@ public class CubeGameBot extends TelegramLongPollingBot {
         final String dbName = properties.getDatabaseName();
 
         return "mongodb://" + dbUser + ":" + dbPass + "@" + dbHost + ":" + dbPort + "/" + dbName;
+    }
+
+
+    private Incident notSupportedEventException(Update update) {
+        return new InternalError(
+                Internal.Logical.INCONSISTENCY,
+                String.format("Not supported event.", update),
+                Collections.emptyMap(),
+                null
+        );
     }
 }

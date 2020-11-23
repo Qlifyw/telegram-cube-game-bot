@@ -8,8 +8,8 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.cubegame.application.exceptions.incident.internal.Internal;
 import org.cubegame.application.exceptions.incident.internal.InternalError;
-import org.cubegame.application.exceptions.incident.internal.InternalErrorType;
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.game.state.Phase;
 import org.cubegame.domain.model.identifier.ChatId;
@@ -171,7 +171,7 @@ public class GameRepositoryImpl implements GameRepository {
             json = objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             throw new InternalError(
-                    InternalErrorType.JSON_MAPPING,
+                    Internal.Database.MAPPING,
                     "Cannot serialize object.",
                     Collections.emptyMap(),
                     null
@@ -188,7 +188,7 @@ public class GameRepositoryImpl implements GameRepository {
 
             // TODO add MDC
             throw new InternalError(
-                    InternalErrorType.JSON_PARSING,
+                    Internal.Database.PARSING,
                     "Cannot deserialize object.",
                     Collections.emptyMap(),
                     null

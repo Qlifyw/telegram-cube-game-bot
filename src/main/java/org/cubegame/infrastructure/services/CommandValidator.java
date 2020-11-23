@@ -1,6 +1,5 @@
 package org.cubegame.infrastructure.services;
 
-import org.cubegame.application.exceptions.EnumException;
 import org.cubegame.domain.events.Command;
 import org.cubegame.infrastructure.properties.ApplicationProperties;
 import org.slf4j.Logger;
@@ -29,14 +28,16 @@ public final class CommandValidator {
         if (!botName.equals(properties.getBotName()))
             return Optional.empty();
 
-        final Command command;
-        try {
-            command = Command.from(commandPart);
-        } catch (EnumException exception) {
+
+        final Optional<ValidatedCommand> validateCommand = Command.from(commandPart)
+                .map(ValidatedCommand::new);
+
+        if (!validateCommand.isPresent()) {
             LOG.error("Cannot find command '{}'", commandPart);
             return Optional.empty();
         }
-        return Optional.of(new ValidatedCommand(command));
+
+        return validateCommand;
     }
 
     public static final class ValidatedCommand {

@@ -1,10 +1,13 @@
 package org.cubegame.infrastructure.properties;
 
-import org.cubegame.infrastructure.exceptions.DiskIOException;
+
+import org.cubegame.application.exceptions.incident.internal.Internal;
+import org.cubegame.application.exceptions.incident.internal.InternalError;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Properties;
 
 public class ApplicationProperties {
@@ -75,8 +78,13 @@ public class ApplicationProperties {
         try /*(FileInputStream fileInputStream = new FileInputStream(propertiesFile))*/ {
             properties.load(properties2);
         } catch (IOException e) {
-            throw new DiskIOException(String.format("Cannot load property file '%s'", /*propertiesFile*/ properties2 ), e);
+            throw new InternalError(
+                    Internal.Logical.INCONSISTENCY,
+                    String.format("Cannot load property file '%s'", /*propertiesFile*/ properties2 ),
+                    Collections.emptyMap(),
+                    e
+            );
+//            throw new DiskIOException(String.format("Cannot load property file '%s'", /*propertiesFile*/ properties2 ), e);
         }
     }
-
 }

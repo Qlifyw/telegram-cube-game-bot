@@ -1,5 +1,8 @@
 package org.cubegame.application.executors.factory;
 
+import org.cubegame.application.exceptions.incident.Incident;
+import org.cubegame.application.exceptions.incident.internal.Internal;
+import org.cubegame.application.exceptions.incident.internal.InternalError;
 import org.cubegame.application.executors.phase.ChooseGamePhaseExecutor;
 import org.cubegame.application.executors.phase.EmptyPhaseExecutor;
 import org.cubegame.application.executors.phase.PlayersAmountPhaseExecutor;
@@ -11,6 +14,9 @@ import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.infrastructure.repositories.game.GameRepository;
 import org.cubegame.infrastructure.repositories.round.RoundRepository;
 import org.cubegame.infrastructure.services.CommandValidator;
+
+import java.util.Collections;
+import java.util.Optional;
 
 public class PhaseExecutorFactory {
 
@@ -29,10 +35,20 @@ public class PhaseExecutorFactory {
     }
 
     public PhaseExecutor newInstance(Phase phase, ChatId chatId) {
-        return createExecutor(phase, chatId);
+        return createExecutor(phase, chatId)
+                .orElseThrow(() -> cannotCreateExecutorException(phase) );
     }
 
-    private PhaseExecutor createExecutor(Phase phase, ChatId chatId) {
+    private Incident cannotCreateExecutorException(Phase phase) {
+        return new InternalError(
+                Internal.Logical.INCONSISTENCY,
+                "Cannot create executor for '" +phase+ "'.",
+                Collections.emptyMap(),
+                null
+        );
+    }
+
+    private Optional<PhaseExecutor> createExecutor(Phase phase, ChatId chatId) {
         PhaseExecutor executor = null;
         switch (phase) {
             case EMPTY:
@@ -57,7 +73,8 @@ public class PhaseExecutorFactory {
             case COMPLETED:
                 break;
         }
-        return executor;
+
+        return executor == null ? Optional.empty() : Optional.of(executor);
     }
 
 }

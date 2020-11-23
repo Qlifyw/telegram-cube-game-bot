@@ -1,5 +1,8 @@
 package org.cubegame.application.executors.phase;
 
+import org.cubegame.application.exceptions.incident.Incident;
+import org.cubegame.application.exceptions.incident.internal.Internal;
+import org.cubegame.application.exceptions.incident.internal.InternalError;
 import org.cubegame.application.executors.factory.PhaseExecutor;
 import org.cubegame.application.model.PhaseResponse;
 import org.cubegame.application.model.ProcessedResult;
@@ -9,7 +12,6 @@ import org.cubegame.domain.model.game.GameBuilder;
 import org.cubegame.domain.model.game.state.Phase;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.message.Message;
-import org.cubegame.infrastructure.exceptions.GameNoFoundException;
 import org.cubegame.infrastructure.model.message.NavigationResponseMessage;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextResponseMessage;
@@ -42,7 +44,7 @@ public class ChooseGamePhaseExecutor implements PhaseExecutor {
     public PhaseResponse execute(Message message) {
         final Game storedGame = gameRepository
                 .getActive(message.getChatId())
-                .orElseThrow(() -> new GameNoFoundException(message.getChatId()));
+                .orElseThrow(this::gameNotFoundException);
 
         if (!message.getAuthor().getUserId().equals(storedGame.getOwner()))
             return new SkipedResult();
@@ -76,6 +78,15 @@ public class ChooseGamePhaseExecutor implements PhaseExecutor {
 
         final List<InlineKeyboardButton> buttonsRaw = Arrays.asList(cubeGameButton, dartsGameButton);
         return new InlineKeyboardMarkup(Collections.singletonList(buttonsRaw));
+    }
+
+    private Incident gameNotFoundException() {
+        return new InternalError(
+                Internal.Logical.INCONSISTENCY,
+                String.format("Cannot find game session for chat with id '%d'", chatId.getValue()),
+                Collections.emptyMap(),
+                null
+        );
     }
 
 }

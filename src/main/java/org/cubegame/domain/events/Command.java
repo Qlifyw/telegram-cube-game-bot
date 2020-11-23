@@ -1,10 +1,10 @@
 package org.cubegame.domain.events;
 
-import org.cubegame.application.exceptions.EnumException;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -15,11 +15,15 @@ public enum Command {
 
     private final String value;
 
-    private static final Map<String, Command> enumsByValue = Stream.of(values())
+    public static final Map<String, Command> enumsByValue = Stream.of(values())
             .collect(Collectors.toMap(
                     command -> command.getValue().toUpperCase(),
                     command -> command)
             );
+
+    static final List<String> allowedValues = Arrays.stream(values())
+            .map(Command::getValue)
+            .collect(Collectors.toList());
 
     Command(String value) {
         this.value = value;
@@ -29,16 +33,12 @@ public enum Command {
         return this.value;
     }
 
-    public static Command from(final String value) {
+    public static Optional<Command> from(final String value) {
         final Command createdValue = enumsByValue.get(value.toUpperCase());
-        if (createdValue == null) {
-            final List<String> allowedValues = Arrays.stream(values())
-                    .map(Command::getValue)
-                    .collect(Collectors.toList());
+        if (createdValue == null)
+            return Optional.empty();
 
-            throw new EnumException(Command.class.getName(), value, allowedValues);
-        }
-        return createdValue;
+        return Optional.of(createdValue);
     }
 
 }

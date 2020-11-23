@@ -6,8 +6,8 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import org.cubegame.application.exceptions.incident.internal.Internal;
 import org.cubegame.application.exceptions.incident.internal.InternalError;
-import org.cubegame.application.exceptions.incident.internal.InternalErrorType;
 import org.cubegame.domain.model.identifier.GameId;
 import org.cubegame.domain.model.round.Round;
 import org.cubegame.infrastructure.repositories.round.entity.OutcomeEntity;
@@ -95,7 +95,7 @@ public class RoundRepositoryImpl implements RoundRepository {
             json = objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             throw new InternalError(
-                    InternalErrorType.JSON_MAPPING,
+                    Internal.Database.MAPPING,
                     "Cannot deserialize object.",
                     Collections.emptyMap(),
                     null

@@ -1,5 +1,8 @@
 package org.cubegame.application.executors.phase;
 
+import org.cubegame.application.exceptions.incident.Incident;
+import org.cubegame.application.exceptions.incident.internal.Internal;
+import org.cubegame.application.exceptions.incident.internal.InternalError;
 import org.cubegame.application.executors.factory.PhaseExecutor;
 import org.cubegame.application.model.IterableResult;
 import org.cubegame.application.model.PhaseResponse;
@@ -18,7 +21,6 @@ import org.cubegame.domain.model.round.Outcomes;
 import org.cubegame.domain.model.round.Points;
 import org.cubegame.domain.model.round.Round;
 import org.cubegame.domain.model.session.GameSession;
-import org.cubegame.infrastructure.exceptions.GameNoFoundException;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextResponseMessage;
 import org.cubegame.infrastructure.repositories.game.GameRepository;
@@ -58,7 +60,7 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
 
         this.storedGame = gameRepository
                 .getActive(this.chatId)
-                .orElseThrow(() -> new GameNoFoundException(this.chatId));
+                .orElseThrow(this::gameNotFoundException);
 
         this.gameSession = new GameSession(storedGame.getGameId());
 
@@ -176,6 +178,15 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private Incident gameNotFoundException() {
+        return new InternalError(
+                Internal.Logical.INCONSISTENCY,
+                String.format("Cannot find game session for chat with id '%d'", chatId.getValue()),
+                Collections.emptyMap(),
+                null
+        );
     }
 
 }
