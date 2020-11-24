@@ -3,10 +3,8 @@ package org.cubegame.infrastructure.bots;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import org.bson.Document;
 import org.cubegame.application.exceptions.incident.Incident;
 import org.cubegame.application.exceptions.incident.external.ExternalError;
 import org.cubegame.application.exceptions.incident.internal.Internal;
@@ -38,14 +36,12 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 public class CubeGameBot extends TelegramLongPollingBot {
 
     private static final Logger LOG = LoggerFactory.getLogger(CubeGameBot.class);
 
     private final ApplicationProperties properties = ApplicationProperties.load();
-
     private final SpeechFactory speechFactory = new SpeechFactory(properties);
 
     private final ConnectionString connectionString = new ConnectionString(getConnectionUrl(properties));
@@ -54,23 +50,13 @@ public class CubeGameBot extends TelegramLongPollingBot {
             .retryReads(true)
             .retryWrites(true)
             .build();
-
     private final MongoClient mongoClient = MongoClients.create(mongoClientSettings);
-
-
-//    private final MongoCredential mongoCredential = MongoCredential.createCredential("mng-client", "cube-game", "mng-client-pass".toCharArray());
-//    private final MongoClient mongoClient = new MongoClient (new ServerAddress("localhost", 27017), mongoCredential);
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final GameRepository gameRepository = new GameRepositoryImpl(mongoClient, objectMapper);
     private final RoundRepository roundRepository = new RoundRepositoryImpl(mongoClient, objectMapper);
 
     private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, roundRepository, properties);
-
-    public CubeGameBot() {
-        final FindIterable<Document> games = mongoClient.getDatabase("cube-game").getCollection("games").find();
-        games.forEach((Consumer<Document>) System.out::println);
-    }
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -85,7 +71,7 @@ public class CubeGameBot extends TelegramLongPollingBot {
         }
     }
 
-    public void receive(Update update) {
+    private void receive(Update update) {
         final Message receivedMessage = extractMessageFromEvent(update)
                 .orElseThrow(() -> notSupportedEventException(update));
 
@@ -107,7 +93,7 @@ public class CubeGameBot extends TelegramLongPollingBot {
         }
     }
 
-    public Optional<Message> extractMessageFromEvent(Update update) {
+    private Optional<Message> extractMessageFromEvent(Update update) {
 
         // In case if the event is a usual message from the user
         if (update.hasMessage()) {
@@ -151,7 +137,7 @@ public class CubeGameBot extends TelegramLongPollingBot {
         return properties.getBotToken();
     }
 
-    public void showMenu(InlineKeyboardMarkup menu, ChatId chatId) {
+    private void showMenu(InlineKeyboardMarkup menu, ChatId chatId) {
         SendMessage message = new SendMessage()
                 .setChatId(chatId.getValue())
                 .setText("Choose the game")
@@ -159,7 +145,7 @@ public class CubeGameBot extends TelegramLongPollingBot {
         respondToClient(message);
     }
 
-    public <T extends TextualResponseMessage> void respond(final T message) {
+    private <T extends TextualResponseMessage> void respond(final T message) {
         final SendMessage responseMessage = new SendMessage()
                 .setChatId(message.getChatId().getValue())
                 .setText(message.getMessage());
