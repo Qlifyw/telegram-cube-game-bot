@@ -60,7 +60,7 @@ class ChooseGamePhaseExecutorIT {
     private final MongoClient mongoClient = MongoClients.create(mongoClientSettings);
 
     private final RoundRepository roundRepository = new RoundRepositoryImpl(mongoClient, objectMapper);
-    private final GameRepository gameRepository = new GameRepositoryImpl(mongoClient, objectMapper);
+    private final GameRepository gameRepository = new GameRepositoryImpl(mongoClient);
 
     private final CommandValidator commandValidator = new CommandValidator(applicationProperties);
     private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, roundRepository, applicationProperties);

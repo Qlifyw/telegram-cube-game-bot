@@ -53,7 +53,7 @@ public class CubeGameBot extends TelegramLongPollingBot {
     private final MongoClient mongoClient = MongoClients.create(mongoClientSettings);
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final GameRepository gameRepository = new GameRepositoryImpl(mongoClient, objectMapper);
+    private final GameRepository gameRepository = new GameRepositoryImpl(mongoClient);
     private final RoundRepository roundRepository = new RoundRepositoryImpl(mongoClient, objectMapper);
 
     private final EventHandler eventHandler = new EventHandlerImpl(gameRepository, roundRepository, properties);
