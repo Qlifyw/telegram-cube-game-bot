@@ -23,8 +23,8 @@ import org.cubegame.domain.model.round.Outcomes;
 import org.cubegame.domain.model.round.Points;
 import org.cubegame.domain.model.round.Round;
 import org.cubegame.domain.model.session.GameSession;
-import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextResponseMessage;
+import org.cubegame.infrastructure.model.message.type.ResponseMessage;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package org.cubegame.infrastructure.model.message;
+package org.cubegame.infrastructure.model.message.type;
 
 import org.cubegame.domain.model.identifier.ChatId;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;

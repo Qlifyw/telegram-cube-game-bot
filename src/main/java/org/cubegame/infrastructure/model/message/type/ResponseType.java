@@ -1,4 +1,4 @@
-package org.cubegame.infrastructure.model.message;
+package org.cubegame.infrastructure.model.message.type;
 
 public enum ResponseType {
     NAVIAGTION,

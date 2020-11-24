@@ -1,6 +1,6 @@
 package org.cubegame.application.model.result;
 
-import org.cubegame.infrastructure.model.message.ResponseMessage;
+import org.cubegame.infrastructure.model.message.type.ResponseMessage;
 
 public final class FailedResult implements PhaseResponse {
 

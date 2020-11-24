@@ -14,7 +14,7 @@ import org.cubegame.domain.model.game.GameBuilder;
 import org.cubegame.domain.model.game.state.Phase;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.domain.model.message.Message;
-import org.cubegame.infrastructure.model.message.ResponseMessage;
+import org.cubegame.infrastructure.model.message.type.ResponseMessage;
 import org.cubegame.infrastructure.properties.ApplicationProperties;
 import org.cubegame.infrastructure.services.CommandValidator;
 
