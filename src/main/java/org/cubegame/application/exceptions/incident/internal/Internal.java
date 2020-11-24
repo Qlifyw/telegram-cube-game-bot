@@ -2,9 +2,11 @@ package org.cubegame.application.exceptions.incident.internal;
 
 public interface Internal {
 
-    enum Database implements InternalErrorType {
-        MAPPING,
-        PARSING
+    interface Database extends InternalErrorType {
+        enum Data implements Database {
+            MAPPING,
+            PARSING
+        }
     }
 
     enum Logical implements InternalErrorType {
@@ -13,10 +15,8 @@ public interface Internal {
 
 
     interface Network extends InternalErrorType {
-        Network IO = Io.IO;
-
-        enum Io implements Network {
-            REST
+        enum General implements Network {
+            IO
         }
 
         enum Api implements Network {

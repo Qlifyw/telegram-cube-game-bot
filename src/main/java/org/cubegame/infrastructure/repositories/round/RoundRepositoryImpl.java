@@ -96,7 +96,7 @@ public class RoundRepositoryImpl implements RoundRepository {
             json = objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             throw new InternalError(
-                    Internal.Database.MAPPING,
+                    Internal.Database.Data.MAPPING,
                     "Cannot deserialize object.",
                     Collections.emptyMap(),
                     null

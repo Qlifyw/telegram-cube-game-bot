@@ -172,7 +172,7 @@ public class GameRepositoryImpl implements GameRepository {
             json = objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             throw new InternalError(
-                    Internal.Database.MAPPING,
+                    Internal.Database.Data.MAPPING,
                     "Cannot serialize object.",
                     Collections.emptyMap(),
                     null
@@ -189,7 +189,7 @@ public class GameRepositoryImpl implements GameRepository {
 
             // TODO add MDC
             throw new InternalError(
-                    Internal.Database.PARSING,
+                    Internal.Database.Data.PARSING,
                     "Cannot deserialize object.",
                     Collections.emptyMap(),
                     null
