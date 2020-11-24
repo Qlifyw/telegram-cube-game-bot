@@ -17,7 +17,6 @@ import org.cubegame.infrastructure.repositories.round.entity.PointsEntity;
 import org.cubegame.infrastructure.repositories.round.entity.RoundEntity;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -95,12 +94,7 @@ public class RoundRepositoryImpl implements RoundRepository {
         try {
             json = objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            throw new InternalError(
-                    Internal.Database.Data.MAPPING,
-                    "Cannot deserialize object.",
-                    Collections.emptyMap(),
-                    null
-            );
+            throw new InternalError(Internal.Database.Data.MAPPING, "Cannot deserialize object.");
         }
         return json;
     }

@@ -36,7 +36,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -187,11 +186,6 @@ public class CubeGameBot extends TelegramLongPollingBot {
 
 
     private Incident notSupportedEventException(Update update) {
-        return new InternalError(
-                Internal.Logical.INCONSISTENCY,
-                String.format("Not supported event.", update),
-                Collections.emptyMap(),
-                null
-        );
+        return new InternalError(Internal.Logical.INCONSISTENCY, "Not supported event." + update);
     }
 }

@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -171,12 +170,7 @@ public class GameRepositoryImpl implements GameRepository {
         try {
             json = objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            throw new InternalError(
-                    Internal.Database.Data.MAPPING,
-                    "Cannot serialize object.",
-                    Collections.emptyMap(),
-                    null
-            );
+            throw new InternalError(Internal.Database.Data.MAPPING, "Cannot serialize object.");
         }
         return json;
     }
@@ -188,12 +182,7 @@ public class GameRepositoryImpl implements GameRepository {
         } catch (JsonProcessingException e) {
 
             // TODO add MDC
-            throw new InternalError(
-                    Internal.Database.Data.PARSING,
-                    "Cannot deserialize object.",
-                    Collections.emptyMap(),
-                    null
-            );
+            throw new InternalError(Internal.Database.Data.PARSING, "Cannot deserialize object.");
         }
         return object;
     }

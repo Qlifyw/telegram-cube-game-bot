@@ -18,7 +18,6 @@ import org.cubegame.infrastructure.model.message.ErrorResponseMessage;
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 import org.cubegame.infrastructure.model.message.TextResponseMessage;
 
-import java.util.Collections;
 import java.util.Optional;
 
 public class PlayersAmountPhaseExecutor implements PhaseExecutor {
@@ -97,9 +96,7 @@ public class PlayersAmountPhaseExecutor implements PhaseExecutor {
     private Incident gameNotFoundException() {
         return new InternalError(
                 Internal.Logical.INCONSISTENCY,
-                String.format("Cannot find game session for chat with id '%d'", chatId.getValue()),
-                Collections.emptyMap(),
-                null
+                String.format("Cannot find game session for chat with id '%d'", chatId.getValue())
         );
     }
 }
