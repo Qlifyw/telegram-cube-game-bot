@@ -15,7 +15,6 @@ import org.cubegame.domain.model.game.state.Phase;
 import org.cubegame.domain.model.identifier.ChatId;
 import org.cubegame.infrastructure.services.CommandValidator;
 
-import java.util.Collections;
 import java.util.Optional;
 
 public class PhaseExecutorFactory {
@@ -36,16 +35,7 @@ public class PhaseExecutorFactory {
 
     public PhaseExecutor newInstance(Phase phase, ChatId chatId) {
         return createExecutor(phase, chatId)
-                .orElseThrow(() -> cannotCreateExecutorException(phase) );
-    }
-
-    private Incident cannotCreateExecutorException(Phase phase) {
-        return new InternalError(
-                Internal.Logical.INCONSISTENCY,
-                "Cannot create executor for '" +phase+ "'.",
-                Collections.emptyMap(),
-                null
-        );
+                .orElseThrow(() -> cannotCreateExecutorException(phase));
     }
 
     private Optional<PhaseExecutor> createExecutor(Phase phase, ChatId chatId) {
@@ -69,6 +59,7 @@ public class PhaseExecutorFactory {
             case STARTED:
                 executor = new StartGamePhaseExecutor(chatId, gameRepository, roundRepository);
                 break;
+
             case CANCELED:
             case COMPLETED:
                 break;
@@ -77,4 +68,10 @@ public class PhaseExecutorFactory {
         return executor == null ? Optional.empty() : Optional.of(executor);
     }
 
+    private Incident cannotCreateExecutorException(Phase phase) {
+        return new InternalError(
+                Internal.Logical.INCONSISTENCY,
+                "Cannot create executor for '" + phase + "'."
+        );
+    }
 }
