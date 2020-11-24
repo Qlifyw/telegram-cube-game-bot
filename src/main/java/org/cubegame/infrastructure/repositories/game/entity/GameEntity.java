@@ -17,48 +17,41 @@ import java.util.stream.Collectors;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GameEntity {
 
-    @JsonProperty("gameIdProp")
+    @JsonProperty("gameId")
     private final String gameId;
 
-    @JsonProperty("chatIdProp")
+    @JsonProperty("chatId")
     private final String chatId;
 
-    @JsonProperty("gameNameProp")
+    @JsonProperty("gameName")
     private final String gameName;
 
-    @JsonProperty("numberOfPlayerProp")
+    @JsonProperty("numberOfPlayer")
     private final int numberOfPlayers;
 
-    @JsonProperty("numberOfRoundsProp")
+    @JsonProperty("numberOfRounds")
     private final int numberOfRounds;
 
     @JsonProperty("phaseProp")
     private final String phase;
 
-    @JsonProperty("playersProp")
+    @JsonProperty("players")
     private final List<PlayerEntity> players;
 
-    @JsonProperty("ownerProp")
+    @JsonProperty("owner")
     private final String owner;
 
 
     @JsonCreator
     public GameEntity(
-            @JsonProperty("gameIdProp") final String gameId,
-
-            @JsonProperty("chatIdProp") final String chatId,
-
+            @JsonProperty("gameId") final String gameId,
+            @JsonProperty("chatId") final String chatId,
             @JsonProperty("phaseProp") final String phase,
-
-            @JsonProperty("gameNameProp") final String gameName,
-
-            @JsonProperty("numberOfPlayerProp") final int numberOfPlayers,
-
-            @JsonProperty("numberOfRoundsProp") final int numberOfRounds,
-
-            @JsonProperty("playersProp") final List<PlayerEntity> players,
-
-            @JsonProperty("ownerProp") final String owner
+            @JsonProperty("gameName") final String gameName,
+            @JsonProperty("numberOfPlayer") final int numberOfPlayers,
+            @JsonProperty("numberOfRounds") final int numberOfRounds,
+            @JsonProperty("players") final List<PlayerEntity> players,
+            @JsonProperty("owner") final String owner
     ) {
         this.gameId = gameId;
         this.chatId = chatId;

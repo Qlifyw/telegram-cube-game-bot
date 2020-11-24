@@ -68,7 +68,7 @@ public class GameRepositoryImpl implements GameRepository {
         final Document activeGame = gamesCollection
                 .find(
                         and(
-                                eq("chatIdProp", chatId.toString()),
+                                eq("chatId", chatId.toString()),
                                 in("phaseProp", activePhases)
                         )
                 )
@@ -116,8 +116,8 @@ public class GameRepositoryImpl implements GameRepository {
 
 
         final Bson filter = and(
-                eq("chatIdProp", game.getChatId().toString()),
-                eq("gameIdProp", game.getGameId().toString())
+                eq("chatId", game.getChatId().toString()),
+                eq("gameId", game.getGameId().toString())
         );
 
         final Object replacedObject = gamesCollection.findOneAndReplace(filter, document);
