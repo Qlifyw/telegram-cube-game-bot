@@ -106,7 +106,7 @@ class ChooseGamePhaseExecutorIT {
 
         phaseExecutor.inception()
                 .ifPresent(responseMessage ->
-                        assertEquals(responseMessage.getMessage(), nextPhaseIntro.getMessage())
+                        assertEquals(nextPhaseIntro.getMessage(), responseMessage.getMessage())
                 );
     }
 

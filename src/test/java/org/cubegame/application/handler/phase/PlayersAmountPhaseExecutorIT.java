@@ -108,7 +108,6 @@ class PlayersAmountPhaseExecutorIT {
 
         phaseExecutor.inception()
                 .ifPresent(responseMessage ->
-                        // TODO replace everywhere  expected and actual value
                         assertEquals(nextPhaseIntro.getMessage(), responseMessage.getMessage())
                 );
     }

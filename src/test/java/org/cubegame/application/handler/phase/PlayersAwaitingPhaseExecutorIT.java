@@ -112,7 +112,7 @@ class PlayersAwaitingPhaseExecutorIT {
 
         phaseExecutor.inception()
                 .ifPresent(responseMessage ->
-                        assertEquals(responseMessage.getMessage(), responsesAfterSecondPlayer.get(0).getMessage())
+                        assertEquals(responsesAfterSecondPlayer.get(0).getMessage(), responseMessage.getMessage())
                 );
     }
 

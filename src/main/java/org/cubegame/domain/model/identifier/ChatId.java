@@ -4,7 +4,6 @@ import java.util.Objects;
 
 public final class ChatId {
 
-    // TODO use primitive
     private final Long value;
 
     public ChatId(Long value) {
