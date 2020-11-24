@@ -4,7 +4,6 @@ package org.cubegame.infrastructure.properties;
 import org.cubegame.application.exceptions.incident.internal.Internal;
 import org.cubegame.application.exceptions.incident.internal.InternalError;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -21,12 +20,11 @@ public class ApplicationProperties {
     private static final String PROPERTY_DATABASE_PASS = "db.pass";
     private static final String PROPERTY_DATABASE_NAME = "db.name";
 
+    private static final String DEFAULT_FILE_PATH = "/application.properties";
+
     private static final Properties properties = new Properties();
 
-    private static final InputStream properties2 = ApplicationProperties.class.getResourceAsStream("/application.properties");
-
-//    private static final File defaultPropertiesFile = new File("src/main/resources/application.properties");
-
+    private static final InputStream inputStream = ApplicationProperties.class.getResourceAsStream(DEFAULT_FILE_PATH);
 
     public ApplicationProperties() {
     }
@@ -36,13 +34,13 @@ public class ApplicationProperties {
     }
 
     public static ApplicationProperties load() {
-        System.out.println(System.getProperty("user.dir"));
-        tryLoad(/*defaultPropertiesFile*/);
+        tryLoad(inputStream);
         return new ApplicationProperties();
     }
 
-    public static ApplicationProperties load(File propsFile) {
-        tryLoad(/*propsFile*/);
+    public static ApplicationProperties load(String path) {
+        final InputStream inputStream = ApplicationProperties.class.getResourceAsStream(path);
+        tryLoad(inputStream);
         return new ApplicationProperties();
     }
 
@@ -74,17 +72,16 @@ public class ApplicationProperties {
         return properties.getProperty(PROPERTY_DATABASE_NAME);
     }
 
-    private static void tryLoad(/*final File propertiesFile*/) {
-        try /*(FileInputStream fileInputStream = new FileInputStream(propertiesFile))*/ {
-            properties.load(properties2);
+    private static void tryLoad(final InputStream inputStream) {
+        try {
+            properties.load(inputStream);
         } catch (IOException e) {
             throw new InternalError(
                     Internal.Logical.INCONSISTENCY,
-                    String.format("Cannot load property file '%s'", /*propertiesFile*/ properties2 ),
+                    String.format("Cannot load property file '%s'", /*propertiesFile*/ inputStream),
                     Collections.emptyMap(),
                     e
             );
-//            throw new DiskIOException(String.format("Cannot load property file '%s'", /*propertiesFile*/ properties2 ), e);
         }
     }
 }
