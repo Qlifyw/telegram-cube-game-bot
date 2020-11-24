@@ -75,12 +75,12 @@ public class ApplicationProperties {
     private static void tryLoad(final InputStream inputStream) {
         try {
             properties.load(inputStream);
-        } catch (IOException e) {
+        } catch (IOException exception) {
             throw new InternalError(
                     Internal.Logical.INCONSISTENCY,
                     String.format("Cannot load property file '%s'", /*propertiesFile*/ inputStream),
                     Collections.emptyMap(),
-                    e
+                    exception
             );
         }
     }
