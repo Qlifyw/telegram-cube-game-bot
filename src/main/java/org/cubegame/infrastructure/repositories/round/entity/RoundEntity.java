@@ -1,5 +1,6 @@
 package org.cubegame.infrastructure.repositories.round.entity;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.cubegame.domain.model.round.Round;
 
@@ -8,19 +9,20 @@ import java.util.stream.Collectors;
 
 public class RoundEntity {
 
-    @JsonProperty("roundIdProp")
+    @JsonProperty("roundId")
     private final String id;
 
-    @JsonProperty("relatedGameProp")
+    @JsonProperty("relatedGame")
     private final String relatedGame;
 
-    @JsonProperty("outcomesProp")
+    @JsonProperty("outcomes")
     private final List<OutcomeEntity> results;
 
+    @JsonCreator
     public RoundEntity(
-            final List<OutcomeEntity> results,
-            final String relatedGame,
-            final String id
+            @JsonProperty("roundId") final List<OutcomeEntity> results,
+            @JsonProperty("relatedGame") final String relatedGame,
+            @JsonProperty("outcomes") final String id
     ) {
         this.id = id;
         this.relatedGame = relatedGame;

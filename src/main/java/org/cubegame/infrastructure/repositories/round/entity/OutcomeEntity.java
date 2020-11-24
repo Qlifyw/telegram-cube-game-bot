@@ -1,17 +1,22 @@
 package org.cubegame.infrastructure.repositories.round.entity;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.cubegame.domain.model.round.Outcome;
 
 public class OutcomeEntity {
 
-    @JsonProperty("playerProp")
+    @JsonProperty("player")
     private final PlayerEntity player;
 
-    @JsonProperty("pointsProp")
+    @JsonProperty("points")
     private final PointsEntity points;
 
-    public OutcomeEntity(final PlayerEntity player, final PointsEntity points) {
+    @JsonCreator
+    public OutcomeEntity(
+            @JsonProperty("player") final PlayerEntity player,
+            @JsonProperty("points") final PointsEntity points
+    ) {
         this.player = player;
         this.points = points;
     }
