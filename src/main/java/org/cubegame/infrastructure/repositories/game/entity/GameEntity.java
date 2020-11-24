@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-
- // TODO remove annotation and add propery object ID
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GameEntity {
 
@@ -46,29 +44,21 @@ public class GameEntity {
 
     @JsonCreator
     public GameEntity(
-            @JsonProperty("gameIdProp")
-            final String gameId,
+            @JsonProperty("gameIdProp") final String gameId,
 
-            @JsonProperty("chatIdProp")
-            final String chatId,
+            @JsonProperty("chatIdProp") final String chatId,
 
-            @JsonProperty("phaseProp")
-            final String phase,
+            @JsonProperty("phaseProp") final String phase,
 
-            @JsonProperty("gameNameProp")
-            final String gameName,
+            @JsonProperty("gameNameProp") final String gameName,
 
-            @JsonProperty("numberOfPlayerProp")
-            final int numberOfPlayers,
+            @JsonProperty("numberOfPlayerProp") final int numberOfPlayers,
 
-            @JsonProperty("numberOfRoundsProp")
-            final int numberOfRounds,
+            @JsonProperty("numberOfRoundsProp") final int numberOfRounds,
 
-            @JsonProperty("playersProp")
-            final List<PlayerEntity> players,
+            @JsonProperty("playersProp") final List<PlayerEntity> players,
 
-            @JsonProperty("ownerProp")
-            final String owner
+            @JsonProperty("ownerProp") final String owner
     ) {
         this.gameId = gameId;
         this.chatId = chatId;
