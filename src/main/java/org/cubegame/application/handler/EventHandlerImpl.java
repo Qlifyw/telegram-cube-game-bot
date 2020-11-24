@@ -2,10 +2,10 @@ package org.cubegame.application.handler;
 
 import org.cubegame.application.executors.factory.PhaseExecutor;
 import org.cubegame.application.executors.factory.PhaseExecutorFactory;
-import org.cubegame.application.model.FailedResult;
-import org.cubegame.application.model.IterableResult;
-import org.cubegame.application.model.PhaseResponse;
-import org.cubegame.application.model.ProcessedResult;
+import org.cubegame.application.model.result.FailedResult;
+import org.cubegame.application.model.result.IterableResult;
+import org.cubegame.application.model.result.PhaseResponse;
+import org.cubegame.application.model.result.ProcessedResult;
 import org.cubegame.application.repositories.game.GameRepository;
 import org.cubegame.application.repositories.round.RoundRepository;
 import org.cubegame.domain.events.Command;

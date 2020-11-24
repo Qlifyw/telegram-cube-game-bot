@@ -1,4 +1,4 @@
-package org.cubegame.application.model;
+package org.cubegame.application.model.result;
 
 import org.cubegame.infrastructure.model.message.ResponseMessage;
 
