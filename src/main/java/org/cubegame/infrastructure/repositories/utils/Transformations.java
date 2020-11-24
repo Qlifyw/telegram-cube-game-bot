@@ -10,7 +10,7 @@ public class Transformations {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static  <T> String toJson(T object) {
+    public static <T> String toJson(T object) {
         final String json;
         try {
             json = objectMapper.writeValueAsString(object);
@@ -20,18 +20,15 @@ public class Transformations {
         return json;
     }
 
-    public static  <T> T toObject(Document document, Class<T> clazz) {
+    public static <T> T toObject(Document document, Class<T> clazz) {
         final T object;
         try {
             object = objectMapper.readValue(document.toJson(), clazz);
         } catch (JsonProcessingException e) {
-
-            // TODO add MDC
             throw new InternalError(Internal.Database.Data.PARSING, "Cannot deserialize object.");
         }
         return object;
     }
-
 
 
 }

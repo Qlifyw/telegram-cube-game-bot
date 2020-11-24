@@ -1,6 +1,5 @@
 package org.cubegame.application.handler.phase;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
@@ -45,7 +44,6 @@ class StartGamePhaseExecutorIT {
     private static final String BOT_NAME = applicationProperties.getBotName();
     private static final SpeechFactory speechFactory = new SpeechFactory(applicationProperties);
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
     private final static MongoDBContainer dbContainer = TestDatabaseConfiguration.getInstance();
 
     private final ConnectionString connectionString = new ConnectionString("mongodb://"+dbContainer.getHost()+":"+dbContainer.getFirstMappedPort());
@@ -57,7 +55,7 @@ class StartGamePhaseExecutorIT {
 
     private final MongoClient mongoClient = MongoClients.create(mongoClientSettings);
 
-    private final RoundRepository roundRepository = new RoundRepositoryImpl(mongoClient, objectMapper);
+    private final RoundRepository roundRepository = new RoundRepositoryImpl(mongoClient);
     private final GameRepository gameRepository = new GameRepositoryImpl(mongoClient);
 
     private final CommandValidator commandValidator = new CommandValidator(applicationProperties);
