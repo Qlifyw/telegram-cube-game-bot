@@ -1,7 +1,7 @@
 package org.cubegame.application.exceptions.incident.internal;
 
 import org.cubegame.application.exceptions.incident.Incident;
-import org.cubegame.domain.utils.PrintFormaters;
+import org.cubegame.application.utils.PrintFormaters;
 
 import java.util.Collections;
 import java.util.Map;

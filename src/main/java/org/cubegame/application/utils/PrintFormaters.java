@@ -1,9 +1,12 @@
-package org.cubegame.domain.utils;
+package org.cubegame.application.utils;
 
 import java.util.Iterator;
 import java.util.Map;
 
 public class PrintFormaters {
+
+    private PrintFormaters() {
+    }
 
     public static <K, V> String pretty(Map<K, V> map) {
         StringBuilder sb = new StringBuilder();
