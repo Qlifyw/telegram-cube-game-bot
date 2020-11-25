@@ -3,19 +3,32 @@ version: '3'
 services:
   web:
     build: .
-    container_name: "cube-game-app-tmp"
+    container_name: cube-game-app-tmp
     ports:
     - 8080:8080
+    networks:
+      - cube-net
+    links:
+      - database
     depends_on:
       - database
     restart: always
 
   database:
     image: 'mongo:4.0.20-xenial'
-    container_name: "cube-game-db-tmp"
+    container_name: cube-game-db-tmp
     ports:
     - 27017:27017
+    networks:
+      - cube-net
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: pass
+    volumes:
+    - ./docs/db/mongo-init-scripts.js:/docker-entrypoint-initdb.d/mongo-init-scripts.js
+    - ./data/db:/data/db
     restart: always
+
+networks:
+  cube-net:
+    driver: bridge

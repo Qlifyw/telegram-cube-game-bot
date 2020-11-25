@@ -1,7 +1,7 @@
 
 // The userAdministrator user has only permission to create and manage the database users
-use admin
-db.createUser(
+AdminDb = db.getSiblingDB('admin');
+AdminDb.createUser(
     {
         user : "admin-login",
         pwd : "admin-pass",
@@ -9,8 +9,8 @@ db.createUser(
     }
 )
 
-use cube-game
-db.createUser(
+cubeGameDb = db.getSiblingDB('cube-game');
+cubeGameDb.createUser(
     {
         user : "mng-client",
         pwd : "mng-client-pass",
@@ -18,7 +18,6 @@ db.createUser(
     }
 )
 
-use cube-game                    // create DB
-db.createCollection("rounds")    // create collections for storing rounds
-db.createCollection("games")     // create collections for storing games
+cubeGameDb.createCollection("rounds")    // create collections for storing rounds
+cubeGameDb.createCollection("games")     // create collections for storing games
 
