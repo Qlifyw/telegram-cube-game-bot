@@ -95,7 +95,7 @@ class RoundAmountPhaseExecutorIT {
 
         final Game storedGame = gameRepository.getActive(CHAT_ID).get();
         final PhaseExecutor phaseExecutor = phaseExecutorFactory
-                .newInstance(storedGame.getPhase(), message.getChatId());
+                .newInstance(storedGame.getPhase(), message.getChatId()).get();
 
         assertFalse(responses.isEmpty());
         assertEquals(1, responses.size());

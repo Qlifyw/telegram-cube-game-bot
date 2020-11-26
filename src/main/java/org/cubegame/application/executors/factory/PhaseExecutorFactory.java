@@ -1,8 +1,5 @@
 package org.cubegame.application.executors.factory;
 
-import org.cubegame.application.exceptions.incident.Incident;
-import org.cubegame.application.exceptions.incident.internal.Internal;
-import org.cubegame.application.exceptions.incident.internal.InternalError;
 import org.cubegame.application.executors.phase.ChooseGamePhaseExecutor;
 import org.cubegame.application.executors.phase.EmptyPhaseExecutor;
 import org.cubegame.application.executors.phase.PlayersAmountPhaseExecutor;
@@ -33,9 +30,8 @@ public class PhaseExecutorFactory {
         this.commandValidator = commandValidator;
     }
 
-    public PhaseExecutor newInstance(Phase phase, ChatId chatId) {
-        return createExecutor(phase, chatId)
-                .orElseThrow(() -> cannotCreateExecutorException(phase));
+    public Optional<PhaseExecutor> newInstance(Phase phase, ChatId chatId) {
+        return createExecutor(phase, chatId);
     }
 
     private Optional<PhaseExecutor> createExecutor(Phase phase, ChatId chatId) {
@@ -68,10 +64,4 @@ public class PhaseExecutorFactory {
         return executor == null ? Optional.empty() : Optional.of(executor);
     }
 
-    private Incident cannotCreateExecutorException(Phase phase) {
-        return new InternalError(
-                Internal.Logical.INCONSISTENCY,
-                "Cannot create executor for '" + phase + "'."
-        );
-    }
 }

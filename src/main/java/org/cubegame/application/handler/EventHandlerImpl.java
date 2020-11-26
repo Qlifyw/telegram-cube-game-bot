@@ -1,5 +1,8 @@
 package org.cubegame.application.handler;
 
+import org.cubegame.application.exceptions.incident.Incident;
+import org.cubegame.application.exceptions.incident.internal.Internal;
+import org.cubegame.application.exceptions.incident.internal.InternalError;
 import org.cubegame.application.executors.factory.PhaseExecutor;
 import org.cubegame.application.executors.factory.PhaseExecutorFactory;
 import org.cubegame.application.model.result.FailedResult;
@@ -87,9 +90,13 @@ public class EventHandlerImpl implements EventHandler {
 
     private PhaseExecutor getExecutor(Phase phase, ChatId chatId) {
         if (phaseExecutors.get(chatId) == null) {
-            final PhaseExecutor newExecutor = phaseExecutorFactory.newInstance(phase, chatId);
+            final PhaseExecutor newExecutor = phaseExecutorFactory
+                    .newInstance(phase, chatId)
+                    .orElseThrow(() -> cannotCreateExecutorException(phase));
+
             phaseExecutors.put(chatId, newExecutor);
             return newExecutor;
+
         } else {
             return phaseExecutors.get(chatId);
         }
@@ -110,11 +117,10 @@ public class EventHandlerImpl implements EventHandler {
     }
 
     private Optional<ResponseMessage> getNextPhaseEntrance(ChatId chatId, Phase phase) {
-        final PhaseExecutor nextExecutor = phaseExecutorFactory.newInstance(Phase.getNextFor(phase), chatId);
-        if (nextExecutor != null) {
-            phaseExecutors.put(chatId, nextExecutor);
-            return nextExecutor
-                    .inception();
+        final Optional<PhaseExecutor> nextExecutor = phaseExecutorFactory.newInstance(Phase.getNextFor(phase), chatId);
+        if (nextExecutor.isPresent()) {
+            phaseExecutors.put(chatId, nextExecutor.get());
+            return nextExecutor.get().inception();
         }
         return Optional.empty();
     }
@@ -145,6 +151,13 @@ public class EventHandlerImpl implements EventHandler {
         }
 
         return responses;
+    }
+
+    private Incident cannotCreateExecutorException(Phase phase) {
+        return new InternalError(
+                Internal.Logical.INCONSISTENCY,
+                "Cannot create executor for '" + phase + "'."
+        );
     }
 
 }

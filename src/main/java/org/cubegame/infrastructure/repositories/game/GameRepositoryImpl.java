@@ -59,7 +59,6 @@ public class GameRepositoryImpl implements GameRepository {
         final Game game = GameEntity.toDomain(gameEntity);
 
         return Optional.of(game);
-
     }
 
     @Override

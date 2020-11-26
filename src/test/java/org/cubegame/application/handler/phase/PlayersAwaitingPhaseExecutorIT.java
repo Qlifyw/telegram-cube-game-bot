@@ -108,7 +108,7 @@ class PlayersAwaitingPhaseExecutorIT {
 
         final Game storedGame = gameRepository.getActive(CHAT_ID).get();
         final PhaseExecutor phaseExecutor = phaseExecutorFactory
-                .newInstance(storedGame.getPhase(), message.getChatId());
+                .newInstance(storedGame.getPhase(), message.getChatId()).get();
 
         phaseExecutor.inception()
                 .ifPresent(responseMessage ->
