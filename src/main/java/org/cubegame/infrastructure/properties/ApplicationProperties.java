@@ -75,6 +75,7 @@ public class ApplicationProperties {
     private static void tryLoad(final InputStream inputStream) {
         try {
             properties.load(inputStream);
+            inputStream.close();
         } catch (IOException exception) {
             throw new InternalError(
                     Internal.Logical.INCONSISTENCY,
