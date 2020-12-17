@@ -18,7 +18,8 @@ public class CascadePhaseStepper {
                     reply.getUserId(),
                     message.getAuthor().getFirstName() + reply.getUserId(),
                     reply.getSpeech(),
-                    message.getDice()
+                    message.getDice(),
+                    message.getForwardedMessageId()
             );
             eventHandler.handle(newMessage);
         });

@@ -14,6 +14,7 @@ import org.cubegame.application.repositories.game.GameRepository;
 import org.cubegame.application.repositories.round.RoundRepository;
 import org.cubegame.domain.model.dice.Dice;
 import org.cubegame.domain.model.identifier.ChatId;
+import org.cubegame.domain.model.identifier.MessageId;
 import org.cubegame.domain.model.identifier.UserId;
 import org.cubegame.domain.model.message.Message;
 import org.cubegame.domain.model.message.speach.Speech;
@@ -101,9 +102,12 @@ public class CubeGameBot extends TelegramLongPollingBot {
             final UserId userId = new UserId(receivedMessage.getFrom().getId());
             final String firstName = receivedMessage.getFrom().getFirstName();
             final Dice dice = receivedMessage.hasDice() ? new Dice(receivedMessage.getDice().getValue()) : null;
+            final MessageId forwardedMessageId = receivedMessage.getForwardFromMessageId() != null
+                    ? new MessageId(receivedMessage.getForwardFromMessageId())
+                    : null;
 
             final Speech speech = speechFactory.of(receivedText);
-            final Message createdMessage = new Message(chatId, userId, firstName, speech, dice);
+            final Message createdMessage = new Message(chatId, userId, firstName, speech, dice, forwardedMessageId);
             return Optional.of(createdMessage);
         }
 
@@ -115,10 +119,13 @@ public class CubeGameBot extends TelegramLongPollingBot {
             final ChatId chatId = new ChatId(callbackQuery.getMessage().getChat().getId());
             final UserId userId = new UserId(callbackQuery.getFrom().getId());
             final String firstName = callbackQuery.getMessage().getFrom().getFirstName();
+            final MessageId forwardedMessageId = callbackQuery.getMessage().getForwardFromMessageId() != null
+                    ? new MessageId(callbackQuery.getMessage().getForwardFromMessageId())
+                    : null;
 
             final Speech speech = speechFactory.of(receivedText);
 
-            final Message createdMessage = new Message(chatId, userId, firstName, speech, null);
+            final Message createdMessage = new Message(chatId, userId, firstName, speech, null, forwardedMessageId);
             return Optional.of(createdMessage);
         }
 

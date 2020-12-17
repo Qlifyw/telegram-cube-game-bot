@@ -18,6 +18,7 @@ import org.cubegame.domain.events.Command;
 import org.cubegame.domain.model.dice.Dice;
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.identifier.ChatId;
+import org.cubegame.domain.model.identifier.MessageId;
 import org.cubegame.domain.model.identifier.UserId;
 import org.cubegame.domain.model.message.Message;
 import org.cubegame.domain.model.message.speach.Speech;
@@ -39,9 +40,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PlayersAwaitingPhaseExecutorIT {
     private static final String BOT_NAME = "my-bot";
@@ -72,6 +71,7 @@ class PlayersAwaitingPhaseExecutorIT {
     private static final UserId USER_ID_2 = new UserId(678L);
     private static final String FIRST_NAME = "First name";
     private static final Dice DICE = null;
+    private static final MessageId FORWARDED = null;
 
     private static final String GAME_NAME = "cube-game";
     private static final long PLAYERS_AMOUNT = 2;
@@ -86,12 +86,12 @@ class PlayersAwaitingPhaseExecutorIT {
     @Test
     @DisplayName("Success when all players connected")
     void suceessWhenChooseGame() {
-        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, SpeechFactory.EMPTY_SPEECH, DICE);
+        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, SpeechFactory.EMPTY_SPEECH, DICE, FORWARDED);
 
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
 
         final Speech speech = speechFactory.of(String.format("@%s %s", applicationProperties.getBotName(), "+"));
-        final Message message = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, speech, DICE);
+        final Message message = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, speech, DICE, FORWARDED);
         final List<ResponseMessage> responsesAfterFirstPlayer = eventHandler.handle(message);
 
         assertFalse(responsesAfterFirstPlayer.isEmpty());
@@ -100,7 +100,7 @@ class PlayersAwaitingPhaseExecutorIT {
 
 
         final Speech speech2 = speechFactory.of(String.format("@%s %s", applicationProperties.getBotName(), "+"));
-        final Message message2 = new Message(CHAT_ID, USER_ID_2, FIRST_NAME, speech2, DICE);
+        final Message message2 = new Message(CHAT_ID, USER_ID_2, FIRST_NAME, speech2, DICE, FORWARDED);
         final List<ResponseMessage> responsesAfterSecondPlayer = eventHandler.handle(message2);
 
         assertFalse(responsesAfterSecondPlayer.isEmpty());
@@ -119,11 +119,11 @@ class PlayersAwaitingPhaseExecutorIT {
     @Test
     @DisplayName("Skiped when one players connected twice")
     void skipedWhenOnePlayerConnectedTwice() {
-        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, SpeechFactory.EMPTY_SPEECH, DICE);
+        final Message msgTemplate = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, SpeechFactory.EMPTY_SPEECH, DICE, FORWARDED);
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
 
         final Speech speech = speechFactory.of(String.format("@%s %s", applicationProperties.getBotName(), "+"));
-        final Message message = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, speech, DICE);
+        final Message message = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, speech, DICE, FORWARDED);
         final List<ResponseMessage> responsesAfterFirstPlayer = eventHandler.handle(message);
 
         assertFalse(responsesAfterFirstPlayer.isEmpty());
@@ -138,7 +138,7 @@ class PlayersAwaitingPhaseExecutorIT {
     @ParameterizedTest(name = "Skip {0} message")
     @MethodSource("ignoredMessages")
     void skipMessageIfNotTagged(Speech speech) {
-        final Message message = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, speech, DICE);
+        final Message message = new Message(CHAT_ID, USER_ID_1, FIRST_NAME, speech, DICE, FORWARDED);
         final List<ResponseMessage> responses = eventHandler.handle(message);
 
         assertTrue(responses.isEmpty());

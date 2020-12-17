@@ -18,6 +18,7 @@ import org.cubegame.domain.events.Command;
 import org.cubegame.domain.model.dice.Dice;
 import org.cubegame.domain.model.game.Game;
 import org.cubegame.domain.model.identifier.ChatId;
+import org.cubegame.domain.model.identifier.MessageId;
 import org.cubegame.domain.model.identifier.UserId;
 import org.cubegame.domain.model.message.Message;
 import org.cubegame.domain.model.message.speach.Speech;
@@ -41,9 +42,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PlayersAmountPhaseExecutorIT {
     private static final String BOT_NAME = "my-bot";
@@ -73,6 +72,7 @@ class PlayersAmountPhaseExecutorIT {
     private static final UserId USER_ID = new UserId(456L);
     private static final String FIRST_NAME = "First name";
     private static final Dice DICE = null;
+    private static final MessageId FORWARDED = null;
 
     private static final String GAME_NAME = "cube-game";
     private static final long PLAYERS_AMOUNT = 2;
@@ -87,12 +87,12 @@ class PlayersAmountPhaseExecutorIT {
     @Test
     @DisplayName("Success when specified valid amount")
     void suceessWhenChooseGame() {
-        final Message msgTemplate = new Message(CHAT_ID, USER_ID, FIRST_NAME, SpeechFactory.EMPTY_SPEECH, DICE);
+        final Message msgTemplate = new Message(CHAT_ID, USER_ID, FIRST_NAME, SpeechFactory.EMPTY_SPEECH, DICE, FORWARDED);
 
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
 
         final Speech speech = speechFactory.of(String.format("@%s %d", applicationProperties.getBotName(), PLAYERS_AMOUNT));
-        final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, speech, DICE);
+        final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, speech, DICE, FORWARDED);
         final List<ResponseMessage> responses = eventHandler.handle(message);
 
         final Game storedGame = gameRepository.getActive(CHAT_ID).get();
@@ -117,10 +117,10 @@ class PlayersAmountPhaseExecutorIT {
     void skipMessageIfNotTagged() {
         final UserId anotherUserId = new UserId(ThreadLocalRandom.current().nextLong());
 
-        final Message msgTemplate = new Message(CHAT_ID, USER_ID, FIRST_NAME, speechFactory.of(GAME_NAME), DICE);
+        final Message msgTemplate = new Message(CHAT_ID, USER_ID, FIRST_NAME, speechFactory.of(GAME_NAME), DICE, FORWARDED);
 
         final Speech speech = speechFactory.of(String.format("@%s %d", applicationProperties.getBotName(), PLAYERS_AMOUNT));
-        final Message message = new Message(CHAT_ID, anotherUserId, FIRST_NAME, speech, DICE);
+        final Message message = new Message(CHAT_ID, anotherUserId, FIRST_NAME, speech, DICE, FORWARDED);
 
         CascadePhaseStepper.moveUp(eventHandler, msgTemplate, commands);
 
@@ -132,7 +132,7 @@ class PlayersAmountPhaseExecutorIT {
     @ParameterizedTest(name = "Skip {0} message")
     @MethodSource("ignoredMessages")
     void skipMessageIfNotTagged(Speech speech) {
-        final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, speech, DICE);
+        final Message message = new Message(CHAT_ID, USER_ID, FIRST_NAME, speech, DICE, FORWARDED);
         final List<ResponseMessage> responses = eventHandler.handle(message);
 
         assertTrue(responses.isEmpty());

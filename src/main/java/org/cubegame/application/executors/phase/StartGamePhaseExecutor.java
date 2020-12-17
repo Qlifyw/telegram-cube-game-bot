@@ -26,12 +26,7 @@ import org.cubegame.domain.model.session.GameSession;
 import org.cubegame.infrastructure.model.message.TextResponseMessage;
 import org.cubegame.infrastructure.model.message.type.ResponseMessage;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -93,7 +88,7 @@ public class StartGamePhaseExecutor implements PhaseExecutor {
             final Outcomes currentRoundOutcomes = currentRound.getResults();
             final UserId currentPlayer = message.getAuthor().getUserId();
 
-            if (currentRoundOutcomes.contains(currentPlayer))
+            if (currentRoundOutcomes.contains(currentPlayer) || message.isForwarded())
                 return new SkipedResult();
 
             final Player newPlayer = new Player(currentPlayer, message.getAuthor().getFirstName());
