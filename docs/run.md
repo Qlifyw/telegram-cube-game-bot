@@ -1,10 +1,6 @@
-# Cube Game Bot #
 
-Bot for play telegram games 
 
-## How to run it ###
-
-### Using docker-compose
+# Using docker-compose
 
 First of all set <i><b> db.host </b></i>
  property (in <i> application.properties </i> file) same to database service name in docker compose file.
@@ -12,15 +8,15 @@ First of all set <i><b> db.host </b></i>
 $ docker-compose up
 ```
 
-#### Deploying changes
+## Deploying changes
 
 ```
 $ docker-compose build web
 $ docker-compose up --no-deps -d web
 ```
 
-### Using docker
-#### Install mongo db
+# Using docker
+## Install mongo db
 
 ```
 $ docker run -d --name <cube-game-db> \
@@ -30,7 +26,7 @@ $ docker run -d --name <cube-game-db> \
   mongo:4.0.20-xenial
 ```
 
-#### Entry in container
+## Entry in container
 
 ```
 $ docker exec -it <cube-game-db> mongo
@@ -65,14 +61,3 @@ And then
  > db.createCollection("rounds")    # create collections for storing rounds
  > db.createCollection("games")     # create collections for storing games
 ```
-
-
-### Communication ###
-
-To start communication send ``` /start@BotName ```
-
-For "say" something to bot use ``` @BotName <your text>```
-
-Use ```/stop@BotName``` to cancel game
-
- 

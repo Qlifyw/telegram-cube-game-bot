@@ -1,5 +1,8 @@
 plugins {
     id 'java'
+    id "com.palantir.docker" version "0.22.1"
+    id 'com.palantir.git-version' version '0.12.3'
+    id 'com.github.johnrengelman.shadow' version '5.0.0'
 }
 
 group 'org.cubegame'
@@ -12,11 +15,36 @@ repositories {
 }
 
 dependencies {
-    testCompile("org.junit.jupiter:junit-jupiter-engine:5.6.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.6.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.6.2")
 
-    compile group: 'org.telegram', name: 'telegrambots', version: '4.9.1'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
+
+    implementation 'org.mongodb:mongodb-driver-sync:4.1.1'
+
+    testImplementation group: 'org.testcontainers', name: 'mongodb', version: '1.14.3'
+
+    implementation group: 'org.telegram', name: 'telegrambots', version: '4.9.1'
 }
 
 test {
     useJUnitPlatform()
 }
+
+
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'org.cubegame.infrastructure.BotRunner'
+        )
+    }
+}
+
+docker {
+    name "${project.name}:${project.version}.${gitVersion.hashCode()}"
+    files "${project.name}-${project.version}-all.jar"
+    noCache true
+}
+
