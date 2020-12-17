@@ -21,11 +21,7 @@ import org.cubegame.infrastructure.model.message.type.ResponseMessage;
 import org.cubegame.infrastructure.properties.ApplicationProperties;
 import org.cubegame.infrastructure.services.CommandValidator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class EventHandlerImpl implements EventHandler {
@@ -85,7 +81,7 @@ public class EventHandlerImpl implements EventHandler {
 
     private void cancelGame(Game game) {
         final GameBuilder builder = GameBuilder.from(game).setPhase(Phase.CANCELED);
-        gameRepository.save(builder.build());
+        gameRepository.update(builder.build());
     }
 
     private PhaseExecutor getExecutor(Phase phase, ChatId chatId) {
