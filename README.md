@@ -1,29 +1,78 @@
-# README #
+# Cube Game Bot #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+Bot for play telegram games 
 
-### What is this repository for? ###
+## How to run it ###
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+### Using docker-compose
 
-### How do I get set up? ###
+First of all set <i><b> db.host </b></i>
+ property (in <i> application.properties </i> file) same to database service name in docker compose file.
+```
+$ docker-compose up
+```
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+#### Deploying changes
 
-### Contribution guidelines ###
+```
+$ docker-compose build web
+$ docker-compose up --no-deps -d web
+```
 
-* Writing tests
-* Code review
-* Other guidelines
+### Using docker
+#### Install mongo db
 
-### Who do I talk to? ###
+```
+$ docker run -d --name <cube-game-db> \
+  -e MONGO_INITDB_ROOT_USERNAME=root \
+  -e MONGO_INITDB_ROOT_PASSWORD=toor \
+  -p 27017:27017 \
+  mongo:4.0.20-xenial
+```
 
-* Repo owner or admin
-* Other community or team contact
+#### Entry in container
+
+```
+$ docker exec -it <cube-game-db> mongo
+```
+#### Create user
+
+```
+# The userAdministrator user has only permission to create and manage the database users
+
+> use admin
+> db.createUser(
+    {
+        user : "admin-login",
+        pwd : "admin-pass",
+        roles: [ {role:"userAdminAnyDatabase", db: "admin"} ]
+        }
+    )
+
+> use <cube-game-db>
+> db.createUser(
+    {
+        user : "mng-client",
+        pwd : "mng-client-pass",
+        roles: [ {role: "readWrite", db: "<cube-game-db>"} ]
+    }
+)
+```
+
+
+And then
+```
+ > db.createCollection("rounds")    # create collections for storing rounds
+ > db.createCollection("games")     # create collections for storing games
+```
+
+
+### Communication ###
+
+To start communication send ``` /start@BotName ```
+
+For "say" something to bot use ``` @BotName <your text>```
+
+Use ```/stop@BotName``` to cancel game
+
+ 
